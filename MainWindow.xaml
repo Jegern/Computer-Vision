@@ -16,6 +16,7 @@
         <CommandBinding Command="Zoom" Executed="ToggleSlidingWindowCommand_OnExecuted" />
         <CommandBinding Command="NavigateJournal" Executed="ToggleSlidingWindowInfoCommand_OnExecuted" />
         <CommandBinding Command="ScrollByLine" Executed="ToggleBrightnessProfileCommand_OnExecuted" />
+        <CommandBinding Command="Properties" Executed="ToggleImagePropertiesCommand_OnExecuted" />
     </Window.CommandBindings>
     <Window.InputBindings>
         <KeyBinding Modifiers="Control" Key="O" Command="Open" />
@@ -23,6 +24,7 @@
         <KeyBinding Modifiers="Control" Key="W" Command="Zoom" />
         <KeyBinding Modifiers="Control" Key="M" Command="NavigateJournal" />
         <KeyBinding Modifiers="Control" Key="P" Command="ScrollByLine" />
+        <KeyBinding Modifiers="Control" Key="T" Command="Properties" />
     </Window.InputBindings>
 
     <Grid>
@@ -58,6 +60,9 @@
                 <MenuItem Header="Профиль яркости"
                           InputGestureText="Ctrl+P"
                           Command="ScrollByLine" />
+                <MenuItem Header="ПропертиИмагов"
+                          InputGestureText="Ctrl+T"
+                          Command="Properties" />
             </MenuItem>
         </Menu>
 
@@ -72,6 +77,8 @@
               x:Name="FrameGrid"
               Background="WhiteSmoke">
             <Grid.RowDefinitions>
+                <RowDefinition Height="0*"/>
+                <RowDefinition Height="0*"/>
                 <RowDefinition Height="0*"/>
                 <RowDefinition Height="0*"/>
                 <RowDefinition Height="0*"/>
@@ -91,8 +98,13 @@
                    NavigationUIVisibility="Hidden"
                    Tag="Hidden"
                    LoadCompleted="Frame_OnLoadCompleted" />
-            <Frame Grid.Row="2"
+            <Frame Grid.Row="3"
                    x:Name="BrightnessProfileFrame"
+                   NavigationUIVisibility="Hidden"
+                   Tag="Hidden"
+                   LoadCompleted="Frame_OnLoadCompleted" />
+            <Frame Grid.Row="4"
+                   x:Name="ImagePropertiesFrame"
                    NavigationUIVisibility="Hidden"
                    Tag="Hidden"
                    LoadCompleted="Frame_OnLoadCompleted" />
