@@ -1,0 +1,77 @@
+﻿<Page x:Class="Laboratory_work_1.ImageProperties"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Laboratory_work_1"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="200"
+      Title="ImageProperties">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Text="Яркость картинки" Grid.Row="0" Grid.Column="0"/>
+        <Slider x:Name="Brightness" ValueChanged="Brightness_ValueChanged" Grid.Row="0" Grid.Column="1" Minimum="0" Maximum="255"  Value="127"/>
+        <TextBlock Text="Интенсивность картинки" Grid.Row="1" Grid.Column="0"/>
+        <Slider x:Name="Intensivity" ValueChanged="Intensivity_ValueChanged" Grid.Row="1" Grid.Column="1" Minimum="0" Maximum="255" />
+        <TextBlock Text="Обесцвечивание картинки" Grid.Row="2" Grid.Column="0"/>
+        <Button x:Name="Bleach" Click="Bleach_Click"  Grid.Row="2" Grid.Column="1"/>
+        <TextBlock Text="Негатив картинки" Grid.Row="3" Grid.Column="0"/>
+        <Button x:Name="Negative" Click="Negative_Click"  Grid.Row="3" Grid.Column="1"/>
+        <Grid Grid.Row="4" Grid.Column="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Text="Выберите каналы для обмена" Grid.ColumnSpan="3"></TextBlock>
+            <CheckBox x:Name="Red" Grid.Row="1" Grid.Column="0"></CheckBox>
+            <CheckBox x:Name="Green" Grid.Row="1" Grid.Column="1"></CheckBox>
+            <CheckBox x:Name="Blue" Grid.Row="1" Grid.Column="2"></CheckBox>
+        </Grid>
+        <Button x:Name="SwapChanels" Click="SwapChanels_Click" Grid.Row="4" Grid.Column="1"></Button>
+        <Grid Grid.Row="5" Grid.Column="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Text="Выберите симметрию" Grid.ColumnSpan="3"></TextBlock>
+            <CheckBox x:Name="Vertical" Grid.Row="1" Grid.Column="0"></CheckBox>
+            <CheckBox x:Name="Horizontal" Grid.Row="1" Grid.Column="1"></CheckBox>
+        </Grid>
+        <Button x:Name="SimmetricalImage" Click="SimmetricalImage_Click" Grid.Row="5" Grid.Column="1"></Button>
+        <Grid Grid.Row="6" Grid.Column="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Text="Выберите симметрию" Grid.ColumnSpan="2"></TextBlock>
+            <CheckBox x:Name="ConnectFour" Grid.Row="1" Grid.Column="0"></CheckBox>
+            <CheckBox x:Name="ConnectEight" Grid.Row="1" Grid.Column="1"></CheckBox>
+        </Grid>
+        <Button x:Name="Vanish" Click="Vanish_Click" Grid.Row="6" Grid.Column="1"></Button>
+    </Grid>
+</Page>

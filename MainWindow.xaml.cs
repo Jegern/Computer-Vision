@@ -26,7 +26,8 @@ namespace Laboratory_work_1
                 PixelInfoFrame,
                 SlidingWindowFrame,
                 SlidingWindowInfoFrame,
-                BrightnessProfileFrame
+                BrightnessProfileFrame,
+                ImagePropertiesFrame
             };
         }
 
@@ -328,6 +329,14 @@ namespace Laboratory_work_1
             ChangeFrameContent(BrightnessProfileFrame,
                 BrightnessProfileFrame.Content is null
                     ? new BrightnessProfile(this)
+                    : null);
+        }
+
+        private void ToggleImagePropertiesCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            ChangeFrameContent(ImagePropertiesFrame,
+                ImagePropertiesFrame.Content is null
+                    ? new ImageProperties(this)
                     : null);
         }
     }
