@@ -281,7 +281,7 @@ namespace Laboratory_work_1
         {
             var brightnessSum = 0.0;
             for (var i = 0; i < _slidingWindowPixels.Length; i += 4)
-                brightnessSum += GetPixelBrightness(i);
+                brightnessSum += GetPixelBrightness(_slidingWindowPixels, i);
             return Math.Round(GetMeanFromSum(brightnessSum), 3);
         }
 
@@ -290,10 +290,10 @@ namespace Laboratory_work_1
             return sum / (_slidingWindowPixels.Length / 4.0);
         }
 
-        private double GetPixelBrightness(int index)
+        internal static double GetPixelBrightness(byte[] source, int index)
         {
             //Находится среднее значение между красным, зеленым и синим каналом
-            return _slidingWindowPixels.Skip(index).Take(3).Select(x => (int) x).Sum() / 3.0;
+            return source.Skip(index).Take(3).Select(x => (int) x).Sum() / 3.0;
         }
 
         private double GetSlidingWindowStandardDeviation()
@@ -302,7 +302,7 @@ namespace Laboratory_work_1
             var meanBrightness = GetSlidingWindowMean();
             for (var i = 0; i < _slidingWindowPixels.Length; i += 4)
                 //Из яркости одного пикселя вычетается средняя яркость изображения и возводится в квадрат
-                differenceSquareSum += Math.Pow(GetPixelBrightness(i) - meanBrightness, 2);
+                differenceSquareSum += Math.Pow(GetPixelBrightness(_slidingWindowPixels, i) - meanBrightness, 2);
             return Math.Round(Math.Sqrt(GetMeanFromSum(differenceSquareSum)), 3);
         }
 
@@ -311,7 +311,7 @@ namespace Laboratory_work_1
             var brightnessList = new List<double>();
             for (var i = 0; i < _slidingWindowPixels.Length; i += 4)
                 //Сборка всех яркостей в один List
-                brightnessList.Add(GetPixelBrightness(i));
+                brightnessList.Add(GetPixelBrightness(_slidingWindowPixels, i));
             return Math.Round(GetMedianFromList(brightnessList), 3);
         }
 
@@ -327,7 +327,7 @@ namespace Laboratory_work_1
         {
             ChangeFrameContent(BrightnessProfileFrame,
                 BrightnessProfileFrame.Content is null
-                    ? new BrightnessProfile()
+                    ? new BrightnessProfile(this)
                     : null);
         }
     }

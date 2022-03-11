@@ -75,6 +75,7 @@
                 <RowDefinition Height="0*"/>
                 <RowDefinition Height="0*"/>
                 <RowDefinition Height="0*"/>
+                <RowDefinition Height="0*"/>
             </Grid.RowDefinitions>
             <Frame Grid.Row="0"
                    x:Name="PixelInfoFrame"
@@ -91,7 +92,7 @@
                    NavigationUIVisibility="Hidden"
                    Tag="Hidden"
                    LoadCompleted="Frame_OnLoadCompleted" />
-            <Frame Grid.Row="2"
+            <Frame Grid.Row="3"
                    x:Name="BrightnessProfileFrame"
                    NavigationUIVisibility="Hidden"
                    Tag="Hidden"

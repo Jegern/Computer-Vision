@@ -3,11 +3,41 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:Laboratory_work_1"
+      xmlns:oxy="http://oxyplot.org/wpf"
       mc:Ignorable="d"
-      
-      Title="BrightnessProfile" 
-      Width="200" Height="100" >
+
+      Title="BrightnessProfile"
+      Width="200" Height="200">
+<Page.DataContext>
+    <local:BrightnessProfileViewModel/>
+</Page.DataContext>
+
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition />
+            <RowDefinition Height="2.5*" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0"
+                   Text="Номер строки"
+                   FontSize="16"
+                   TextWrapping="Wrap"
+                   TextAlignment="Center"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center" />
+        <TextBox Grid.Row="1"
+                 x:Name="StringNumber"
+                 FontSize="16"
+                 TextAlignment="Center"
+                 VerticalContentAlignment="Center" />
+        <Button Grid.Row="2"
+                Content="Отобразить"
+                FontSize="16"
+                Click="ButtonBase_OnClick" />
+        <oxy:PlotView Grid.Row="3"
+                      x:Name="BrightnessProfilePlot"
+                      Model="{Binding Model}" />
     </Grid>
 </Page>
