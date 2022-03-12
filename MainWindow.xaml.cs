@@ -31,53 +31,6 @@ namespace Laboratory_work_1
             };
         }
 
-        private void OpenImageCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
-        {
-            var openFileDialog = new OpenFileDialog();
-            if (openFileDialog.ShowDialog() == true)
-                LoadImageIfSuit(openFileDialog);
-        }
-
-        private void LoadImageIfSuit(FileDialog openFileDialog)
-        {
-            var (width, height) = GetSizeOfPicture(openFileDialog.FileName);
-            if (width <= 1600 && height <= 900)
-            {
-                MainImage.Source = new BitmapImage(new Uri(openFileDialog.FileName));
-                SizeToContent = SizeToContent.WidthAndHeight;
-                CenterWindowOnScreen();
-            }
-            else
-                MessageBox.Show(
-                    "Разрешение картинки не может быть больше 1600x900.",
-                    "Ошибка!",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-        }
-
-        private static (int, int) GetSizeOfPicture(string fileName)
-        {
-            using var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-            var bitmapFrame = BitmapFrame.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.None);
-            var width = bitmapFrame.PixelWidth;
-            var height = bitmapFrame.PixelHeight;
-            return (width, height);
-        }
-
-        private void CenterWindowOnScreen()
-        {
-            Top = (SystemParameters.WorkArea.Height - Height) / 2;
-            Left = (SystemParameters.WorkArea.Width - Width) / 2;
-        }
-
-        private void TogglePixelInfoCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
-        {
-            ChangeFrameContent(PixelInfoFrame,
-                PixelInfoFrame.Content is null
-                    ? new PixelInfo()
-                    : null);
-        }
-
         private static void ChangeFrameContent(Frame frame, Page? page)
         {
             frame.Content = page;
@@ -110,7 +63,7 @@ namespace Laboratory_work_1
         {
             Width += width == 0 ? -200 : width;
             ToolsColumn.Width = new GridLength(width);
-            CenterWindowOnScreen();
+            Getters.CenterWindowOnScreen(this);
         }
 
         private void ResizeToolboxRow(Frame loadedFrame)

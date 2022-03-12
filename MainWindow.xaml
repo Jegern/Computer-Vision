@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Laboratory_work_1"
         xmlns:cmd="clr-namespace:Laboratory_work_1.Commands"
         mc:Ignorable="d"
 
@@ -11,12 +12,14 @@
         Width="600" Height="450"
         MinWidth="600" MinHeight="450"
         WindowStartupLocation="CenterScreen">
+    
     <Window.Resources>
         <cmd:OpenImageCommand x:Key="OpenImageCommand"/>
+        <cmd:TogglePixelInfoCommand x:Key="TogglePixelInfoCommand"/>
     </Window.Resources>
+    
     <Window.CommandBindings>
-        <!-- <CommandBinding Command="Open" Executed="OpenImageCommand_OnExecuted" /> -->
-        <CommandBinding Command="Help" Executed="TogglePixelInfoCommand_OnExecuted" />
+        <!-- <CommandBinding Command="Help" Executed="TogglePixelInfoCommand_OnExecuted" /> -->
         <CommandBinding Command="Zoom" Executed="ToggleSlidingWindowCommand_OnExecuted" />
         <CommandBinding Command="NavigateJournal" Executed="ToggleSlidingWindowInfoCommand_OnExecuted" />
         <CommandBinding Command="ScrollByLine" Executed="ToggleBrightnessProfileCommand_OnExecuted" />
@@ -24,10 +27,11 @@
     </Window.CommandBindings>
     <Window.InputBindings>
         <KeyBinding Modifiers="Control" Key="O"
-                    x:Name="OpenImage"
                     Command="{StaticResource OpenImageCommand}"
-                    CommandParameter="{RelativeSource Self}"/>
-        <KeyBinding Modifiers="Control" Key="I" Command="Help" />
+                    CommandParameter="{Binding ElementName=MainWindowName}"/>
+        <KeyBinding Modifiers="Control" Key="I"
+                    Command="{StaticResource TogglePixelInfoCommand}"
+                    CommandParameter="{Binding ElementName=PixelInfoFrame}"/>
         <KeyBinding Modifiers="Control" Key="W" Command="Zoom" />
         <KeyBinding Modifiers="Control" Key="M" Command="NavigateJournal" />
         <KeyBinding Modifiers="Control" Key="P" Command="ScrollByLine" />
@@ -58,7 +62,8 @@
                       Height="25">
                 <MenuItem Header="Информация о пикселе"
                           InputGestureText="Ctrl+I"
-                          Command="Help" />
+                          Command="{StaticResource TogglePixelInfoCommand}"
+                          CommandParameter="{Binding ElementName=PixelInfoFrame}" />
                 <MenuItem Header="Скользящее окно"
                           InputGestureText="Ctrl+W"
                           Command="Zoom" />

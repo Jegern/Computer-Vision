@@ -1,5 +1,6 @@
 ﻿using System.Windows.Input;
 using Laboratory_work_1.Commands;
+using Laboratory_work_1.ViewModels.Base;
 
 namespace Laboratory_work_1.ViewModels;
 

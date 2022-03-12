@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
 namespace Laboratory_work_1;
@@ -45,5 +46,11 @@ public static class Getters
             "Ошибка!",
             MessageBoxButton.OK,
             MessageBoxImage.Error);
+    }
+    
+    public static void ChangeFrameContent(Frame frame, Page? page)
+    {
+        frame.Content = page;
+        frame.NavigationService.RemoveBackEntry();
     }
 }

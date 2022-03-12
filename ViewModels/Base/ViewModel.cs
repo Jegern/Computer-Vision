@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
-namespace Laboratory_work_1.ViewModels;
+namespace Laboratory_work_1.ViewModels.Base;
 
 public abstract class ViewModel: INotifyPropertyChanged
 {
