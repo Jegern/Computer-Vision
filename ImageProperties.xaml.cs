@@ -22,11 +22,12 @@ namespace Laboratory_work_1
     {
         private MainWindow _owner;
         private BitmapSource _original;
+
         public ImageProperties(MainWindow owner)
         {
             InitializeComponent();
             _owner = owner;
-            _original = (BitmapSource)_owner.MainImage.Source;
+            _original = (BitmapSource) _owner.MainImage.Source;
         }
 
         private void Brightness_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -34,11 +35,10 @@ namespace Laboratory_work_1
             if (_owner != null)
             {
                 // deterime the brightness to add
-                byte brightnessValue = (byte)Brightness.Value;
+                byte brightnessValue = (byte) Brightness.Value;
                 BitmapSource orig = _original;
-                ChangeBrightness((BitmapSource)_owner.MainImage.Source, brightnessValue, orig);
+                ChangeBrightness((BitmapSource) _owner.MainImage.Source, brightnessValue, orig);
             }
-
         }
 
         private void ChangeBrightness(BitmapSource source, byte brightnessValue, BitmapSource original)
@@ -50,15 +50,16 @@ namespace Laboratory_work_1
             {
                 if ((i + 1) % 4 == 0)
                 {
-                    imagePixels[i - 3] = (byte)(origPixels[i - 3] * brightnessValue / 127);
-                    imagePixels[i - 2] = (byte)(origPixels[i - 2] * brightnessValue / 127);
-                    imagePixels[i - 1] = (byte)(origPixels[i - 1] * brightnessValue / 127);
+                    imagePixels[i - 3] = (byte) (origPixels[i - 3] * brightnessValue / 127);
+                    imagePixels[i - 2] = (byte) (origPixels[i - 2] * brightnessValue / 127);
+                    imagePixels[i - 1] = (byte) (origPixels[i - 1] * brightnessValue / 127);
                 }
                 else
                 {
                     continue;
                 }
             }
+
             ReplaceImage(source, imagePixels);
         }
 
@@ -73,7 +74,6 @@ namespace Laboratory_work_1
                 source.Palette,
                 imagePixels,
                 source.PixelWidth * 4);
-
         }
 
         private void Intensivity_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -81,11 +81,10 @@ namespace Laboratory_work_1
             if (Intensivity != null)
             {
                 // deterime the brightness to add
-                byte intensivityValue = (byte)Intensivity.Value;
+                byte intensivityValue = (byte) Intensivity.Value;
 
-                ChangeIntensivity((BitmapSource)_owner.MainImage.Source, intensivityValue);
+                ChangeIntensivity((BitmapSource) _owner.MainImage.Source, intensivityValue);
             }
-
         }
 
         private void ChangeIntensivity(BitmapSource source, byte intensivityValue)
@@ -102,65 +101,52 @@ namespace Laboratory_work_1
                 {
                     continue;
                 }
-
             }
+
             ReplaceImage(source, imagePixels);
         }
 
         private void Bleach_Click(object sender, RoutedEventArgs e)
         {
-            BitmapSource source = (BitmapSource)_owner.MainImage.Source;
-
+            var source = (BitmapSource) _owner.MainImage.Source;
             var imagePixels = MainWindow.GetPixels(source);
 
-            for (int i = 0; i < imagePixels.Length; i += 4)
+            for (var i = 0; i < imagePixels.Length; i += 4)
             {
-
-                int coef = (imagePixels[i] + imagePixels[i + 1] + imagePixels[i + 2]) / 3;
-
-                imagePixels[i] = (byte)coef;
-                imagePixels[i + 1] = (byte)coef;
-                imagePixels[i + 2] = (byte)coef;
-
-
+                var pixelBrightness = MainWindow.GetPixelBrightness(imagePixels, i);
+                imagePixels[i] = (byte) pixelBrightness;
+                imagePixels[i + 1] = (byte) pixelBrightness;
+                imagePixels[i + 2] = (byte) pixelBrightness;
             }
+
             ReplaceImage(source, imagePixels);
         }
 
         private void Negative_Click(object sender, RoutedEventArgs e)
         {
-            BitmapSource source = (BitmapSource)_owner.MainImage.Source;
+            BitmapSource source = (BitmapSource) _owner.MainImage.Source;
 
             var imagePixels = MainWindow.GetPixels(source);
 
             for (int i = 0; i < imagePixels.Length; i += 4)
             {
-
-
-                imagePixels[i] = (byte)Math.Abs(imagePixels[i] - 255);
-                imagePixels[i + 1] = (byte)Math.Abs(imagePixels[i + 1] - 255);
-                imagePixels[i + 2] = (byte)Math.Abs(imagePixels[i + 2] - 255);
-
-
+                imagePixels[i] = (byte) Math.Abs(imagePixels[i] - 255);
+                imagePixels[i + 1] = (byte) Math.Abs(imagePixels[i + 1] - 255);
+                imagePixels[i + 2] = (byte) Math.Abs(imagePixels[i + 2] - 255);
             }
+
             ReplaceImage(source, imagePixels);
         }
 
         private void SwapChanels_Click(object sender, RoutedEventArgs e)
         {
-            BitmapSource source = (BitmapSource)_owner.MainImage.Source;
-
+            var source = (BitmapSource) _owner.MainImage.Source;
             var imagePixels = MainWindow.GetPixels(source);
+            var chanels = FindChanelsToSwap();
 
-            int[] chanels = new int[3];
-
-            chanels = FindChanelsToSwap();
-
-            for (int i = 0; i < imagePixels.Length; i += 4)
+            for (var i = 0; i < imagePixels.Length; i += 4)
             {
-                byte temp;
-
-                temp = (chanels[0] == 1) ? imagePixels[i] : imagePixels[i + 1];
+                var temp = (chanels[0] == 1) ? imagePixels[i] : imagePixels[i + 1];
 
                 if (temp == imagePixels[i + 1])
                 {
@@ -177,60 +163,56 @@ namespace Laboratory_work_1
                     imagePixels[i] = imagePixels[i + 1];
                     imagePixels[i + 1] = temp;
                 }
-
             }
             ReplaceImage(source, imagePixels);
         }
 
-
         private int[] FindChanelsToSwap()
         {
-            int red = (bool)Red.IsChecked ? 1 : 0;
-            int green = (bool)Green.IsChecked ? 1 : 0;
-            int blue = (bool)Blue.IsChecked ? 1 : 0;
-            int[] chanels = { red, green, blue };
+            var red = (bool) RedExchange.IsChecked ? 1 : 0;
+            var green = (bool) GreenExchange.IsChecked ? 1 : 0;
+            var blue = (bool) BlueExchange.IsChecked ? 1 : 0;
+            int[] chanels = {red, green, blue};
             return chanels;
         }
 
         private void SimmetricalImage_Click(object sender, RoutedEventArgs e)
         {
-            
-            var source = (BitmapSource)_owner.MainImage.Source;
+            var source = (BitmapSource) _owner.MainImage.Source;
             var imageBytes = MainWindow.GetPixels(source);
             var width = source.PixelWidth;
             var height = source.PixelHeight;
             if (Vertical.IsChecked == true)
             {
                 for (var i = 0; i < height; i++)
-                    for (var j = 0; j < width / 2; j++)
-                    {
-                        var tempR = imageBytes[i * width * 4 + j * 4 + 0];
-                        var tempG = imageBytes[i * width * 4 + j * 4 + 1];
-                        var tempB = imageBytes[i * width * 4 + j * 4 + 2];
-                        imageBytes[i * width * 4 + j * 4 + 0] = imageBytes[i * width * 4 + (width - j - 1) * 4 + 0];
-                        imageBytes[i * width * 4 + j * 4 + 1] = imageBytes[i * width * 4 + (width - j - 1) * 4 + 1];
-                        imageBytes[i * width * 4 + j * 4 + 2] = imageBytes[i * width * 4 + (width - j - 1) * 4 + 2];
-                        imageBytes[i * width * 4 + (width - j - 1) * 4 + 0] = tempR;
-                        imageBytes[i * width * 4 + (width - j - 1) * 4 + 1] = tempG;
-                        imageBytes[i * width * 4 + (width - j - 1) * 4 + 2] = tempB;
-                    }
+                for (var j = 0; j < width / 2; j++)
+                {
+                    var tempR = imageBytes[i * width * 4 + j * 4 + 0];
+                    var tempG = imageBytes[i * width * 4 + j * 4 + 1];
+                    var tempB = imageBytes[i * width * 4 + j * 4 + 2];
+                    imageBytes[i * width * 4 + j * 4 + 0] = imageBytes[i * width * 4 + (width - j - 1) * 4 + 0];
+                    imageBytes[i * width * 4 + j * 4 + 1] = imageBytes[i * width * 4 + (width - j - 1) * 4 + 1];
+                    imageBytes[i * width * 4 + j * 4 + 2] = imageBytes[i * width * 4 + (width - j - 1) * 4 + 2];
+                    imageBytes[i * width * 4 + (width - j - 1) * 4 + 0] = tempR;
+                    imageBytes[i * width * 4 + (width - j - 1) * 4 + 1] = tempG;
+                    imageBytes[i * width * 4 + (width - j - 1) * 4 + 2] = tempB;
+                }
             }
             else
             {
                 for (var i = 0; i < height / 2; i++)
-                    for (var j = 0; j < width; j++)
-                    {
-                        var tempR = imageBytes[i * width * 4 + j * 4 + 0];
-                        var tempG = imageBytes[i * width * 4 + j * 4 + 1];
-                        var tempB = imageBytes[i * width * 4 + j * 4 + 2];
-                        imageBytes[i * width * 4 + j * 4 + 0] = imageBytes[(height - 1 - i) * width * 4 + j * 4 + 0];
-                        imageBytes[i * width * 4 + j * 4 + 1] = imageBytes[(height - 1 - i) * width * 4 + j * 4 + 1];
-                        imageBytes[i * width * 4 + j * 4 + 2] = imageBytes[(height - 1 - i) * width * 4 + j * 4 + 2];
-                        imageBytes[(height - 1 - i) * width * 4 + j * 4 + 0] = tempR;
-                        imageBytes[(height - 1 - i)* width * 4 + j * 4 + 1] = tempG;
-                        imageBytes[(height - 1 - i)* width * 4 + j * 4 + 2] = tempB;
-                    }
-                  
+                for (var j = 0; j < width; j++)
+                {
+                    var tempR = imageBytes[i * width * 4 + j * 4 + 0];
+                    var tempG = imageBytes[i * width * 4 + j * 4 + 1];
+                    var tempB = imageBytes[i * width * 4 + j * 4 + 2];
+                    imageBytes[i * width * 4 + j * 4 + 0] = imageBytes[(height - 1 - i) * width * 4 + j * 4 + 0];
+                    imageBytes[i * width * 4 + j * 4 + 1] = imageBytes[(height - 1 - i) * width * 4 + j * 4 + 1];
+                    imageBytes[i * width * 4 + j * 4 + 2] = imageBytes[(height - 1 - i) * width * 4 + j * 4 + 2];
+                    imageBytes[(height - 1 - i) * width * 4 + j * 4 + 0] = tempR;
+                    imageBytes[(height - 1 - i) * width * 4 + j * 4 + 1] = tempG;
+                    imageBytes[(height - 1 - i) * width * 4 + j * 4 + 2] = tempB;
+                }
             }
 
             ReplaceImage(source, imageBytes);
@@ -262,7 +244,7 @@ namespace Laboratory_work_1
 
         private void Vanish_Click(object sender, RoutedEventArgs e)
         {
-            var source = (BitmapSource)_owner.MainImage.Source;
+            var source = (BitmapSource) _owner.MainImage.Source;
             var imageBytes = MainWindow.GetPixels(source);
             var copyBytes = MainWindow.GetPixels(source);
             var width = source.PixelWidth;
@@ -274,25 +256,50 @@ namespace Laboratory_work_1
             for (int i = 0; i < imageBytes.Length; i++)
             {
                 int count = 0;
-                try {  neighbour_left = imageBytes[i - 4]; count++; }
-                catch { }
-                try { neighbour_right = imageBytes[i + 4]; count++; }
-                catch {  }
-                try { neighbour_top = imageBytes[i - 4 * width]; count++; }
-                catch { }
-                try {  neighbour_bottom = imageBytes[i + 4 * width]; count++; }
-                catch {  }
+                try
+                {
+                    neighbour_left = imageBytes[i - 4];
+                    count++;
+                }
+                catch
+                {
+                }
 
-                imageBytes[i] = (byte)((copyBytes[neighbour_left] + 
-                    copyBytes[neighbour_right] + 
-                    copyBytes[neighbour_top] + 
-                    copyBytes[neighbour_bottom]) 
-                    / count);
+                try
+                {
+                    neighbour_right = imageBytes[i + 4];
+                    count++;
+                }
+                catch
+                {
+                }
+
+                try
+                {
+                    neighbour_top = imageBytes[i - 4 * width];
+                    count++;
+                }
+                catch
+                {
+                }
+
+                try
+                {
+                    neighbour_bottom = imageBytes[i + 4 * width];
+                    count++;
+                }
+                catch
+                {
+                }
+
+                imageBytes[i] = (byte) ((copyBytes[neighbour_left] +
+                                         copyBytes[neighbour_right] +
+                                         copyBytes[neighbour_top] +
+                                         copyBytes[neighbour_bottom])
+                                        / count);
             }
 
             ReplaceImage(source, imageBytes);
         }
     }
-
 }
-
