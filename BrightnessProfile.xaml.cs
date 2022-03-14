@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Linq;
+using System.ComponentModel;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using OxyPlot;
-using OxyPlot.Series;
 
 namespace Laboratory_work_1;
 
@@ -25,11 +27,10 @@ public partial class BrightnessProfile
         var stringBytes = MainWindow.GetPixels(source, 0, stringNumber, width, 1);
         var stringBrightnesses = GetBrightnessesFromBytes(stringBytes);
 
-        var lineSeries = CreatePlotLineSeries(stringBrightnesses);
-        DisplayLineSeries(lineSeries);
+        FillPointsWithBrightnessPoints(stringBrightnesses);
     }
 
-    private static IReadOnlyList<double> GetBrightnessesFromBytes(byte[] bytes)
+    private static IEnumerable<double> GetBrightnessesFromBytes(byte[] bytes)
     {
         var listOfBrightnesses = new List<double>();
         for (var i = 0; i < bytes.Length; i += 4)
@@ -37,24 +38,33 @@ public partial class BrightnessProfile
         return listOfBrightnesses.ToArray();
     }
 
-    private static LineSeries CreatePlotLineSeries(IReadOnlyList<double> points)
-    {
-        var lineSeries = new LineSeries {MarkerType = MarkerType.Circle};
-        for (var i = 0; i < points.Count; i++)
-            lineSeries.Points.Add(new DataPoint(i, points[i]));
-        return lineSeries;
-    }
-
-    private void DisplayLineSeries(Series lineSeries)
+    private void FillPointsWithBrightnessPoints(IEnumerable<double> brightnessPoints)
     {
         var viewModel = (BrightnessProfileViewModel) DataContext;
-        var plotModel = new PlotModel();
-        plotModel.Series.Add(lineSeries);
-        viewModel.Model = plotModel;
+        var newPoints = brightnessPoints.Select((t, i) => new DataPoint(i, t)).ToList();
+        viewModel.Points = newPoints;
     }
 }
 
-public class BrightnessProfileViewModel
+public class BrightnessProfileViewModel : INotifyPropertyChanged
 {
-    public PlotModel Model { get; set; } = null!;
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    private List<DataPoint> _points = new();
+
+    public List<DataPoint> Points
+    {
+        get => _points;
+        set
+        {
+            if (Equals(_points, value)) return;
+            _points = value;
+            OnPropertyChanged();
+        }
+    }
 }

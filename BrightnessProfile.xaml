@@ -18,7 +18,7 @@
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
-            <RowDefinition Height="2.5*" />
+            <RowDefinition Height="3*" />
         </Grid.RowDefinitions>
         <TextBlock Grid.Row="0"
                    Text="Номер строки"
@@ -36,8 +36,12 @@
                 Content="Отобразить"
                 FontSize="16"
                 Click="ButtonBase_OnClick" />
-        <oxy:PlotView Grid.Row="3"
-                      x:Name="BrightnessProfilePlot"
-                      Model="{Binding Model}" />
+        <oxy:Plot Grid.Row="3">
+            <oxy:Plot.Axes>
+                <oxy:LinearAxis Position="Left"/>
+                <oxy:LinearAxis Position="Bottom"/>
+            </oxy:Plot.Axes>
+            <oxy:LineSeries ItemsSource="{Binding Points}"/>
+        </oxy:Plot>
     </Grid>
 </Page>
