@@ -7,28 +7,26 @@
         mc:Ignorable="d"
 
         Title="MainWindow"
-        Width="600" Height="450"
-        MinWidth="600" MinHeight="450"
-        SizeToContent="WidthAndHeight"
+        Width="200" Height="200"
+        ResizeMode="CanMinimize"
         WindowStartupLocation="CenterScreen">
 
     <Window.DataContext>
-        <vm:MainViewModel/>
+        <vm:MainViewModel />
     </Window.DataContext>
-    <Window.CommandBindings>
-        <!-- <CommandBinding Command="Open" Executed="OpenImageCommand_OnExecuted" /> -->
-        <CommandBinding Command="Help" Executed="TogglePixelInfoCommand_OnExecuted" />
-        <CommandBinding Command="Zoom" Executed="ToggleSlidingWindowCommand_OnExecuted" />
-        <CommandBinding Command="NavigateJournal" Executed="ToggleSlidingWindowInfoCommand_OnExecuted" />
-        <CommandBinding Command="Properties" Executed="ToggleImagePropertiesCommand_OnExecuted" />
-    </Window.CommandBindings>
     <Window.InputBindings>
-        <KeyBinding Modifiers="Control" Key="O" Command="{Binding OpenImageCommand}" />
-        <KeyBinding Modifiers="Control" Key="S" Command="{Binding SaveImageCommand}" />
-        <KeyBinding Modifiers="Control" Key="I" Command="Help" />
-        <KeyBinding Modifiers="Control" Key="W" Command="Zoom" />
-        <KeyBinding Modifiers="Control" Key="M" Command="NavigateJournal" />
-        <KeyBinding Modifiers="Control" Key="T" Command="Properties" />
+        <KeyBinding
+            Modifiers="Control" Key="O"
+            Command="{Binding OpenImageCommand}" />
+        <KeyBinding
+            Modifiers="Control" Key="S"
+            Command="{Binding SaveImageCommand}" />
+        <KeyBinding
+            Modifiers="Control" Key="M"
+            Command="{Binding MagnifierCommand}" />
+        <KeyBinding
+            Modifiers="Control" Key="I"
+            Command="{Binding ImageManagementCommand}" />
     </Window.InputBindings>
 
     <Grid>
@@ -56,57 +54,49 @@
             <MenuItem Header="Инструменты"
                       Height="25">
                 <MenuItem Header="Информация о пикселе"
-                          InputGestureText="Ctrl+I"
-                          Command="Help" />
-                <MenuItem Header="Скользящее окно"
-                          InputGestureText="Ctrl+W"
-                          Command="Zoom" />
-                <MenuItem Header="Информация о скользящем окне"
+                          Command="{Binding PixelInfoCommand}" />
+                <MenuItem Header="Увеличительное стекло"
                           InputGestureText="Ctrl+M"
-                          Command="NavigateJournal" />
-                <MenuItem Header="ПропертиИмагов"
-                          InputGestureText="Ctrl+T"
-                          Command="Properties" />
+                          Command="{Binding MagnifierCommand}" />
+                <MenuItem Header="Информация об увеличительном стекле"
+                          Command="{Binding MagnifierInfoCommand}" />
+                <MenuItem Header="Управление изображением"
+                          InputGestureText="Ctrl+I"
+                          Command="{Binding ImageManagementCommand}" />
             </MenuItem>
         </Menu>
 
         <Image Grid.Column="0" Grid.Row="1"
                x:Name="Picture"
                Source="{Binding Picture}"
-               Stretch="Uniform"
-               Width="{Binding Source.(BitmapImage.PixelWidth), RelativeSource={RelativeSource Self}}"
-               Height="{Binding Source.(BitmapImage.PixelHeight), RelativeSource={RelativeSource Self}}"
-               MouseMove="MainImage_OnMouseMove"/>
+               Stretch="None"
+               MouseMove="MainImage_OnMouseMove" />
 
         <Grid Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
               x:Name="FrameGrid"
               Background="WhiteSmoke">
             <Grid.RowDefinitions>
-                <RowDefinition Height="0*"/>
-                <RowDefinition Height="0*"/>
-                <RowDefinition Height="0*"/>
-                <RowDefinition Height="0*"/>
+                <RowDefinition Height="0*" />
+                <RowDefinition Height="0*" />
+                <RowDefinition Height="0*" />
+                <RowDefinition Height="0*" />
             </Grid.RowDefinitions>
             <Frame Grid.Row="0"
                    x:Name="PixelInfoFrame"
-                   NavigationUIVisibility="Hidden"
-                   Tag="Hidden"
+                   Content="{Binding PixelInfo}"
                    LoadCompleted="Frame_OnLoadCompleted" />
-            <Frame Grid.Row="1"
-                   x:Name="SlidingWindowFrame"
-                   NavigationUIVisibility="Hidden"
-                   Tag="Hidden"
-                   LoadCompleted="Frame_OnLoadCompleted" />
-            <Frame Grid.Row="2"
-                   x:Name="SlidingWindowInfoFrame"
-                   NavigationUIVisibility="Hidden"
-                   Tag="Hidden"
-                   LoadCompleted="Frame_OnLoadCompleted" />
-            <Frame Grid.Row="3"
-                   x:Name="ImagePropertiesFrame"
-                   NavigationUIVisibility="Hidden"
-                   Tag="Hidden"
-                   LoadCompleted="Frame_OnLoadCompleted" />
+            <!-- <Frame Grid.Row="1" -->
+            <!--        x:Name="SlidingWindowFrame" -->
+            <!--        Content="{Binding Magnifier}" -->
+            <!--        LoadCompleted="Frame_OnLoadCompleted" /> -->
+            <!-- <Frame Grid.Row="2" -->
+            <!--        x:Name="SlidingWindowInfoFrame" -->
+            <!--        Content="{Binding MagnifierInfo}" -->
+            <!--        LoadCompleted="Frame_OnLoadCompleted" /> -->
+            <!-- <Frame Grid.Row="3" -->
+            <!--        x:Name="ImageManagementFrame" -->
+            <!--        Content="{Binding ImageManagement}" -->
+            <!--        LoadCompleted="Frame_OnLoadCompleted" /> -->
         </Grid>
     </Grid>
 </Window>

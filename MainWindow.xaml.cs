@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Globalization;
 using System.Collections.Generic;
@@ -9,9 +8,6 @@ using System.Windows.Media;
 using System.Windows.Controls;
 using System.Windows.Navigation;
 using System.Windows.Media.Imaging;
-using Laboratory_work_1.Services;
-using Laboratory_work_1.ViewModels;
-using Microsoft.Win32;
 
 namespace Laboratory_work_1
 {
@@ -24,46 +20,13 @@ namespace Laboratory_work_1
         {
             InitializeComponent();
             
-            _listOfFrames = new[]
-            {
-                PixelInfoFrame,
-                SlidingWindowFrame,
-                SlidingWindowInfoFrame,
-                ImagePropertiesFrame
-            };
-        }
-
-        private void OpenImageCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
-        {
-            var openFileDialog = new OpenFileDialog();
-            if (openFileDialog.ShowDialog() == true)
-                LoadImageIfSuit(openFileDialog);
-        }
-
-        private void LoadImageIfSuit(FileDialog openFileDialog)
-        {
-            var (width, height) = GetSizeOfPicture(openFileDialog.FileName);
-            if (width <= 1600 && height <= 900)
-            {
-                Picture.Source = new BitmapImage(new Uri(openFileDialog.FileName));
-                SizeToContent = SizeToContent.WidthAndHeight;
-                CenterWindowOnScreen();
-            }
-            else
-                MessageBox.Show(
-                    "Разрешение картинки не может быть больше 1600x900.",
-                    "Ошибка!",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
-        }
-
-        private static (int, int) GetSizeOfPicture(string fileName)
-        {
-            using var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-            var bitmapFrame = BitmapFrame.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.None);
-            var width = bitmapFrame.PixelWidth;
-            var height = bitmapFrame.PixelHeight;
-            return (width, height);
+            // _listOfFrames = new[]
+            // {
+            //     PixelInfoFrame,
+            //     SlidingWindowFrame,
+            //     SlidingWindowInfoFrame,
+            //     ImageManagementFrame
+            // };
         }
 
         private void CenterWindowOnScreen()
@@ -72,24 +35,10 @@ namespace Laboratory_work_1
             Left = (SystemParameters.WorkArea.Width - Width) / 2;
         }
 
-        private void TogglePixelInfoCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
-        {
-            ChangeFrameContent(PixelInfoFrame,
-                PixelInfoFrame.Content is null
-                    ? new PixelInfo()
-                    : null);
-        }
-
-        private static void ChangeFrameContent(Frame frame, Page? page)
-        {
-            frame.Content = page;
-            frame.NavigationService.RemoveBackEntry();
-        }
-
         private void Frame_OnLoadCompleted(object sender, NavigationEventArgs e)
         {
             var loadedFrame = (Frame) sender;
-            ResizingToolboxColumnCondition(loadedFrame.Tag);
+            //ResizingToolboxColumnCondition(loadedFrame.Tag);
             ResizeToolboxRow(loadedFrame);
             ChangeFrameTag(loadedFrame);
         }
@@ -112,7 +61,7 @@ namespace Laboratory_work_1
         {
             Width += width == 0 ? -200 : width;
             ToolsColumn.Width = new GridLength(width);
-            CenterWindowOnScreen();
+            // CenterWindowOnScreen();
         }
 
         private void ResizeToolboxRow(Frame loadedFrame)
@@ -126,31 +75,23 @@ namespace Laboratory_work_1
             frame.Tag = frame.Content is null ? "Hidden" : "Visible";
         }
 
-        private void ToggleSlidingWindowCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
-        {
-            ChangeFrameContent(SlidingWindowFrame,
-                SlidingWindowFrame.Content is null
-                    ? new SlidingWindow()
-                    : null);
-        }
-
         private void MainImage_OnMouseMove(object sender, MouseEventArgs e)
         {
             var pixelPosition = e.MouseDevice.GetPosition(sender as Image);
 
-            if (PixelInfoFrame.Content is not null)
-                UpdatePixelInfo(pixelPosition);
-            if (SlidingWindowFrame.Content is not null)
-                UpdateSlidingWindow(pixelPosition);
-            if (SlidingWindowInfoFrame.Content is not null)
-                UpdateSlidingWindowInfo(pixelPosition);
+            // if (PixelInfoFrame.Content is not null)
+            //     UpdatePixelInfo(pixelPosition);
+            // if (SlidingWindowFrame.Content is not null)
+            //     UpdateSlidingWindow(pixelPosition);
+            // if (SlidingWindowInfoFrame.Content is not null)
+            //     UpdateSlidingWindowInfo(pixelPosition);
         }
 
         private void UpdatePixelInfo(Point pixelPosition)
         {
-            var pixelInfo = (PixelInfo) PixelInfoFrame.Content;
-            UpdateCoordinate(pixelInfo.Coordinates, pixelPosition);
-            UpdateRgb((BitmapImage) Picture.Source, pixelInfo, pixelPosition);
+            // var pixelInfo = (PixelInfo) PixelInfoFrame.Content;
+            // UpdateCoordinate(pixelInfo.Coordinates, pixelPosition);
+            // UpdateRgb((BitmapImage) Picture.Source, pixelInfo, pixelPosition);
         }
 
         private static void UpdateCoordinate(TextBlock coordinates, Point pixelPosition)
@@ -194,8 +135,8 @@ namespace Laboratory_work_1
         {
             _slidingWindowPixels = GetSlidingWindowPixels((BitmapImage) Picture.Source, pixelPosition);
 
-            var slidingWindowImage = ((SlidingWindow) SlidingWindowFrame.Content).SlidingWindowImage;
-            UpdateSlidingWindowImage((BitmapImage) Picture.Source, slidingWindowImage, pixelPosition);
+            // var slidingWindowImage = ((Magnifier) SlidingWindowFrame.Content).SlidingWindowImage;
+            // UpdateSlidingWindowImage((BitmapImage) Picture.Source, slidingWindowImage, pixelPosition);
         }
 
         private static byte[] GetSlidingWindowPixels(BitmapSource source, Point pixelPosition)
@@ -238,7 +179,7 @@ namespace Laboratory_work_1
             slidingWindowImage.Source = CreateImageFromPixels(source, slidingWindowPixels, width, height, width * 4);
         }
 
-        internal static BitmapSource CreateImageFromPixels(BitmapSource source,
+        private static BitmapSource CreateImageFromPixels(BitmapSource source,
             byte[] pixels,
             int width,
             int height,
@@ -255,28 +196,20 @@ namespace Laboratory_work_1
                 stride);
         }
 
-        private void ToggleSlidingWindowInfoCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
-        {
-            ChangeFrameContent(SlidingWindowInfoFrame,
-                SlidingWindowInfoFrame.Content is null
-                    ? new SlidingWindowInfo()
-                    : null);
-        }
-
         private void UpdateSlidingWindowInfo(Point pixelPosition)
         {
-            var slidingWindowInfo = (SlidingWindowInfo) SlidingWindowInfoFrame.Content;
-            UpdateCoordinate(slidingWindowInfo.Coordinates, pixelPosition);
-            UpdateMath(slidingWindowInfo);
+            // var slidingWindowInfo = (MagnifierInfo) SlidingWindowInfoFrame.Content;
+            // UpdateCoordinate(slidingWindowInfo.Coordinates, pixelPosition);
+            // UpdateMath(slidingWindowInfo);
         }
 
-        private void UpdateMath(SlidingWindowInfo slidingWindowInfo)
+        private void UpdateMath(MagnifierInfo magnifierInfo)
         {
-            slidingWindowInfo.MeanValue.Text = GetSlidingWindowMean()
+            magnifierInfo.MeanValue.Text = GetSlidingWindowMean()
                 .ToString(CultureInfo.CurrentCulture);
-            slidingWindowInfo.StandardDeviationValue.Text = GetSlidingWindowStandardDeviation()
+            magnifierInfo.StandardDeviationValue.Text = GetSlidingWindowStandardDeviation()
                 .ToString(CultureInfo.CurrentCulture);
-            slidingWindowInfo.MedianValue.Text = GetSlidingWindowMedian()
+            magnifierInfo.MedianValue.Text = GetSlidingWindowMedian()
                 .ToString(CultureInfo.CurrentCulture);
         }
 
@@ -293,7 +226,7 @@ namespace Laboratory_work_1
             return sum / (_slidingWindowPixels.Length / 4.0);
         }
 
-        internal static double GetPixelBrightness(byte[] source, int index)
+        private static double GetPixelBrightness(byte[] source, int index)
         {
             //Находится среднее значение между красным, зеленым и синим каналом
             return source.Skip(index).Take(3).Select(x => (int) x).Sum() / 3.0;
@@ -324,14 +257,6 @@ namespace Laboratory_work_1
             if (data.Length % 2 == 0)
                 return (data[data.Length / 2 - 1] + data[data.Length / 2]) / 2.0;
             return data[data.Length / 2];
-        }
-
-        private void ToggleImagePropertiesCommand_OnExecuted(object sender, ExecutedRoutedEventArgs e)
-        {
-            ChangeFrameContent(ImagePropertiesFrame,
-                ImagePropertiesFrame.Content is null
-                    ? new ImageProperties(this)
-                    : null);
         }
     }
 }

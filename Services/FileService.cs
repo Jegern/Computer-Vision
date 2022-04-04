@@ -6,7 +6,7 @@ namespace Laboratory_work_1.Services;
 
 public class FileService
 {
-    public BitmapImage? OpenedImage { get; set; }
+    public BitmapImage? OpenedImage { get; private set; }
     
     public bool Open(string filePath)
     {
