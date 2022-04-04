@@ -27,7 +27,7 @@ namespace Laboratory_work_1
         {
             InitializeComponent();
             _owner = owner;
-            _original = (BitmapSource) _owner.MainImage.Source;
+            _original = (BitmapSource) _owner.Picture.Source;
         }
 
         private void Brightness_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -37,7 +37,7 @@ namespace Laboratory_work_1
                 // deterime the brightness to add
                 byte brightnessValue = (byte) Brightness.Value;
                 BitmapSource orig = _original;
-                ChangeBrightness((BitmapSource) _owner.MainImage.Source, brightnessValue, orig);
+                ChangeBrightness((BitmapSource) _owner.Picture.Source, brightnessValue, orig);
             }
         }
 
@@ -65,7 +65,7 @@ namespace Laboratory_work_1
 
         private void ReplaceImage(BitmapSource source, byte[] imagePixels)
         {
-            _owner.MainImage.Source = BitmapSource.Create(
+            _owner.Picture.Source = BitmapSource.Create(
                 source.PixelWidth,
                 source.PixelHeight,
                 source.DpiX,
@@ -83,7 +83,7 @@ namespace Laboratory_work_1
                 // deterime the brightness to add
                 byte intensivityValue = (byte) Intensivity.Value;
 
-                ChangeIntensivity((BitmapSource) _owner.MainImage.Source, intensivityValue);
+                ChangeIntensivity((BitmapSource) _owner.Picture.Source, intensivityValue);
             }
         }
 
@@ -108,7 +108,7 @@ namespace Laboratory_work_1
 
         private void Bleach_Click(object sender, RoutedEventArgs e)
         {
-            BitmapSource source = (BitmapSource) _owner.MainImage.Source;
+            BitmapSource source = (BitmapSource) _owner.Picture.Source;
 
             var imagePixels = MainWindow.GetPixels(source);
 
@@ -126,7 +126,7 @@ namespace Laboratory_work_1
 
         private void Negative_Click(object sender, RoutedEventArgs e)
         {
-            BitmapSource source = (BitmapSource) _owner.MainImage.Source;
+            BitmapSource source = (BitmapSource) _owner.Picture.Source;
 
             var imagePixels = MainWindow.GetPixels(source);
 
@@ -142,7 +142,7 @@ namespace Laboratory_work_1
 
         private void SwapChanels_Click(object sender, RoutedEventArgs e)
         {
-            var source = (BitmapSource) _owner.MainImage.Source;
+            var source = (BitmapSource) _owner.Picture.Source;
             var imagePixels = MainWindow.GetPixels(source);
             var chanels = FindChanelsToSwap();
 
@@ -180,7 +180,7 @@ namespace Laboratory_work_1
 
         private void SimmetricalImage_Click(object sender, RoutedEventArgs e)
         {
-            var source = (BitmapSource) _owner.MainImage.Source;
+            var source = (BitmapSource) _owner.Picture.Source;
             var imageBytes = MainWindow.GetPixels(source);
             var width = source.PixelWidth;
             var height = source.PixelHeight;
@@ -246,7 +246,7 @@ namespace Laboratory_work_1
 
         private void Vanish_Click(object sender, RoutedEventArgs e)
         {
-            var source = (BitmapSource) _owner.MainImage.Source;
+            var source = (BitmapSource) _owner.Picture.Source;
             var imageBytes = MainWindow.GetPixels(source);
             var copyBytes = MainWindow.GetPixels(source);
             var width = source.PixelWidth;

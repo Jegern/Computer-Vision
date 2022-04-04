@@ -3,15 +3,20 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:Laboratory_work_1.ViewModels"
         mc:Ignorable="d"
 
         Title="MainWindow"
         Width="600" Height="450"
         MinWidth="600" MinHeight="450"
+        SizeToContent="WidthAndHeight"
         WindowStartupLocation="CenterScreen">
 
+    <Window.DataContext>
+        <vm:MainViewModel/>
+    </Window.DataContext>
     <Window.CommandBindings>
-        <CommandBinding Command="Open" Executed="OpenImageCommand_OnExecuted" />
+        <!-- <CommandBinding Command="Open" Executed="OpenImageCommand_OnExecuted" /> -->
         <CommandBinding Command="Help" Executed="TogglePixelInfoCommand_OnExecuted" />
         <CommandBinding Command="Zoom" Executed="ToggleSlidingWindowCommand_OnExecuted" />
         <CommandBinding Command="NavigateJournal" Executed="ToggleSlidingWindowInfoCommand_OnExecuted" />
@@ -19,7 +24,7 @@
         <CommandBinding Command="Properties" Executed="ToggleImagePropertiesCommand_OnExecuted" />
     </Window.CommandBindings>
     <Window.InputBindings>
-        <KeyBinding Modifiers="Control" Key="O" Command="Open" />
+        <KeyBinding Modifiers="Control" Key="O" Command="{Binding OpenImageCommand}" />
         <KeyBinding Modifiers="Control" Key="I" Command="Help" />
         <KeyBinding Modifiers="Control" Key="W" Command="Zoom" />
         <KeyBinding Modifiers="Control" Key="M" Command="NavigateJournal" />
@@ -42,9 +47,9 @@
         <Menu Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0">
             <MenuItem Header="Файл"
                       Height="25">
-                <MenuItem Header="Открыть..."
+                <MenuItem Header="Открыть"
                           InputGestureText="Ctrl+O"
-                          Command="Open" />
+                          Command="{Binding OpenImageCommand}" />
             </MenuItem>
             <MenuItem Header="Инструменты"
                       Height="25">
@@ -67,7 +72,8 @@
         </Menu>
 
         <Image Grid.Column="0" Grid.Row="1"
-               x:Name="MainImage"
+               x:Name="Picture"
+               Source="{Binding Picture}"
                Stretch="Uniform"
                Width="{Binding Source.(BitmapImage.PixelWidth), RelativeSource={RelativeSource Self}}"
                Height="{Binding Source.(BitmapImage.PixelHeight), RelativeSource={RelativeSource Self}}"

@@ -21,7 +21,7 @@ public partial class BrightnessProfile
 
     private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
     {
-        var source = (BitmapSource) _owner.MainImage.Source;
+        var source = (BitmapSource) _owner.Picture.Source;
         var stringNumber = Convert.ToInt32(StringNumber.Text);
         var width = source.PixelWidth;
         var stringBytes = MainWindow.GetPixels(source, 0, stringNumber, width, 1);

@@ -9,6 +9,8 @@ using System.Windows.Media;
 using System.Windows.Controls;
 using System.Windows.Navigation;
 using System.Windows.Media.Imaging;
+using Laboratory_work_1.Services;
+using Laboratory_work_1.ViewModels;
 using Microsoft.Win32;
 
 namespace Laboratory_work_1
@@ -21,6 +23,7 @@ namespace Laboratory_work_1
         public MainWindow()
         {
             InitializeComponent();
+            
             _listOfFrames = new[]
             {
                 PixelInfoFrame,
@@ -43,7 +46,7 @@ namespace Laboratory_work_1
             var (width, height) = GetSizeOfPicture(openFileDialog.FileName);
             if (width <= 1600 && height <= 900)
             {
-                MainImage.Source = new BitmapImage(new Uri(openFileDialog.FileName));
+                Picture.Source = new BitmapImage(new Uri(openFileDialog.FileName));
                 SizeToContent = SizeToContent.WidthAndHeight;
                 CenterWindowOnScreen();
             }
@@ -148,7 +151,7 @@ namespace Laboratory_work_1
         {
             var pixelInfo = (PixelInfo) PixelInfoFrame.Content;
             UpdateCoordinate(pixelInfo.Coordinates, pixelPosition);
-            UpdateRgb((BitmapImage) MainImage.Source, pixelInfo, pixelPosition);
+            UpdateRgb((BitmapImage) Picture.Source, pixelInfo, pixelPosition);
         }
 
         private static void UpdateCoordinate(TextBlock coordinates, Point pixelPosition)
@@ -190,10 +193,10 @@ namespace Laboratory_work_1
 
         private void UpdateSlidingWindow(Point pixelPosition)
         {
-            _slidingWindowPixels = GetSlidingWindowPixels((BitmapImage) MainImage.Source, pixelPosition);
+            _slidingWindowPixels = GetSlidingWindowPixels((BitmapImage) Picture.Source, pixelPosition);
 
             var slidingWindowImage = ((SlidingWindow) SlidingWindowFrame.Content).SlidingWindowImage;
-            UpdateSlidingWindowImage((BitmapImage) MainImage.Source, slidingWindowImage, pixelPosition);
+            UpdateSlidingWindowImage((BitmapImage) Picture.Source, slidingWindowImage, pixelPosition);
         }
 
         private static byte[] GetSlidingWindowPixels(BitmapSource source, Point pixelPosition)
