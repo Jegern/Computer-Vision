@@ -6,31 +6,40 @@ namespace Laboratory_work_1.Services;
 
 public class FileService
 {
-    public BitmapImage? Image { get; set; }
+    public BitmapImage? OpenedImage { get; set; }
     
     public bool Open(string filePath)
     {
-        var (width, height) = GetSizeOfPicture(filePath);
-        if (width > 1600 || height > 900) return false;
-        Image = new BitmapImage(new Uri(filePath));
+        var (imageWidth, imageHeight) = GetSizeOfPicture(filePath);
+        if (imageWidth > 1600 || imageHeight > 900) return false;
+        OpenedImage = new BitmapImage(new Uri(filePath));
         return true;
     }
     
-    private static (int, int) GetSizeOfPicture(string fileName)
+    private static (int, int) GetSizeOfPicture(string filePath)
     {
-        using var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
-        var bitmapFrame = BitmapFrame.Create(stream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.None);
-        var width = bitmapFrame.PixelWidth;
-        var height = bitmapFrame.PixelHeight;
-        return (width, height);
+        using var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+        var bitmapFrame = BitmapFrame.Create(fileStream, BitmapCreateOptions.DelayCreation, BitmapCacheOption.None);
+        var pixelWidth = bitmapFrame.PixelWidth;
+        var pixelHeight = bitmapFrame.PixelHeight;
+        return (pixelWidth, pixelHeight);
     }
  
     public void Save(string filePath, BitmapImage image)
     {
-        BitmapEncoder encoder = new PngBitmapEncoder();
-        encoder.Frames.Add(BitmapFrame.Create(image));
-
+        var fileExtension = Path.GetExtension(filePath);
+        BitmapEncoder? encoder = fileExtension switch
+        {
+            ".png" => new PngBitmapEncoder(),
+            ".jpg" => new JpegBitmapEncoder(),
+            ".tiff" => new TiffBitmapEncoder(),
+            ".bmp" => new BmpBitmapEncoder(),
+            _ => null
+        };
+        if (encoder is null) return;
+        
         using var fileStream = new FileStream(filePath, FileMode.Create);
+        encoder.Frames.Add(BitmapFrame.Create(image));
         encoder.Save(fileStream);
     }
 }

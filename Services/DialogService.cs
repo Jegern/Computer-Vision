@@ -17,7 +17,14 @@ public class DialogService
  
     public bool SaveFileDialog()
     {
-        var saveFileDialog = new SaveFileDialog();
+        var saveFileDialog = new SaveFileDialog
+        {
+            Filter = "PNG files (*.png)|*.png|" +
+                     "JPG files (*.jpg)|*.jpg|" +
+                     "TIFF files (*.tiff)|*.tiff|" +
+                     "BMP files (*.bmp)|*.bmp|" +
+                     "All files (*.*)|*.*"
+        };
         if (saveFileDialog.ShowDialog() == false) return false;
         FilePath = saveFileDialog.FileName;
         return true;

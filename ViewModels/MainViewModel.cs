@@ -31,9 +31,23 @@ public class MainViewModel : ViewModel
     {
         if (!_dialogService.OpenFileDialog()) return;
         if (_fileService.Open(_dialogService.FilePath!))
-            Picture = _fileService.Image;
+            Picture = _fileService.OpenedImage;
         else
             _dialogService.ShowError("Разрешение картинки не может быть больше 1600x900");
+    }
+
+    #endregion
+    
+    #region SaveImageCommand
+
+    public Command SaveImageCommand { get; }
+
+    private bool SaveImageCommand_CanExecute(object parameter) => Picture is not null;
+
+    private void SaveImageCommand_OnExecuted(object parameter)
+    {
+        if (!_dialogService.SaveFileDialog()) return;
+        _fileService.Save(_dialogService.FilePath!, Picture!);
     }
 
     #endregion
@@ -43,5 +57,6 @@ public class MainViewModel : ViewModel
     public MainViewModel()
     {
         OpenImageCommand = new Command(OpenImageCommand_OnExecuted, OpenImageCommand_CanExecute);
+        SaveImageCommand = new Command(SaveImageCommand_OnExecuted, SaveImageCommand_CanExecute);
     }
 }

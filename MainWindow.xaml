@@ -20,15 +20,14 @@
         <CommandBinding Command="Help" Executed="TogglePixelInfoCommand_OnExecuted" />
         <CommandBinding Command="Zoom" Executed="ToggleSlidingWindowCommand_OnExecuted" />
         <CommandBinding Command="NavigateJournal" Executed="ToggleSlidingWindowInfoCommand_OnExecuted" />
-        <CommandBinding Command="ScrollByLine" Executed="ToggleBrightnessProfileCommand_OnExecuted" />
         <CommandBinding Command="Properties" Executed="ToggleImagePropertiesCommand_OnExecuted" />
     </Window.CommandBindings>
     <Window.InputBindings>
         <KeyBinding Modifiers="Control" Key="O" Command="{Binding OpenImageCommand}" />
+        <KeyBinding Modifiers="Control" Key="S" Command="{Binding SaveImageCommand}" />
         <KeyBinding Modifiers="Control" Key="I" Command="Help" />
         <KeyBinding Modifiers="Control" Key="W" Command="Zoom" />
         <KeyBinding Modifiers="Control" Key="M" Command="NavigateJournal" />
-        <KeyBinding Modifiers="Control" Key="P" Command="ScrollByLine" />
         <KeyBinding Modifiers="Control" Key="T" Command="Properties" />
     </Window.InputBindings>
 
@@ -50,6 +49,9 @@
                 <MenuItem Header="Открыть"
                           InputGestureText="Ctrl+O"
                           Command="{Binding OpenImageCommand}" />
+                <MenuItem Header="Сохранить"
+                          InputGestureText="Ctrl+S"
+                          Command="{Binding SaveImageCommand}" />
             </MenuItem>
             <MenuItem Header="Инструменты"
                       Height="25">
@@ -62,9 +64,6 @@
                 <MenuItem Header="Информация о скользящем окне"
                           InputGestureText="Ctrl+M"
                           Command="NavigateJournal" />
-                <MenuItem Header="Профиль яркости"
-                          InputGestureText="Ctrl+P"
-                          Command="ScrollByLine" />
                 <MenuItem Header="ПропертиИмагов"
                           InputGestureText="Ctrl+T"
                           Command="Properties" />
@@ -77,13 +76,12 @@
                Stretch="Uniform"
                Width="{Binding Source.(BitmapImage.PixelWidth), RelativeSource={RelativeSource Self}}"
                Height="{Binding Source.(BitmapImage.PixelHeight), RelativeSource={RelativeSource Self}}"
-               MouseMove="MainImage_OnMouseMove" />
+               MouseMove="MainImage_OnMouseMove"/>
 
         <Grid Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
               x:Name="FrameGrid"
               Background="WhiteSmoke">
             <Grid.RowDefinitions>
-                <RowDefinition Height="0*"/>
                 <RowDefinition Height="0*"/>
                 <RowDefinition Height="0*"/>
                 <RowDefinition Height="0*"/>
@@ -105,11 +103,6 @@
                    Tag="Hidden"
                    LoadCompleted="Frame_OnLoadCompleted" />
             <Frame Grid.Row="3"
-                   x:Name="BrightnessProfileFrame"
-                   NavigationUIVisibility="Hidden"
-                   Tag="Hidden"
-                   LoadCompleted="Frame_OnLoadCompleted" />
-            <Frame Grid.Row="4"
                    x:Name="ImagePropertiesFrame"
                    NavigationUIVisibility="Hidden"
                    Tag="Hidden"
