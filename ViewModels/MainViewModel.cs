@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows;
 using System.Windows.Media.Imaging;
 using Laboratory_work_1.Services;
 using Laboratory_work_1.Commands.Base;
@@ -17,41 +15,11 @@ public class MainViewModel : ViewModel
     #region Fields
 
     private BitmapImage? _picture;
-    private Page? _pixelInfo;
-    private Page? _magnifier;
-    private Page? _magnifierInfo;
-    private Page? _imageManagement;
 
     public BitmapImage? Picture
     {
         get => _picture;
         set => Set(ref _picture, value);
-    }
-    
-    public List<Page> Children { get; } = new();
-
-    public Page? PixelInfo
-    {
-        get => _pixelInfo;
-        set => Set(ref _pixelInfo, value);
-    }
-
-    public Page? Magnifier
-    {
-        get => _magnifier;
-        set => Set(ref _magnifier, value);
-    }
-    
-    public Page? MagnifierInfo
-    {
-        get => _magnifierInfo;
-        set => Set(ref _magnifierInfo, value);
-    }
-
-    public Page? ImageManagement
-    {
-        get => _imageManagement;
-        set => Set(ref _imageManagement, value);
     }
 
     #endregion
@@ -100,8 +68,7 @@ public class MainViewModel : ViewModel
 
     private void PixelInfoCommand_OnExecuted(object parameter)
     {
-        PixelInfo = PixelInfo is null ? new PixelInfo() : null;
-        if (PixelInfo != null) Children.Add(PixelInfo);
+        
     }
 
     #endregion
@@ -114,7 +81,7 @@ public class MainViewModel : ViewModel
 
     private void MagnifierCommand_OnExecuted(object parameter)
     {
-        Magnifier = Magnifier is null ? new Magnifier() : null;
+        
     }
 
     #endregion
@@ -123,11 +90,11 @@ public class MainViewModel : ViewModel
 
     public Command MagnifierInfoCommand { get; }
 
-    private bool MagnifierInfoCommand_CanExecute(object parameter) => Picture is not null && Magnifier is not null;
+    private bool MagnifierInfoCommand_CanExecute(object parameter) => Picture is not null;
 
     private void MagnifierInfoCommand_OnExecuted(object parameter)
     {
-        MagnifierInfo = MagnifierInfo is null ? new MagnifierInfo() : null;
+        
     }
 
     #endregion
@@ -140,7 +107,7 @@ public class MainViewModel : ViewModel
 
     private void ImageManagementCommand_OnExecuted(object parameter)
     {
-        ImageManagement = ImageManagement is null ? new ImageManagement((MainWindow) Application.Current.MainWindow) : null;
+        
     }
 
     #endregion

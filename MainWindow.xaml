@@ -3,11 +3,12 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Laboratory_work_1"
         xmlns:vm="clr-namespace:Laboratory_work_1.ViewModels"
         mc:Ignorable="d"
 
         Title="MainWindow"
-        Width="200" Height="200"
+        Width="400" Height="400"
         ResizeMode="CanMinimize"
         WindowStartupLocation="CenterScreen">
 
@@ -36,7 +37,7 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
-            <ColumnDefinition Width="0"
+            <ColumnDefinition Width="Auto"
                               x:Name="ToolsColumn" />
         </Grid.ColumnDefinitions>
 
@@ -72,19 +73,10 @@
                Stretch="None"
                MouseMove="MainImage_OnMouseMove" />
 
-        <Grid Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
+        <StackPanel Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
               x:Name="FrameGrid"
               Background="WhiteSmoke">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="0*" />
-                <RowDefinition Height="0*" />
-                <RowDefinition Height="0*" />
-                <RowDefinition Height="0*" />
-            </Grid.RowDefinitions>
-            <Frame Grid.Row="0"
-                   x:Name="PixelInfoFrame"
-                   Content="{Binding PixelInfo}"
-                   LoadCompleted="Frame_OnLoadCompleted" />
+            <local:PixelInfo/>
             <!-- <Frame Grid.Row="1" -->
             <!--        x:Name="SlidingWindowFrame" -->
             <!--        Content="{Binding Magnifier}" -->
@@ -97,6 +89,6 @@
             <!--        x:Name="ImageManagementFrame" -->
             <!--        Content="{Binding ImageManagement}" -->
             <!--        LoadCompleted="Frame_OnLoadCompleted" /> -->
-        </Grid>
+        </StackPanel>
     </Grid>
 </Window>
