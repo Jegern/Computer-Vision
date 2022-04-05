@@ -74,21 +74,10 @@
                MouseMove="MainImage_OnMouseMove" />
 
         <StackPanel Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
-              x:Name="FrameGrid"
-              Background="WhiteSmoke">
-            <local:PixelInfo/>
-            <!-- <Frame Grid.Row="1" -->
-            <!--        x:Name="SlidingWindowFrame" -->
-            <!--        Content="{Binding Magnifier}" -->
-            <!--        LoadCompleted="Frame_OnLoadCompleted" /> -->
-            <!-- <Frame Grid.Row="2" -->
-            <!--        x:Name="SlidingWindowInfoFrame" -->
-            <!--        Content="{Binding MagnifierInfo}" -->
-            <!--        LoadCompleted="Frame_OnLoadCompleted" /> -->
-            <!-- <Frame Grid.Row="3" -->
-            <!--        x:Name="ImageManagementFrame" -->
-            <!--        Content="{Binding ImageManagement}" -->
-            <!--        LoadCompleted="Frame_OnLoadCompleted" /> -->
+                    x:Name="FrameGrid"
+                    Background="WhiteSmoke">
+            <local:PixelInfo Visibility="{Binding PixelInfoVisibility}" />
+            <local:Magnifier Visibility="{Binding MagnifierVisibility}" />
         </StackPanel>
     </Grid>
 </Window>

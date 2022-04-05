@@ -15,13 +15,27 @@ public class MainViewModel : ViewModel
     #region Fields
 
     private BitmapImage? _picture;
+    private Visibility _pixelInfoVisibility = Visibility.Collapsed;
+    private Visibility _magnifierVisibility = Visibility.Collapsed;
 
     public BitmapImage? Picture
     {
         get => _picture;
         set => Set(ref _picture, value);
     }
-
+    
+    public Visibility PixelInfoVisibility
+    {
+        get => _pixelInfoVisibility;
+        set => Set(ref _pixelInfoVisibility, value);
+    }
+    
+    public Visibility MagnifierVisibility
+    {
+        get => _magnifierVisibility;
+        set => Set(ref _magnifierVisibility, value);
+    }
+    
     #endregion
 
     #region Commands
@@ -68,7 +82,7 @@ public class MainViewModel : ViewModel
 
     private void PixelInfoCommand_OnExecuted(object parameter)
     {
-        
+        PixelInfoVisibility = PixelInfoVisibility is Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
     }
 
     #endregion
@@ -81,7 +95,7 @@ public class MainViewModel : ViewModel
 
     private void MagnifierCommand_OnExecuted(object parameter)
     {
-        
+        MagnifierVisibility = MagnifierVisibility is Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
     }
 
     #endregion

@@ -10,7 +10,7 @@
 
     <UserControl.Resources>
         <Style TargetType="{x:Type TextBlock}">
-            <Setter Property="Width" Value="93" />
+            <Setter Property="Width" Value="100" />
             <Setter Property="FontSize" Value="16" />
             <Setter Property="TextWrapping" Value="Wrap" />
             <Setter Property="TextAlignment" Value="Center" />
@@ -18,7 +18,7 @@
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
         <Style TargetType="{x:Type TextBox}">
-            <Setter Property="Width" Value="93" />
+            <Setter Property="Width" Value="87" />
             <Setter Property="FontSize" Value="16" />
         </Style>
         <Style TargetType="{x:Type StackPanel}">
@@ -26,14 +26,17 @@
         </Style>
     </UserControl.Resources>
 
-    <StackPanel>
+    <StackPanel Margin="7">
         <Image x:Name="MagnifierPicture"
-               Height="200"
+               Height="186"
                SnapsToDevicePixels="True"
                RenderOptions.BitmapScalingMode="NearestNeighbor" />
         <StackPanel Orientation="Horizontal">
-            <TextBlock />
-            <TextBox />
+            <TextBlock Text="Размер (NxN)" />
+            <TextBox x:Name="MagnifierSize" 
+                     Width="60"
+                     MaxLeng"
+                     Margin="10, 0, 0, 0"/>
         </StackPanel>
     </StackPanel>
 </UserControl>

@@ -10,7 +10,7 @@
 
     <UserControl.Resources>
         <Style TargetType="{x:Type TextBlock}">
-            <Setter Property="Width" Value="93" />
+            <Setter Property="Width" Value="100" />
             <Setter Property="FontSize" Value="16" />
             <Setter Property="TextWrapping" Value="Wrap" />
             <Setter Property="TextAlignment" Value="Center" />
@@ -22,22 +22,26 @@
         </Style>
     </UserControl.Resources>
 
-    <StackPanel>
+    <StackPanel Margin="7">
         <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Координаты пискеля" />
-            <TextBlock x:Name="PixelLocation" />
+            <TextBlock Text="Координаты пикселя" />
+            <TextBlock x:Name="PixelLocation"
+                       Width="80" />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="Красный" />
-            <TextBlock x:Name="PixelRed" />
+            <TextBlock x:Name="PixelRed"
+                       Width="80" />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="Зеленый" />
-            <TextBlock x:Name="PixelGreen" />
+            <TextBlock x:Name="PixelGreen"
+                       Width="80" />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="Синий" />
-            <TextBlock x:Name="PixelBlue" />
+            <TextBlock x:Name="PixelBlue"
+                       Width="80" />
         </StackPanel>
     </StackPanel>
 </UserControl>
