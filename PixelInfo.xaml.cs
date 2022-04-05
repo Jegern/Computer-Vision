@@ -1,4 +1,4 @@
-﻿namespace Laboratory_work_1;
+namespace Laboratory_work_1;
 
 public partial class PixelInfo
 {
