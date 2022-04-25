@@ -53,11 +53,21 @@
             </MenuItem>
             <MenuItem Header="Инструменты"
                       Height="25">
-                <MenuItem Header="Информация о пикселе"
-                          Command="{Binding PixelInfoCommand}" />
-                    <MenuItem Header="Увеличительное стекло"
-                              InputGestureText="Ctrl+M"
-                              Command="{Binding MagnifierCommand}" />
+                <MenuItem x:Name="PixelInfoMenuItem"
+                          Header="Информация о пикселе"
+                          Command="{Binding PixelInfoCommand}">
+                    <MenuItem.DataContext>
+                        <viewModel:PixelInfoViewModel />
+                    </MenuItem.DataContext>
+                </MenuItem>
+                <MenuItem x:Name="MagnifierMenuItem"
+                          Header="Увеличительное стекло"
+                          InputGestureText="Ctrl+M"
+                          Command="{Binding MagnifierCommand}">
+                    <MenuItem.DataContext>
+                        <viewModel:MagnifierViewModel />
+                    </MenuItem.DataContext>
+                </MenuItem>
                 <MenuItem Header="Информация об увеличительном стекле"
                           Command="{Binding MagnifierInfoCommand}" />
                 <MenuItem Header="Управление изображением"
@@ -80,10 +90,18 @@
 
         <StackPanel Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
                     Background="WhiteSmoke">
-            <view:PixelInfo x:Name="PixelInfo"
-                Visibility="{Binding PixelInfoVisibility}" />
-            <view:Magnifier x:Name="Magnifier"
-                Visibility="{Binding MagnifierVisibility}" />
+            <view:PixelInfo x:Name="PixelInfoControl"
+                            Visibility="{Binding PixelInfoVisibility}">
+                <view:PixelInfo.DataContext>
+                    <viewModel:PixelInfoViewModel />
+                </view:PixelInfo.DataContext>
+            </view:PixelInfo>
+            <view:Magnifier x:Name="MagnifierControl"
+                            Visibility="{Binding MagnifierVisibility}">
+                <view:Magnifier.DataContext>
+                    <viewModel:MagnifierViewModel />
+                </view:Magnifier.DataContext>
+            </view:Magnifier>
         </StackPanel>
     </Grid>
 </Window>

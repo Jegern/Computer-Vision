@@ -1,57 +1,21 @@
 using System.Windows;
 using System.Windows.Media.Imaging;
+using Laboratory_work_1.Commands.Base;
 using Laboratory_work_1.ViewModels.Base;
 
 namespace Laboratory_work_1.ViewModels;
 
 public class PixelInfoViewModel : ViewModel
 {
-    public PixelInfoViewModel()
-    {
-    }
-
-    public PixelInfoViewModel(Store store)
-    {
-        store.PictureChanged += Picture_OnChanged;
-        store.PixelInfoVisibilityChanged += PixelInfoVisibility_OnChanged;
-        store.MousePositionChanged += PixelInfoLocation_OnChanged;
-    }
-
-    private void Picture_OnChanged(BitmapImage? source)
-    {
-        Picture = source;
-    }
-
-    private void PixelInfoVisibility_OnChanged(Visibility visibility)
-    {
-        PixelInfoVisibility = visibility;
-    }
-
-    private void PixelInfoLocation_OnChanged(Point? point)
-    {
-        if (point is null) return;
-
-        var roundedPoint = new Point((int) point.Value.X, (int) point.Value.Y);
-        PixelLocation = roundedPoint;
-        UpdatePixelRgb(roundedPoint);
-    }
-
-    private void UpdatePixelRgb(Point point)
-    {
-        var pixelColor = Tools.GetPixelColor(Picture, point);
-        PixelRed = pixelColor.R;
-        PixelGreen = pixelColor.G;
-        PixelBlue = pixelColor.B;
-        PixelIntensivity = (byte) ((pixelColor.R + pixelColor.G + pixelColor.B) / 3);
-    }
+    #region Fields
 
     private BitmapImage? _picture;
     private Visibility _pixelInfoVisibility = Visibility.Collapsed;
     private Point _pixelLocation;
-    private byte? _pixelRed;
-    private byte? _pixelGreen;
-    private byte? _pixelBlue;
-    private byte? _pixelIntensivity;
+    private byte _pixelRed;
+    private byte _pixelGreen;
+    private byte _pixelBlue;
+    private byte _pixelIntensivity;
 
     private BitmapImage? Picture
     {
@@ -71,27 +35,81 @@ public class PixelInfoViewModel : ViewModel
         set => Set(ref _pixelLocation, value);
     }
 
-    public byte? PixelRed
+    public byte PixelRed
     {
         get => _pixelRed;
         set => Set(ref _pixelRed, value);
     }
 
-    public byte? PixelGreen
+    public byte PixelGreen
     {
         get => _pixelGreen;
         set => Set(ref _pixelGreen, value);
     }
 
-    public byte? PixelBlue
+    public byte PixelBlue
     {
         get => _pixelBlue;
         set => Set(ref _pixelBlue, value);
     }
 
-    public byte? PixelIntensivity
+    public byte PixelIntensivity
     {
         get => _pixelIntensivity;
         set => Set(ref _pixelIntensivity, value);
     }
+
+    #endregion
+    
+    /// <summary>
+    /// Default constructor for code suggestions
+    /// </summary>
+    public PixelInfoViewModel()
+    {
+    }
+
+    public PixelInfoViewModel(Store store)
+    {
+        store.PictureChanged += Picture_OnChanged;
+        store.MousePositionChanged += MousePosition_OnChanged;
+        
+        PixelInfoCommand = new Command(PixelInfoCommand_OnExecuted, PixelInfoCommand_CanExecute);
+    }
+
+    #region Event Subscription
+
+    private void Picture_OnChanged(BitmapImage? source)
+    {
+        Picture = source;
+    }
+
+    private void MousePosition_OnChanged(Point point)
+    {
+        PixelLocation = point;
+        UpdatePixelRgb(point);
+    }
+
+    private void UpdatePixelRgb(Point point)
+    {
+        var pixelColor = Tools.GetPixelColor(Picture, point);
+        PixelRed = pixelColor.R;
+        PixelGreen = pixelColor.G;
+        PixelBlue = pixelColor.B;
+        PixelIntensivity = (byte) ((pixelColor.R + pixelColor.G + pixelColor.B) / 3);
+    }
+
+    #endregion
+    
+    #region PixelInfoCommand
+
+    public Command? PixelInfoCommand { get; }
+
+    private bool PixelInfoCommand_CanExecute(object? parameter) => Picture is not null;
+
+    private void PixelInfoCommand_OnExecuted(object? parameter)
+    {
+        PixelInfoVisibility = PixelInfoVisibility is Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
+    }
+
+    #endregion
 }

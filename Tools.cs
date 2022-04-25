@@ -5,11 +5,12 @@ using System.Windows.Media.Imaging;
 
 namespace Laboratory_work_1;
 
-public class Tools
+public static class Tools
 {
     public static void ResizeAndCenterWindow(Window? window)
     {
         if (window is null) return;
+        
         window.SizeToContent = SizeToContent.WidthAndHeight;
         window.Top = (SystemParameters.WorkArea.Height - window.Height) / 2;
         window.Left = (SystemParameters.WorkArea.Width - window.Width) / 2;
@@ -56,30 +57,4 @@ public class Tools
             pixels,
             width * 4);
     }
-
-    
-    // private static (int Width, int Height) GetSlidingWindowSize(
-    //     BitmapSource source,
-    //     Point center,
-    //     int size)
-    // {
-    //     var location = (X: (int) center.X - 5, Y: (int) center.Y - 5);
-    //     var size = (Width: 11, Height: 11);
-    //     if (center.X - 5 < 0)
-    //     {
-    //         size.Width += location.X;
-    //         location.X = 0;
-    //     }
-    //     if (center.Y - 5 < 0)
-    //     {
-    //         size.Height += location.Y;
-    //         location.Y = 0;
-    //     }
-    //     if (location.X + 11 > source.PixelWidth)
-    //         size.Width = source.PixelWidth - location.X;
-    //     if (location.Y + 11 > source.PixelHeight)
-    //         size.Height = source.PixelHeight - location.Y;
-    //     return (location, size);
-    // }
-
 }

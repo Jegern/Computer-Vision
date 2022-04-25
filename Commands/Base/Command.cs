@@ -5,10 +5,10 @@ namespace Laboratory_work_1.Commands.Base;
 
 public class Command : ICommand
 {
-    private readonly Action<object> _execute;
-    private readonly Func<object, bool>? _canExecute;
+    private readonly Action<object?> _execute;
+    private readonly Func<object?, bool>? _canExecute;
 
-    public Command(Action<object> execute, Func<object, bool>? canExecute = null)
+    public Command(Action<object?> execute, Func<object?, bool>? canExecute = null)
     {
         _execute = execute ?? throw new ArgumentNullException(nameof(execute));
         _canExecute = canExecute;
@@ -20,7 +20,7 @@ public class Command : ICommand
         remove => CommandManager.RequerySuggested -= value;
     }
 
-    public bool CanExecute(object parameter) => _canExecute?.Invoke(parameter) ?? true;
+    public bool CanExecute(object? parameter) => _canExecute?.Invoke(parameter) ?? true;
 
-    public void Execute(object parameter) => _execute(parameter);
+    public void Execute(object? parameter) => _execute(parameter);
 }

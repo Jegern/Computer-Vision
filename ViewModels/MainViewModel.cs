@@ -22,12 +22,13 @@ public class MainViewModel : ViewModel
         OpenImageCommand = new Command(OpenImageCommand_OnExecuted, OpenImageCommand_CanExecute);
         SaveImageCommand = new Command(SaveImageCommand_OnExecuted, SaveImageCommand_CanExecute);
         MouseMoveCommand = new Command(MouseMoveCommand_OnExecuted, MouseMoveCommand_CanExecute);
-        PixelInfoCommand = new Command(PixelInfoCommand_OnExecuted, PixelInfoCommand_CanExecute);
-        MagnifierCommand = new Command(MagnifierCommand_OnExecuted, MagnifierCommand_CanExecute);
         MagnifierInfoCommand = new Command(MagnifierInfoCommand_OnExecuted, MagnifierInfoCommand_CanExecute);
         ImageManagementCommand = new Command(ImageManagementCommand_OnExecuted, ImageManagementCommand_CanExecute);
     }
 
+    /// <summary>
+    /// Default constructor for code suggestions
+    /// </summary>
     public MainViewModel()
     {
         _store = new Store();
@@ -35,8 +36,6 @@ public class MainViewModel : ViewModel
         OpenImageCommand = new Command(OpenImageCommand_OnExecuted, OpenImageCommand_CanExecute);
         SaveImageCommand = new Command(SaveImageCommand_OnExecuted, SaveImageCommand_CanExecute);
         MouseMoveCommand = new Command(MouseMoveCommand_OnExecuted, MouseMoveCommand_CanExecute);
-        PixelInfoCommand = new Command(PixelInfoCommand_OnExecuted, PixelInfoCommand_CanExecute);
-        MagnifierCommand = new Command(MagnifierCommand_OnExecuted, MagnifierCommand_CanExecute);
         MagnifierInfoCommand = new Command(MagnifierInfoCommand_OnExecuted, MagnifierInfoCommand_CanExecute);
         ImageManagementCommand = new Command(ImageManagementCommand_OnExecuted, ImageManagementCommand_CanExecute);
     }
@@ -44,7 +43,7 @@ public class MainViewModel : ViewModel
     #region Fields
 
     private BitmapImage? _picture;
-    private Point? _pictureMousePosition;
+    private Point _pictureMousePosition;
 
     public BitmapImage? Picture
     {
@@ -56,94 +55,15 @@ public class MainViewModel : ViewModel
         } 
     }
 
-    public Point? PictureMousePosition
+    private Point PictureMousePosition
     {
         get => _pictureMousePosition;
         set
         {
             Set(ref _pictureMousePosition, value);
-            _store.TriggerMousePositionEvent((Point) _pictureMousePosition!);
+            _store.TriggerMousePositionEvent(_pictureMousePosition);
         }
     }
-
-    #region PixelInfo
-
-    private Visibility _pixelInfoVisibility = Visibility.Collapsed;
-
-    public Visibility PixelInfoVisibility
-    {
-        get => _pixelInfoVisibility;
-        set
-        {
-            Set(ref _pixelInfoVisibility, value);
-            _store.TriggerPixelInfoVisibilityEvent(_pixelInfoVisibility);
-        }
-    }
-
-    #endregion
-
-    #region Magnifier
-
-    private Visibility _magnifierVisibility = Visibility.Collapsed;
-    private Point? _magnifierLocation;
-    private BitmapSource? _magnifierWindow;
-    private int _magnifierSize = 11;
-
-    public Visibility MagnifierVisibility
-    {
-        get => _magnifierVisibility;
-        set => Set(ref _magnifierVisibility, value);
-    }
-
-    private void UpdateMagnifierLocation()
-    {
-        MagnifierLocation = PictureMousePosition;
-    }
-
-    public Point? MagnifierLocation
-    {
-        get => _magnifierLocation;
-        set
-        {
-            Set(ref _magnifierLocation, value);
-            UpdateMagnifierWindow();
-        }
-    }
-
-    private void UpdateMagnifierWindow()
-    {
-        if (MagnifierSize == 0) return;
-        if (MagnifierLocation!.Value.X - MagnifierSize / 2.0 < 0 ||
-            MagnifierLocation!.Value.X + MagnifierSize / 2.0 > Picture!.PixelWidth) return;
-        if (MagnifierLocation!.Value.Y - MagnifierSize / 2.0 < 0 ||
-            MagnifierLocation!.Value.Y + MagnifierSize / 2.0 > Picture!.PixelHeight) return;
-
-        var magnifierPixels = Tools.GetPixels(
-            Picture!,
-            (int) (MagnifierLocation!.Value.X - MagnifierSize / 2.0),
-            (int) (MagnifierLocation!.Value.Y - MagnifierSize / 2.0),
-            MagnifierSize,
-            MagnifierSize);
-        MagnifierWindow = Tools.CreateImage(
-            Picture!,
-            magnifierPixels,
-            MagnifierSize,
-            MagnifierSize);
-    }
-
-    public BitmapSource? MagnifierWindow
-    {
-        get => _magnifierWindow;
-        set => Set(ref _magnifierWindow, value);
-    }
-
-    public int MagnifierSize
-    {
-        get => _magnifierSize;
-        set => Set(ref _magnifierSize, value);
-    }
-
-    #endregion
 
     #endregion
 
@@ -153,9 +73,9 @@ public class MainViewModel : ViewModel
 
     public Command OpenImageCommand { get; }
 
-    private bool OpenImageCommand_CanExecute(object parameter) => true;
+    private bool OpenImageCommand_CanExecute(object? parameter) => true;
 
-    private void OpenImageCommand_OnExecuted(object parameter)
+    private void OpenImageCommand_OnExecuted(object? parameter)
     {
         if (!_dialogService.OpenFileDialog()) return;
         if (_fileService.Open(_dialogService.FilePath!))
@@ -173,9 +93,9 @@ public class MainViewModel : ViewModel
 
     public Command SaveImageCommand { get; }
 
-    private bool SaveImageCommand_CanExecute(object parameter) => Picture is not null;
+    private bool SaveImageCommand_CanExecute(object? parameter) => Picture is not null;
 
-    private void SaveImageCommand_OnExecuted(object parameter)
+    private void SaveImageCommand_OnExecuted(object? parameter)
     {
         if (!_dialogService.SaveFileDialog()) return;
         _fileService.Save(_dialogService.FilePath!, Picture!);
@@ -187,13 +107,12 @@ public class MainViewModel : ViewModel
 
     public Command MouseMoveCommand { get; }
 
-    private bool MouseMoveCommand_CanExecute(object parameter) =>
-        Picture is not null &&
-        ((MouseEventArgs) parameter).Source is Image;
+    private bool MouseMoveCommand_CanExecute(object? parameter) =>
+        Picture is not null && ((MouseEventArgs) parameter!).Source is Image;
 
-    private void MouseMoveCommand_OnExecuted(object parameter)
+    private void MouseMoveCommand_OnExecuted(object? parameter)
     {
-        var e = (MouseEventArgs) parameter;
+        var e = (MouseEventArgs) parameter!;
         var position = e.GetPosition((Image) e.Source);
         position.X = Math.Min(position.X, Picture!.PixelWidth - 1);
         position.Y = Math.Min(position.Y, Picture!.PixelHeight - 1);
@@ -202,40 +121,13 @@ public class MainViewModel : ViewModel
 
     #endregion
 
-    #region PixelInfoCommand
-
-    public Command PixelInfoCommand { get; }
-
-    private bool PixelInfoCommand_CanExecute(object parameter) => Picture is not null;
-
-    private void PixelInfoCommand_OnExecuted(object parameter)
-    {
-        PixelInfoVisibility = PixelInfoVisibility is Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
-        _store.TriggerPixelInfoVisibilityEvent(PixelInfoVisibility);
-    }
-
-    #endregion
-
-    #region MagnifierCommand
-
-    public Command MagnifierCommand { get; }
-
-    private bool MagnifierCommand_CanExecute(object parameter) => Picture is not null;
-
-    private void MagnifierCommand_OnExecuted(object parameter)
-    {
-        MagnifierVisibility = MagnifierVisibility is Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
-    }
-
-    #endregion
-
     #region MagnifierInfoCommand
 
     public Command MagnifierInfoCommand { get; }
 
-    private bool MagnifierInfoCommand_CanExecute(object parameter) => Picture is not null;
+    private bool MagnifierInfoCommand_CanExecute(object? parameter) => Picture is not null;
 
-    private void MagnifierInfoCommand_OnExecuted(object parameter)
+    private void MagnifierInfoCommand_OnExecuted(object? parameter)
     {
     }
 
@@ -245,9 +137,9 @@ public class MainViewModel : ViewModel
 
     public Command ImageManagementCommand { get; }
 
-    private bool ImageManagementCommand_CanExecute(object parameter) => Picture is not null;
+    private bool ImageManagementCommand_CanExecute(object? parameter) => Picture is not null;
 
-    private void ImageManagementCommand_OnExecuted(object parameter)
+    private void ImageManagementCommand_OnExecuted(object? parameter)
     {
     }
 

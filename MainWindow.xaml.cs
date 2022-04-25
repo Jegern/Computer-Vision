@@ -6,26 +6,32 @@ namespace Laboratory_work_1
 {
     public partial class MainWindow
     {
-        
         public MainWindow()
         {
             InitializeComponent();
-
-            var store = new Store();
-            DataContext = new MainViewModel(store);
-            PixelInfo.DataContext = new PixelInfoViewModel(store);
+            InitializeViewModels();
         }
 
-        internal static byte[] GetPixels(BitmapSource source, int x = 0, int y = 0, int width = 0, int height = 0)
+        private void InitializeViewModels()
         {
-            if (width == 0)
-                width = source.PixelWidth;
-            if (height == 0)
-                height = source.PixelHeight;
-            var stride = width * 4;
-            var pixels = new byte[height * width * 4];
-            source.CopyPixels(new Int32Rect(x, y, width, height), pixels, stride, 0);
-            return pixels;
+            var store = new Store();
+            DataContext = new MainViewModel(store);
+            InitializePixelInfoViewModel(store);
+            InitializeMagnifierViewModel(store);
+        }
+
+        private void InitializePixelInfoViewModel(Store store)
+        {
+            var pixelInfoViewModel = new PixelInfoViewModel(store);
+            PixelInfoControl.DataContext = pixelInfoViewModel;
+            PixelInfoMenuItem.DataContext = pixelInfoViewModel;
+        }
+
+        private void InitializeMagnifierViewModel(Store store)
+        {
+            var magnifierViewModel = new MagnifierViewModel(store);
+            MagnifierControl.DataContext = magnifierViewModel;
+            MagnifierMenuItem.DataContext = magnifierViewModel;
         }
     }
 }

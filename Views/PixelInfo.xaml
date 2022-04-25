@@ -9,7 +9,7 @@
              Width="200" Height="Auto">
     
     <UserControl.DataContext>
-        <viewModel:PixelInfoViewModel/>
+        <viewModel:PixelInfoViewModel />
     </UserControl.DataContext>
     
     <UserControl.Resources>
