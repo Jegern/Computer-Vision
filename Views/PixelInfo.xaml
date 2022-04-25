@@ -8,6 +8,10 @@
 
              Width="200" Height="Auto">
     
+    <UserControl.DataContext>
+        <viewModel:PixelInfoViewModel/>
+    </UserControl.DataContext>
+    
     <UserControl.Resources>
         <Style TargetType="{x:Type TextBlock}">
             <Setter Property="Width" Value="100" />

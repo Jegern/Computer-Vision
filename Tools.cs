@@ -1,3 +1,4 @@
+using System;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -14,15 +15,18 @@ public class Tools
         window.Left = (SystemParameters.WorkArea.Width - window.Width) / 2;
     }
     
-    public static Color GetPixelColor(BitmapSource source, Point pixelPosition)
+    public static Color GetPixelColor(BitmapSource? source, Point? pixelPosition)
     {
+        if (source is null) throw new ArgumentNullException(nameof(source));
+        if (pixelPosition is null) throw new ArgumentNullException(nameof(pixelPosition));
+        
         var pixelBytes = GetPixels(
             source,
-            (int) pixelPosition.X,
-            (int) pixelPosition.Y,
+            (int) pixelPosition.Value.X,
+            (int) pixelPosition.Value.Y,
             1,
             1);
-        return Color.FromRgb(pixelBytes[0], pixelBytes[1], pixelBytes[2]);
+        return Color.FromRgb(pixelBytes[2], pixelBytes[1], pixelBytes[0]);
     }
     
     public static byte[] GetPixels(BitmapSource source, int x = 0, int y = 0, int width = 0, int height = 0)

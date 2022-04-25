@@ -55,9 +55,9 @@
                       Height="25">
                 <MenuItem Header="Информация о пикселе"
                           Command="{Binding PixelInfoCommand}" />
-                <MenuItem Header="Увеличительное стекло"
-                          InputGestureText="Ctrl+M"
-                          Command="{Binding MagnifierCommand}" />
+                    <MenuItem Header="Увеличительное стекло"
+                              InputGestureText="Ctrl+M"
+                              Command="{Binding MagnifierCommand}" />
                 <MenuItem Header="Информация об увеличительном стекле"
                           Command="{Binding MagnifierInfoCommand}" />
                 <MenuItem Header="Управление изображением"
@@ -80,8 +80,10 @@
 
         <StackPanel Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
                     Background="WhiteSmoke">
-            <view:PixelInfo Visibility="{Binding PixelInfoVisibility}" />
-            <view:Magnifier Visibility="{Binding MagnifierVisibility}" />
+            <view:PixelInfo x:Name="PixelInfo"
+                Visibility="{Binding PixelInfoVisibility}" />
+            <view:Magnifier x:Name="Magnifier"
+                Visibility="{Binding MagnifierVisibility}" />
         </StackPanel>
     </Grid>
 </Window>

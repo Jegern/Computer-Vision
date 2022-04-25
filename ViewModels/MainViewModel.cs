@@ -13,6 +13,33 @@ public class MainViewModel : ViewModel
 {
     private readonly FileService _fileService = new();
     private readonly DialogService _dialogService = new();
+    private readonly Store _store;
+    
+    public MainViewModel(Store store)
+    {
+        _store = store;
+        
+        OpenImageCommand = new Command(OpenImageCommand_OnExecuted, OpenImageCommand_CanExecute);
+        SaveImageCommand = new Command(SaveImageCommand_OnExecuted, SaveImageCommand_CanExecute);
+        MouseMoveCommand = new Command(MouseMoveCommand_OnExecuted, MouseMoveCommand_CanExecute);
+        PixelInfoCommand = new Command(PixelInfoCommand_OnExecuted, PixelInfoCommand_CanExecute);
+        MagnifierCommand = new Command(MagnifierCommand_OnExecuted, MagnifierCommand_CanExecute);
+        MagnifierInfoCommand = new Command(MagnifierInfoCommand_OnExecuted, MagnifierInfoCommand_CanExecute);
+        ImageManagementCommand = new Command(ImageManagementCommand_OnExecuted, ImageManagementCommand_CanExecute);
+    }
+
+    public MainViewModel()
+    {
+        _store = new Store();
+        
+        OpenImageCommand = new Command(OpenImageCommand_OnExecuted, OpenImageCommand_CanExecute);
+        SaveImageCommand = new Command(SaveImageCommand_OnExecuted, SaveImageCommand_CanExecute);
+        MouseMoveCommand = new Command(MouseMoveCommand_OnExecuted, MouseMoveCommand_CanExecute);
+        PixelInfoCommand = new Command(PixelInfoCommand_OnExecuted, PixelInfoCommand_CanExecute);
+        MagnifierCommand = new Command(MagnifierCommand_OnExecuted, MagnifierCommand_CanExecute);
+        MagnifierInfoCommand = new Command(MagnifierInfoCommand_OnExecuted, MagnifierInfoCommand_CanExecute);
+        ImageManagementCommand = new Command(ImageManagementCommand_OnExecuted, ImageManagementCommand_CanExecute);
+    }
 
     #region Fields
 
@@ -22,7 +49,11 @@ public class MainViewModel : ViewModel
     public BitmapImage? Picture
     {
         get => _picture;
-        set => Set(ref _picture, value);
+        set
+        {
+            Set(ref _picture, value);
+            _store.TriggerPictureEvent(_picture);
+        } 
     }
 
     public Point? PictureMousePosition
@@ -31,72 +62,22 @@ public class MainViewModel : ViewModel
         set
         {
             Set(ref _pictureMousePosition, value);
-            UpdatePixelLocation();
-            UpdateMagnifierLocation();
+            _store.TriggerMousePositionEvent((Point) _pictureMousePosition!);
         }
     }
 
     #region PixelInfo
 
     private Visibility _pixelInfoVisibility = Visibility.Collapsed;
-    private Point? _pixelLocation;
-    private byte? _pixelRed;
-    private byte? _pixelGreen;
-    private byte? _pixelBlue;
-    private byte? _pixelIntensivity;
 
     public Visibility PixelInfoVisibility
     {
         get => _pixelInfoVisibility;
-        set => Set(ref _pixelInfoVisibility, value);
-    }
-
-    private void UpdatePixelLocation()
-    {
-        PixelLocation = PictureMousePosition;
-    }
-
-    public Point? PixelLocation
-    {
-        get => _pixelLocation;
         set
         {
-            Set(ref _pixelLocation, value);
-            UpdatePixelRgb();
+            Set(ref _pixelInfoVisibility, value);
+            _store.TriggerPixelInfoVisibilityEvent(_pixelInfoVisibility);
         }
-    }
-
-    private void UpdatePixelRgb()
-    {
-        var pixelColor = Tools.GetPixelColor(Picture!, (Point) PictureMousePosition!);
-        PixelRed = pixelColor.R;
-        PixelGreen = pixelColor.G;
-        PixelBlue = pixelColor.B;
-        PixelIntensivity = (byte) ((pixelColor.R + pixelColor.G + pixelColor.B) / 3);
-    }
-
-    public byte? PixelRed
-    {
-        get => _pixelRed;
-        set => Set(ref _pixelRed, value);
-    }
-
-    public byte? PixelGreen
-    {
-        get => _pixelGreen;
-        set => Set(ref _pixelGreen, value);
-    }
-
-    public byte? PixelBlue
-    {
-        get => _pixelBlue;
-        set => Set(ref _pixelBlue, value);
-    }
-
-    public byte? PixelIntensivity
-    {
-        get => _pixelIntensivity;
-        set => Set(ref _pixelIntensivity, value);
     }
 
     #endregion
@@ -230,6 +211,7 @@ public class MainViewModel : ViewModel
     private void PixelInfoCommand_OnExecuted(object parameter)
     {
         PixelInfoVisibility = PixelInfoVisibility is Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
+        _store.TriggerPixelInfoVisibilityEvent(PixelInfoVisibility);
     }
 
     #endregion
@@ -272,15 +254,4 @@ public class MainViewModel : ViewModel
     #endregion
 
     #endregion
-
-    public MainViewModel()
-    {
-        OpenImageCommand = new Command(OpenImageCommand_OnExecuted, OpenImageCommand_CanExecute);
-        SaveImageCommand = new Command(SaveImageCommand_OnExecuted, SaveImageCommand_CanExecute);
-        MouseMoveCommand = new Command(MouseMoveCommand_OnExecuted, MouseMoveCommand_CanExecute);
-        PixelInfoCommand = new Command(PixelInfoCommand_OnExecuted, PixelInfoCommand_CanExecute);
-        MagnifierCommand = new Command(MagnifierCommand_OnExecuted, MagnifierCommand_CanExecute);
-        MagnifierInfoCommand = new Command(MagnifierInfoCommand_OnExecuted, MagnifierInfoCommand_CanExecute);
-        ImageManagementCommand = new Command(ImageManagementCommand_OnExecuted, ImageManagementCommand_CanExecute);
-    }
 }

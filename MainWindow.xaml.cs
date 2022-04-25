@@ -1,13 +1,19 @@
 ﻿using System.Windows;
 using System.Windows.Media.Imaging;
+using Laboratory_work_1.ViewModels;
 
 namespace Laboratory_work_1
 {
     public partial class MainWindow
     {
+        
         public MainWindow()
         {
             InitializeComponent();
+
+            var store = new Store();
+            DataContext = new MainViewModel(store);
+            PixelInfo.DataContext = new PixelInfoViewModel(store);
         }
 
         internal static byte[] GetPixels(BitmapSource source, int x = 0, int y = 0, int width = 0, int height = 0)
