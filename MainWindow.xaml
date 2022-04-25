@@ -3,18 +3,19 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Laboratory_work_1"
-        xmlns:vm="clr-namespace:Laboratory_work_1.ViewModels"
+        xmlns:behaviours="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:view="clr-namespace:Laboratory_work_1"
+        xmlns:viewModel="clr-namespace:Laboratory_work_1.ViewModels"
         mc:Ignorable="d"
 
-        Title="MainWindow"
         Width="400" Height="400"
         ResizeMode="CanMinimize"
         WindowStartupLocation="CenterScreen">
 
     <Window.DataContext>
-        <vm:MainViewModel />
+        <viewModel:MainViewModel />
     </Window.DataContext>
+
     <Window.InputBindings>
         <KeyBinding
             Modifiers="Control" Key="O"
@@ -37,10 +38,8 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition />
-            <ColumnDefinition Width="Auto"
-                              x:Name="ToolsColumn" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-
 
         <Menu Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0">
             <MenuItem Header="Файл"
@@ -70,14 +69,19 @@
         <Image Grid.Column="0" Grid.Row="1"
                x:Name="Picture"
                Source="{Binding Picture}"
-               Stretch="None"
-               MouseMove="MainImage_OnMouseMove" />
+               Stretch="None">
+            <behaviours:Interaction.Triggers>
+                <behaviours:EventTrigger EventName="MouseMove">
+                    <behaviours:InvokeCommandAction Command="{Binding MouseMoveCommand}"
+                                                    PassEventArgsToCommand="True" />
+                </behaviours:EventTrigger>
+            </behaviours:Interaction.Triggers>
+        </Image>
 
         <StackPanel Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
-                    x:Name="FrameGrid"
                     Background="WhiteSmoke">
-            <local:PixelInfo Visibility="{Binding PixelInfoVisibility}" />
-            <local:Magnifier Visibility="{Binding MagnifierVisibility}" />
+            <view:PixelInfo Visibility="{Binding PixelInfoVisibility}" />
+            <view:Magnifier Visibility="{Binding MagnifierVisibility}" />
         </StackPanel>
     </Grid>
 </Window>

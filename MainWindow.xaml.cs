@@ -1,6 +1,4 @@
 ﻿using System.Windows;
-using System.Windows.Input;
-using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
 namespace Laboratory_work_1
@@ -12,24 +10,6 @@ namespace Laboratory_work_1
             InitializeComponent();
         }
 
-        private void ResizeToolboxColumn(int width)
-        {
-            Width += width == 0 ? -200 : width;
-            ToolsColumn.Width = new GridLength(width);
-            // CenterWindowOnScreen();
-        }
-
-        private void CenterWindowOnScreen()
-        {
-            Top = (SystemParameters.WorkArea.Height - Height) / 2;
-            Left = (SystemParameters.WorkArea.Width - Width) / 2;
-        }
-
-        private void MainImage_OnMouseMove(object sender, MouseEventArgs e)
-        {
-            //var pixelPosition = e.MouseDevice.GetPosition(sender as Image);
-        }
-        
         internal static byte[] GetPixels(BitmapSource source, int x = 0, int y = 0, int width = 0, int height = 0)
         {
             if (width == 0)
