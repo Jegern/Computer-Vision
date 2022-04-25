@@ -1,70 +1,46 @@
-﻿<Page x:Class="Laboratory_work_1.MagnifierInfo"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      mc:Ignorable="d"
-      
-      Title="SlidingWindowInfo"
-      Width="200" Height="180" >
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="1.4*"/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition Height="0.8*"/>
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
-        
-        <TextBlock Grid.Column="0" Grid.Row="0"
-                   Text="Координаты центра"
-                   FontSize="16"
-                   TextWrapping="Wrap"
-                   TextAlignment="Center"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"/>
-        <TextBlock Grid.Column="0" Grid.Row="1"
-                   Text="Среднее значение"
-                   FontSize="16"
-                   TextWrapping="Wrap"
-                   TextAlignment="Center"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"/>
-        <TextBlock Grid.Column="0" Grid.Row="2"
-                   Text="Стандартное отклонение"
-                   FontSize="16"
-                   TextWrapping="Wrap"
-                   TextAlignment="Center"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"/>
-        <TextBlock Grid.Column="0" Grid.Row="3"
-                   Text="Медиана"
-                   FontSize="16"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"/>
-        
-        <TextBlock Grid.Column="1" Grid.Row="0"
-                   x:Name="Coordinates"
-                   FontSize="16"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"/>
-        <TextBlock Grid.Column="1" Grid.Row="1"
-                   x:Name="MeanValue"
-                   FontSize="16"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"/>
-        <TextBlock Grid.Column="1" Grid.Row="2"
-                   x:Name="StandardDeviationValue"
-                   FontSize="16"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"/>
-        <TextBlock Grid.Column="1" Grid.Row="3"
-                   x:Name="MedianValue"
-                   FontSize="16"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"/>
-    </Grid>
-</Page>
+<UserControl x:Class="Laboratory_work_1.Views.MagnifierInfo"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewModel="clr-namespace:Laboratory_work_1.ViewModels"
+             mc:Ignorable="d"
+             
+             Width="200" Height="Auto">
+    
+    <UserControl.DataContext>
+        <viewModel:MagnifierInfoViewModel />
+    </UserControl.DataContext>
+    
+    <UserControl.Resources>
+        <Style TargetType="{x:Type TextBlock}">
+            <Setter Property="Width" Value="100" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style TargetType="{x:Type StackPanel}">
+            <Setter Property="Margin" Value="3" />
+        </Style>
+    </UserControl.Resources>
+    
+    <StackPanel Margin="7">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Среднее значение" />
+            <TextBlock Text="{Binding MagnifierMean}"
+                       Width="80" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Стандартное отклонение" />
+            <TextBlock Text="{Binding MagnifierDeviation}"
+                       Width="80" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Медиана" />
+            <TextBlock Text="{Binding MagnifierMedian}"
+                       Width="80" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

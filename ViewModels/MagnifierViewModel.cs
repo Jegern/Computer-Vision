@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Media.Imaging;
+using Laboratory_work_1.Stores;
 using Laboratory_work_1.Commands.Base;
 using Laboratory_work_1.ViewModels.Base;
 
@@ -9,13 +10,14 @@ public class MagnifierViewModel : ViewModel
 {
     #region Fields
 
-    private BitmapImage? _picture;
+    private readonly Store? _store;
+    private BitmapSource? _picture;
     private Visibility _magnifierVisibility = Visibility.Collapsed;
     private Point _magnifierLocation;
     private BitmapSource? _magnifierWindow;
     private int _magnifierSize = 11;
 
-    private BitmapImage? Picture
+    private BitmapSource? Picture
     {
         get => _picture;
         set => Set(ref _picture, value);
@@ -36,7 +38,11 @@ public class MagnifierViewModel : ViewModel
     public BitmapSource? MagnifierWindow
     {
         get => _magnifierWindow;
-        set => Set(ref _magnifierWindow, value);
+        set
+        {
+            Set(ref _magnifierWindow, value); 
+            _store?.TriggerMagnifierWindowEvent(_magnifierWindow);
+        }
     }
 
     public int MagnifierSize
@@ -52,10 +58,14 @@ public class MagnifierViewModel : ViewModel
     /// </summary>
     public MagnifierViewModel()
     {
+        
     }
 
-    public MagnifierViewModel(Store store)
+    public MagnifierViewModel(Store? store)
     {
+       if (store is null) return;
+        
+        _store = store;
         store.PictureChanged += Picture_OnChanged;
         store.MousePositionChanged += MousePosition_OnChanged;
         
@@ -64,13 +74,15 @@ public class MagnifierViewModel : ViewModel
 
     #region Event Subscription
 
-    private void Picture_OnChanged(BitmapImage? source)
+    private void Picture_OnChanged(BitmapSource? picture)
     {
-        Picture = source;
+        Picture = picture;
     }
 
     private void MousePosition_OnChanged(Point point)
     {
+        if (MagnifierVisibility is Visibility.Collapsed) return;
+        
         MagnifierLocation = point;
         UpdateMagnifierWindow();
     }

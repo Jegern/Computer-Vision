@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using Laboratory_work_1.Stores;
 using Laboratory_work_1.Services;
 using Laboratory_work_1.Commands.Base;
 using Laboratory_work_1.ViewModels.Base;
@@ -11,37 +12,11 @@ namespace Laboratory_work_1.ViewModels;
 
 public class MainViewModel : ViewModel
 {
-    private readonly FileService _fileService = new();
-    private readonly DialogService _dialogService = new();
-    private readonly Store _store;
-    
-    public MainViewModel(Store store)
-    {
-        _store = store;
-        
-        OpenImageCommand = new Command(OpenImageCommand_OnExecuted, OpenImageCommand_CanExecute);
-        SaveImageCommand = new Command(SaveImageCommand_OnExecuted, SaveImageCommand_CanExecute);
-        MouseMoveCommand = new Command(MouseMoveCommand_OnExecuted, MouseMoveCommand_CanExecute);
-        MagnifierInfoCommand = new Command(MagnifierInfoCommand_OnExecuted, MagnifierInfoCommand_CanExecute);
-        ImageManagementCommand = new Command(ImageManagementCommand_OnExecuted, ImageManagementCommand_CanExecute);
-    }
-
-    /// <summary>
-    /// Default constructor for code suggestions
-    /// </summary>
-    public MainViewModel()
-    {
-        _store = new Store();
-        
-        OpenImageCommand = new Command(OpenImageCommand_OnExecuted, OpenImageCommand_CanExecute);
-        SaveImageCommand = new Command(SaveImageCommand_OnExecuted, SaveImageCommand_CanExecute);
-        MouseMoveCommand = new Command(MouseMoveCommand_OnExecuted, MouseMoveCommand_CanExecute);
-        MagnifierInfoCommand = new Command(MagnifierInfoCommand_OnExecuted, MagnifierInfoCommand_CanExecute);
-        ImageManagementCommand = new Command(ImageManagementCommand_OnExecuted, ImageManagementCommand_CanExecute);
-    }
-
     #region Fields
 
+    private readonly FileService _fileService = new();
+    private readonly DialogService _dialogService = new();
+    private readonly Store? _store;
     private BitmapImage? _picture;
     private Point _pictureMousePosition;
 
@@ -51,27 +26,46 @@ public class MainViewModel : ViewModel
         set
         {
             Set(ref _picture, value);
-            _store.TriggerPictureEvent(_picture);
+            _store?.TriggerPictureEvent(_picture);
         } 
     }
 
     private Point PictureMousePosition
     {
-        get => _pictureMousePosition;
         set
         {
             Set(ref _pictureMousePosition, value);
-            _store.TriggerMousePositionEvent(_pictureMousePosition);
+            _store?.TriggerMousePositionEvent(_pictureMousePosition);
         }
     }
 
     #endregion
 
+    /// <summary>
+    /// Default constructor for code suggestions
+    /// </summary>
+    public MainViewModel()
+    {
+        
+    }
+    
+    public MainViewModel(Store? store)
+    {
+        if (store is null) return;
+        
+        _store = store;
+        
+        OpenImageCommand = new Command(OpenImageCommand_OnExecuted, OpenImageCommand_CanExecute);
+        SaveImageCommand = new Command(SaveImageCommand_OnExecuted, SaveImageCommand_CanExecute);
+        MouseMoveCommand = new Command(MouseMoveCommand_OnExecuted, MouseMoveCommand_CanExecute);
+        ImageManagementCommand = new Command(ImageManagementCommand_OnExecuted, ImageManagementCommand_CanExecute);
+    }
+
     #region Commands
 
     #region OpenImageCommand
 
-    public Command OpenImageCommand { get; }
+    public Command? OpenImageCommand { get; }
 
     private bool OpenImageCommand_CanExecute(object? parameter) => true;
 
@@ -91,7 +85,7 @@ public class MainViewModel : ViewModel
 
     #region SaveImageCommand
 
-    public Command SaveImageCommand { get; }
+    public Command? SaveImageCommand { get; }
 
     private bool SaveImageCommand_CanExecute(object? parameter) => Picture is not null;
 
@@ -105,7 +99,7 @@ public class MainViewModel : ViewModel
 
     #region MouseMoveCommand
 
-    public Command MouseMoveCommand { get; }
+    public Command? MouseMoveCommand { get; }
 
     private bool MouseMoveCommand_CanExecute(object? parameter) =>
         Picture is not null && ((MouseEventArgs) parameter!).Source is Image;
@@ -121,21 +115,9 @@ public class MainViewModel : ViewModel
 
     #endregion
 
-    #region MagnifierInfoCommand
-
-    public Command MagnifierInfoCommand { get; }
-
-    private bool MagnifierInfoCommand_CanExecute(object? parameter) => Picture is not null;
-
-    private void MagnifierInfoCommand_OnExecuted(object? parameter)
-    {
-    }
-
-    #endregion
-
     #region ImageManagementCommand
 
-    public Command ImageManagementCommand { get; }
+    public Command? ImageManagementCommand { get; }
 
     private bool ImageManagementCommand_CanExecute(object? parameter) => Picture is not null;
 

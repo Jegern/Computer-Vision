@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Media.Imaging;
+using Laboratory_work_1.Stores;
 using Laboratory_work_1.Commands.Base;
 using Laboratory_work_1.ViewModels.Base;
 
@@ -9,7 +10,7 @@ public class PixelInfoViewModel : ViewModel
 {
     #region Fields
 
-    private BitmapImage? _picture;
+    private BitmapSource? _picture;
     private Visibility _pixelInfoVisibility = Visibility.Collapsed;
     private Point _pixelLocation;
     private byte _pixelRed;
@@ -17,7 +18,7 @@ public class PixelInfoViewModel : ViewModel
     private byte _pixelBlue;
     private byte _pixelIntensivity;
 
-    private BitmapImage? Picture
+    private BitmapSource? Picture
     {
         get => _picture;
         set => Set(ref _picture, value);
@@ -60,16 +61,19 @@ public class PixelInfoViewModel : ViewModel
     }
 
     #endregion
-    
+
     /// <summary>
     /// Default constructor for code suggestions
     /// </summary>
     public PixelInfoViewModel()
     {
+        
     }
 
-    public PixelInfoViewModel(Store store)
+    public PixelInfoViewModel(Store? store)
     {
+        if (store is null) return;
+        
         store.PictureChanged += Picture_OnChanged;
         store.MousePositionChanged += MousePosition_OnChanged;
         
@@ -78,18 +82,20 @@ public class PixelInfoViewModel : ViewModel
 
     #region Event Subscription
 
-    private void Picture_OnChanged(BitmapImage? source)
+    private void Picture_OnChanged(BitmapSource? source)
     {
         Picture = source;
     }
 
     private void MousePosition_OnChanged(Point point)
     {
+        if (PixelInfoVisibility is Visibility.Collapsed) return;
+        
         PixelLocation = point;
-        UpdatePixelRgb(point);
+        UpdatePixelInfo(point);
     }
 
-    private void UpdatePixelRgb(Point point)
+    private void UpdatePixelInfo(Point point)
     {
         var pixelColor = Tools.GetPixelColor(Picture, point);
         PixelRed = pixelColor.R;

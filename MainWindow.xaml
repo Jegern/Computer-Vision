@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:behaviours="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:view="clr-namespace:Laboratory_work_1"
+        xmlns:view="clr-namespace:Laboratory_work_1.Views"
         xmlns:viewModel="clr-namespace:Laboratory_work_1.ViewModels"
         mc:Ignorable="d"
 
@@ -23,12 +23,6 @@
         <KeyBinding
             Modifiers="Control" Key="S"
             Command="{Binding SaveImageCommand}" />
-        <KeyBinding
-            Modifiers="Control" Key="M"
-            Command="{Binding MagnifierCommand}" />
-        <KeyBinding
-            Modifiers="Control" Key="I"
-            Command="{Binding ImageManagementCommand}" />
     </Window.InputBindings>
 
     <Grid>
@@ -62,16 +56,19 @@
                 </MenuItem>
                 <MenuItem x:Name="MagnifierMenuItem"
                           Header="Увеличительное стекло"
-                          InputGestureText="Ctrl+M"
                           Command="{Binding MagnifierCommand}">
                     <MenuItem.DataContext>
                         <viewModel:MagnifierViewModel />
                     </MenuItem.DataContext>
                 </MenuItem>
-                <MenuItem Header="Информация об увеличительном стекле"
-                          Command="{Binding MagnifierInfoCommand}" />
+                <MenuItem x:Name="MagnifierInfoMenuItem"
+                          Header="Информация об увеличительном стекле"
+                          Command="{Binding MagnifierInfoCommand}">
+                    <MenuItem.DataContext>
+                        <viewModel:MagnifierInfoViewModel />
+                    </MenuItem.DataContext>
+                </MenuItem>
                 <MenuItem Header="Управление изображением"
-                          InputGestureText="Ctrl+I"
                           Command="{Binding ImageManagementCommand}" />
             </MenuItem>
         </Menu>
@@ -102,6 +99,12 @@
                     <viewModel:MagnifierViewModel />
                 </view:Magnifier.DataContext>
             </view:Magnifier>
+            <view:MagnifierInfo x:Name="MagnifierInfoControl"
+                                Visibility="{Binding MagnifierInfoVisibility}">
+                <view:MagnifierInfo.DataContext>
+                    <viewModel:MagnifierInfoViewModel />
+                </view:MagnifierInfo.DataContext>
+            </view:MagnifierInfo>
         </StackPanel>
     </Grid>
 </Window>
