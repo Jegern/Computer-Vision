@@ -1,8 +1,10 @@
+using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using Laboratory_work_1.Stores;
 using Laboratory_work_1.Commands.Base;
 using Laboratory_work_1.ViewModels.Base;
+using Laboratory_work_1.ViewModels.Store;
 
 namespace Laboratory_work_1.ViewModels;
 
@@ -10,40 +12,41 @@ public class MagnifierInfoViewModel : ViewModel
 {
     #region Fields
 
-    private Visibility _magnifierInfoVisibility = Visibility.Collapsed;
-    private BitmapSource? _magnifierWindow;
-    private double _magnifierMean;
-    private double _magnifierDeviation;
-    private double _magnifierMedian;
+    private Visibility _visibility = Visibility.Collapsed;
+    private Visibility _magnifierVisibility = Visibility.Collapsed;
+    private BitmapSource? _window;
+    private double _mean;
+    private double _deviation;
+    private double _median;
 
-    public Visibility MagnifierInfoVisibility
+    public Visibility Visibility
     {
-        get => _magnifierInfoVisibility;
-        set => Set(ref _magnifierInfoVisibility, value);
+        get => _visibility;
+        set => Set(ref _visibility, value);
     }
 
-    private BitmapSource? MagnifierWindow
+    private BitmapSource? Window
     {
-        get => _magnifierWindow;
-        set => Set(ref _magnifierWindow, value);
+        get => _window;
+        set => Set(ref _window, value);
     }
 
-    public double MagnifierMean
+    public double Mean
     {
-        get => _magnifierMean;
-        set => Set(ref _magnifierMean, value);
+        get => _mean;
+        set => Set(ref _mean, value);
     }
 
-    public double MagnifierDeviation
+    public double Deviation
     {
-        get => _magnifierDeviation;
-        set => Set(ref _magnifierDeviation, value);
+        get => _deviation;
+        set => Set(ref _deviation, value);
     }
 
-    public double MagnifierMedian
+    public double Median
     {
-        get => _magnifierMedian;
-        set => Set(ref _magnifierMedian, value);
+        get => _median;
+        set => Set(ref _median, value);
     }
 
     #endregion
@@ -56,26 +59,75 @@ public class MagnifierInfoViewModel : ViewModel
         
     }
 
-    public MagnifierInfoViewModel(Store? store)
+    public MagnifierInfoViewModel(ViewModelStore? store)
     {
         if (store is null) return;
         
+        store.MagnifierVisibilityChanged += MagnifierVisibility_OnChanged;
         store.MagnifierWindowChanged += MagnifierWindow_OnChanged;
 
         MagnifierInfoCommand = new Command(MagnifierInfoCommand_OnExecuted, MagnifierInfoCommand_CanExecute);
     }
 
-    #region Event Subscription
+    
 
-    private void MagnifierWindow_OnChanged(BitmapSource? magnifierWindow)
+    #region Event Subscription
+    
+    private void MagnifierVisibility_OnChanged(Visibility visibility)
     {
-        MagnifierWindow = magnifierWindow;
+        _magnifierVisibility = visibility;
+        if (visibility is Visibility.Collapsed)
+            Visibility = visibility;
+    }
+
+    private void MagnifierWindow_OnChanged(BitmapSource? source)
+    {
+        Window = source;
         UpdateMagnifierInfo();
     }
 
     private void UpdateMagnifierInfo()
     {
-        
+        var magnifierWindowBytes = Tools.GetPixelBytes(Window!);
+        var magnifierWindowLength = Window!.PixelWidth * Window!.PixelHeight;
+        Mean = GetMagnifierMean(magnifierWindowBytes, magnifierWindowLength);
+        Deviation = GetMagnifierDeviation(magnifierWindowBytes, magnifierWindowLength);
+        Median = GetMagnifierMedian(magnifierWindowBytes, magnifierWindowLength);
+    }
+    
+    /// <summary>
+    /// The sum of the intensivity of all pixels divided by the number of pixels
+    /// </summary>
+    private static double GetMagnifierMean(byte[] bytes, int length)
+    {
+        var intesivitySum = 0d;
+        for (var i = 0; i < length; i++)
+            intesivitySum += Tools.GetPixelIntensivity(bytes, i * 4);
+        return Math.Round(intesivitySum / length, 3);
+    }
+    
+    /// <summary>
+    /// The square root of the sum of the squares of
+    /// the difference in pixel intensity and the average intensity of all pixels
+    /// </summary>
+    private static double GetMagnifierDeviation(byte[] bytes, int length)
+    {
+        var magnifierMean = GetMagnifierMean(bytes, length);
+        var differenceSquareSum = 0d;
+        for (var i = 0; i < length; i++)
+            differenceSquareSum += Math.Pow(Tools.GetPixelIntensivity(bytes, i * 4) - magnifierMean, 2);
+        return Math.Round(Math.Sqrt(differenceSquareSum / length), 3);
+    }
+    
+    /// <summary>
+    /// The median of the intensivity of all pixels
+    /// </summary>
+    private static double GetMagnifierMedian(byte[] bytes, int length)
+    {
+        var intensivityList = new List<double>();
+        for (var i = 0; i < length; i += 4)
+            intensivityList.Add(Tools.GetPixelIntensivity(bytes, i * 4));
+        return Math.Round(Tools.GetMedianFromList(intensivityList), 3);
     }
 
     #endregion
@@ -84,12 +136,13 @@ public class MagnifierInfoViewModel : ViewModel
 
     public Command? MagnifierInfoCommand { get; }
 
-    private bool MagnifierInfoCommand_CanExecute(object? parameter) => MagnifierWindow is not null;
+    private bool MagnifierInfoCommand_CanExecute(object? parameter) => _magnifierVisibility is Visibility.Visible;
 
     private void MagnifierInfoCommand_OnExecuted(object? parameter)
     {
-        MagnifierInfoVisibility =
-            MagnifierInfoVisibility is Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
+        Visibility = Visibility is Visibility.Collapsed
+            ? Visibility.Visible
+            : Visibility.Collapsed;
     }
 
     #endregion

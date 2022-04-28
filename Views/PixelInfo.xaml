@@ -29,27 +29,27 @@
     <StackPanel Margin="7">
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="Координаты пикселя" />
-            <TextBlock Text="{Binding PixelLocation}"
+            <TextBlock Text="{Binding Location}"
                        Width="80" />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="Красный" />
-            <TextBlock Text="{Binding PixelRed}"
+            <TextBlock Text="{Binding Red}"
                        Width="80" />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="Зеленый" />
-            <TextBlock Text="{Binding PixelGreen}"
+            <TextBlock Text="{Binding Green}"
                        Width="80" />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="Синий" />
-            <TextBlock Text="{Binding PixelBlue}"
+            <TextBlock Text="{Binding Blue}"
                        Width="80" />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="Яркость" />
-            <TextBlock Text="{Binding PixelIntensivity}"
+            <TextBlock Text="{Binding Intensivity}"
                        Width="80" />
         </StackPanel>
     </StackPanel>

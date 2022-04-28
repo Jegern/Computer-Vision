@@ -3,10 +3,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using Laboratory_work_1.Stores;
 using Laboratory_work_1.Services;
 using Laboratory_work_1.Commands.Base;
 using Laboratory_work_1.ViewModels.Base;
+using Laboratory_work_1.ViewModels.Store;
 
 namespace Laboratory_work_1.ViewModels;
 
@@ -16,26 +16,26 @@ public class MainViewModel : ViewModel
 
     private readonly FileService _fileService = new();
     private readonly DialogService _dialogService = new();
-    private readonly Store? _store;
-    private BitmapImage? _picture;
+    private readonly ViewModelStore? _store;
+    private BitmapSource? _picture;
     private Point _pictureMousePosition;
 
-    public BitmapImage? Picture
+    public BitmapSource? Picture
     {
         get => _picture;
         set
         {
-            Set(ref _picture, value);
-            _store?.TriggerPictureEvent(_picture);
-        } 
+            if (Set(ref _picture, value))
+                _store?.TriggerPictureEvent(_picture);
+        }
     }
 
     private Point PictureMousePosition
     {
         set
         {
-            Set(ref _pictureMousePosition, value);
-            _store?.TriggerMousePositionEvent(_pictureMousePosition);
+            if (Set(ref _pictureMousePosition, value))
+                _store?.TriggerMousePositionEvent(_pictureMousePosition);
         }
     }
 
@@ -46,20 +46,28 @@ public class MainViewModel : ViewModel
     /// </summary>
     public MainViewModel()
     {
-        
     }
-    
-    public MainViewModel(Store? store)
+
+    public MainViewModel(ViewModelStore? store)
     {
         if (store is null) return;
-        
+
+        store.PictureChanged += Picture_OnChanged;
         _store = store;
-        
+
         OpenImageCommand = new Command(OpenImageCommand_OnExecuted, OpenImageCommand_CanExecute);
         SaveImageCommand = new Command(SaveImageCommand_OnExecuted, SaveImageCommand_CanExecute);
         MouseMoveCommand = new Command(MouseMoveCommand_OnExecuted, MouseMoveCommand_CanExecute);
-        ImageManagementCommand = new Command(ImageManagementCommand_OnExecuted, ImageManagementCommand_CanExecute);
     }
+    
+    #region Event Subscription
+
+    private void Picture_OnChanged(BitmapSource? picture)
+    {
+        Picture = picture;
+    }
+
+    #endregion
 
     #region Commands
 
@@ -108,21 +116,9 @@ public class MainViewModel : ViewModel
     {
         var e = (MouseEventArgs) parameter!;
         var position = e.GetPosition((Image) e.Source);
-        position.X = Math.Min(position.X, Picture!.PixelWidth - 1);
-        position.Y = Math.Min(position.Y, Picture!.PixelHeight - 1);
+        position.X = Math.Round(Math.Min(position.X, Picture!.PixelWidth - 1), 0);
+        position.Y = Math.Round(Math.Min(position.Y, Picture!.PixelHeight - 1), 0);
         PictureMousePosition = position;
-    }
-
-    #endregion
-
-    #region ImageManagementCommand
-
-    public Command? ImageManagementCommand { get; }
-
-    private bool ImageManagementCommand_CanExecute(object? parameter) => Picture is not null;
-
-    private void ImageManagementCommand_OnExecuted(object? parameter)
-    {
     }
 
     #endregion

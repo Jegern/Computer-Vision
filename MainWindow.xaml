@@ -24,20 +24,16 @@
             Modifiers="Control" Key="S"
             Command="{Binding SaveImageCommand}" />
     </Window.InputBindings>
+    
+    <Window.Resources>
+        <Style TargetType="{x:Type MenuItem}">
+            <Setter Property="Height" Value="25" />
+        </Style>
+    </Window.Resources>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="25" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
-
-        <Menu Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0">
-            <MenuItem Header="Файл"
-                      Height="25">
+    <StackPanel>
+        <Menu>
+            <MenuItem Header="Файл">
                 <MenuItem Header="Открыть"
                           InputGestureText="Ctrl+O"
                           Command="{Binding OpenImageCommand}" />
@@ -45,8 +41,7 @@
                           InputGestureText="Ctrl+S"
                           Command="{Binding SaveImageCommand}" />
             </MenuItem>
-            <MenuItem Header="Инструменты"
-                      Height="25">
+            <MenuItem Header="Инструменты">
                 <MenuItem x:Name="PixelInfoMenuItem"
                           Header="Информация о пикселе"
                           Command="{Binding PixelInfoCommand}">
@@ -68,43 +63,55 @@
                         <viewModel:MagnifierInfoViewModel />
                     </MenuItem.DataContext>
                 </MenuItem>
-                <MenuItem Header="Управление изображением"
-                          Command="{Binding ImageManagementCommand}" />
+                <MenuItem x:Name="ImageManagementMenuItem"
+                          Header="Управление изображением"
+                          Command="{Binding ImageManagementCommand}">
+                    <MenuItem.DataContext>
+                        <viewModel:ImageManagementViewModel />
+                    </MenuItem.DataContext>
+                </MenuItem>
             </MenuItem>
         </Menu>
 
-        <Image Grid.Column="0" Grid.Row="1"
-               x:Name="Picture"
-               Source="{Binding Picture}"
-               Stretch="None">
-            <behaviours:Interaction.Triggers>
-                <behaviours:EventTrigger EventName="MouseMove">
-                    <behaviours:InvokeCommandAction Command="{Binding MouseMoveCommand}"
-                                                    PassEventArgsToCommand="True" />
-                </behaviours:EventTrigger>
-            </behaviours:Interaction.Triggers>
-        </Image>
+        <StackPanel Orientation="Horizontal">
+            <Image x:Name="Picture"
+                   Source="{Binding Picture}"
+                   Stretch="None">
+                <behaviours:Interaction.Triggers>
+                    <behaviours:EventTrigger EventName="MouseMove">
+                        <behaviours:InvokeCommandAction Command="{Binding MouseMoveCommand}"
+                                                        PassEventArgsToCommand="True" />
+                    </behaviours:EventTrigger>
+                </behaviours:Interaction.Triggers>
+            </Image>
 
-        <StackPanel Grid.Column="1" Grid.Row="0" Grid.RowSpan="2"
-                    Background="WhiteSmoke">
-            <view:PixelInfo x:Name="PixelInfoControl"
-                            Visibility="{Binding PixelInfoVisibility}">
-                <view:PixelInfo.DataContext>
-                    <viewModel:PixelInfoViewModel />
-                </view:PixelInfo.DataContext>
-            </view:PixelInfo>
-            <view:Magnifier x:Name="MagnifierControl"
-                            Visibility="{Binding MagnifierVisibility}">
-                <view:Magnifier.DataContext>
-                    <viewModel:MagnifierViewModel />
-                </view:Magnifier.DataContext>
-            </view:Magnifier>
-            <view:MagnifierInfo x:Name="MagnifierInfoControl"
-                                Visibility="{Binding MagnifierInfoVisibility}">
-                <view:MagnifierInfo.DataContext>
-                    <viewModel:MagnifierInfoViewModel />
-                </view:MagnifierInfo.DataContext>
-            </view:MagnifierInfo>
+            <StackPanel Width="Auto"
+                        Background="WhiteSmoke">
+                <view:PixelInfo x:Name="PixelInfoControl"
+                                Visibility="{Binding Visibility}">
+                    <view:PixelInfo.DataContext>
+                        <viewModel:PixelInfoViewModel />
+                    </view:PixelInfo.DataContext>
+                </view:PixelInfo>
+                <view:Magnifier x:Name="MagnifierControl"
+                                Visibility="{Binding Visibility}">
+                    <view:Magnifier.DataContext>
+                        <viewModel:MagnifierViewModel />
+                    </view:Magnifier.DataContext>
+                </view:Magnifier>
+                <view:MagnifierInfo x:Name="MagnifierInfoControl"
+                                    Visibility="{Binding Visibility}">
+                    <view:MagnifierInfo.DataContext>
+                        <viewModel:MagnifierInfoViewModel />
+                    </view:MagnifierInfo.DataContext>
+                </view:MagnifierInfo>
+                <view:ImageManagement x:Name="ImageManagementControl"
+                                      Visibility="{Binding ImageManagementVisibility}">
+                    <view:ImageManagement.DataContext>
+                        <viewModel:ImageManagementViewModel />
+                    </view:ImageManagement.DataContext>
+                </view:ImageManagement>
+            </StackPanel>
         </StackPanel>
-    </Grid>
+    </StackPanel>
 </Window>

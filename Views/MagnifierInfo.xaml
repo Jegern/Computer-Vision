@@ -29,17 +29,17 @@
     <StackPanel Margin="7">
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="Среднее значение" />
-            <TextBlock Text="{Binding MagnifierMean}"
+            <TextBlock Text="{Binding Mean}"
                        Width="80" />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="Стандартное отклонение" />
-            <TextBlock Text="{Binding MagnifierDeviation}"
+            <TextBlock Text="{Binding Deviation}"
                        Width="80" />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="Медиана" />
-            <TextBlock Text="{Binding MagnifierMedian}"
+            <TextBlock Text="{Binding Median}"
                        Width="80" />
         </StackPanel>
     </StackPanel>

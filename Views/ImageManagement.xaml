@@ -1,12 +1,17 @@
-﻿<UserControl x:Class="Laboratory_work_1.Views.ImageManagement"
+<UserControl x:Class="Laboratory_work_1.Views.ImageManagement"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:behaviours="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:viewModel="clr-namespace:Laboratory_work_1.ViewModels"
              mc:Ignorable="d"
 
              Width="200" Height="Auto">
+
+    <UserControl.DataContext>
+        <viewModel:ImageManagementViewModel />
+    </UserControl.DataContext>
 
     <UserControl.Resources>
         <Style TargetType="{x:Type TextBlock}">
@@ -33,51 +38,57 @@
     <StackPanel Margin="3">
         <StackPanel>
             <TextBlock Text="Яркость" />
-            <Slider x:Name="Brightness"
-                    Value="127"
-                    ValueChanged="Brightness_ValueChanged" />
-        </StackPanel>
-
-        <StackPanel>
-            <TextBlock Text="Интенсивность" />
-            <Slider x:Name="Intensivity"
-                    ValueChanged="Intensivity_ValueChanged" />
+            <Slider Value="{Binding Intensivity}">
+                <behaviours:Interaction.Triggers>
+                    <behaviours:EventTrigger EventName="ValueChanged">
+                        <behaviours:InvokeCommandAction Command="{Binding ValueChangedCommand}"
+                                                        PassEventArgsToCommand="True" />
+                    </behaviours:EventTrigger>
+                </behaviours:Interaction.Triggers>
+            </Slider>
         </StackPanel>
 
         <Button Content="Обесцвечивание"
                 Margin="5"
-                Click="Bleach_Click" />
+                Command="{Binding BleachCommand}" />
 
         <Button Content="Негатив"
                 Margin="5"
-                Click="Negative_Click" />
+                Command="{Binding NegativeCommand}" />
 
         <StackPanel>
             <StackPanel Margin="3">
-                <CheckBox Content="Красный" x:Name="RedExchange" />
-                <CheckBox Content="Зеленый" x:Name="GreenExchange" />
-                <CheckBox Content="Синий" x:Name="BlueExchange" />
+                <CheckBox Content="Красный"
+                          IsChecked="{Binding RedChecked}" />
+                <CheckBox Content="Зеленый"
+                          IsChecked="{Binding GreenChecked}" />
+                <CheckBox Content="Синий"
+                          IsChecked="{Binding BlueChecked}" />
             </StackPanel>
             <Button Content="Обмен каналов"
-                    Click="SwapChanels_Click" />
+                    Command="{Binding SwapCommand}" />
         </StackPanel>
 
         <StackPanel>
             <StackPanel Margin="3">
-                <CheckBox Content="По вертикали" x:Name="Vertical" />
-                <CheckBox Content="По горизонтали" x:Name="Horizontal" />
+                <RadioButton Content="По горизонтали"
+                             IsChecked="{Binding HorizontalChecked}" />
+                <RadioButton Content="По вертикали"
+                             IsChecked="{Binding VerticalChecked}" />
             </StackPanel>
             <Button Content="Отражение"
-                    Click="SimmetricalImage_Click" />
+                    Command="{Binding SymmetryCommand}" />
         </StackPanel>
 
         <StackPanel>
             <StackPanel Margin="3">
-                <CheckBox Content="Горизонталь и вертикаль" />
-                <CheckBox Content="Диагональ" />
+                <CheckBox Content="Горизонталь и вертикаль"
+                          IsChecked="{Binding HorizontalVerticalChecked}" />
+                <CheckBox Content="Диагональ"
+                          IsChecked="{Binding DiagonalChecked}" />
             </StackPanel>
             <Button Content="Размытие"
-                    Click="Vanish_Click" />
+                    Command="{Binding VanishCommand}" />
         </StackPanel>
     </StackPanel>
 </UserControl>

@@ -25,7 +25,7 @@ public class FileService
         return (pixelWidth, pixelHeight);
     }
  
-    public void Save(string filePath, BitmapImage image)
+    public void Save(string filePath, BitmapSource source)
     {
         var fileExtension = Path.GetExtension(filePath);
         BitmapEncoder? encoder = fileExtension switch
@@ -39,7 +39,7 @@ public class FileService
         if (encoder is null) return;
         
         using var fileStream = new FileStream(filePath, FileMode.Create);
-        encoder.Frames.Add(BitmapFrame.Create(image));
+        encoder.Frames.Add(BitmapFrame.Create(source));
         encoder.Save(fileStream);
     }
 }
