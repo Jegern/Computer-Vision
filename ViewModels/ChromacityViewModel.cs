@@ -14,7 +14,7 @@ public class ChromacityViewModel : ViewModel
     private readonly ViewModelStore? _store;
     private BitmapSource? _picture;
     private byte[]? _pictureBytes;
-    private Visibility _chromacityVisibility = Visibility.Collapsed;
+    private Visibility _visibility = Visibility.Collapsed;
 
     private byte? _binaryThreshold;
     private byte? _cutStart;
@@ -33,10 +33,10 @@ public class ChromacityViewModel : ViewModel
         set => Set(ref _pictureBytes, value);
     }
 
-    public Visibility ChromacityVisibility
+    public Visibility Visibility
     {
-        get => _chromacityVisibility;
-        set => Set(ref _chromacityVisibility, value);
+        get => _visibility;
+        set => Set(ref _visibility, value);
     }
 
     public byte? BinaryThreshold
@@ -124,7 +124,7 @@ public class ChromacityViewModel : ViewModel
 
     private void ChromacityCommand_OnExecuted(object? parameter)
     {
-        ChromacityVisibility = ChromacityVisibility is Visibility.Collapsed
+        Visibility = Visibility is Visibility.Collapsed
             ? Visibility.Visible
             : Visibility.Collapsed;
     }

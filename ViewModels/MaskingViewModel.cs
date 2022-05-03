@@ -1,4 +1,3 @@
-using System;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Laboratory_work_1.Commands.Base;
@@ -7,7 +6,7 @@ using Laboratory_work_1.ViewModels.Store;
 
 namespace Laboratory_work_1.ViewModels;
 
-public class SoftMaskingViewModel : ViewModel
+public class MaskingViewModel : ViewModel
 {
     
     #region Fields
@@ -16,7 +15,7 @@ public class SoftMaskingViewModel : ViewModel
     private BitmapSource? _picture;
     private byte[]? _pictureBytes;
     private byte[]? _antiAliasingPictureBytes;
-    private Visibility _softMaskingVisibility = Visibility.Collapsed;
+    private Visibility _visibility = Visibility.Collapsed;
 
     private double? _lambda;
 
@@ -38,10 +37,10 @@ public class SoftMaskingViewModel : ViewModel
         set => Set(ref _antiAliasingPictureBytes, value);
     }
 
-    public Visibility SoftMaskingVisibility
+    public Visibility Visibility
     {
-        get => _softMaskingVisibility;
-        set => Set(ref _softMaskingVisibility, value);
+        get => _visibility;
+        set => Set(ref _visibility, value);
     }
 
     public double? Lambda
@@ -55,11 +54,11 @@ public class SoftMaskingViewModel : ViewModel
     /// <summary>
     /// Default constructor for code suggestions
     /// </summary>
-    public SoftMaskingViewModel()
+    public MaskingViewModel()
     {
     }
 
-    public SoftMaskingViewModel(ViewModelStore? store)
+    public MaskingViewModel(ViewModelStore? store)
     {
         if (store is null) return;
 
@@ -68,12 +67,12 @@ public class SoftMaskingViewModel : ViewModel
         store.AntiAliasingPictureBytesChanged += AntiAliasingPictureBytes_OnChanged;
         _store = store;
 
-        SoftMaskingCommand = new Command(
-            SoftMaskingCommand_OnExecuted,
-            SoftMaskingCommand_CanExecute);
         MaskingCommand = new Command(
             MaskingCommand_OnExecuted,
             MaskingCommand_CanExecute);
+        SoftMaskingCommand = new Command(
+            SoftMaskingCommand_OnExecuted,
+            SoftMaskingCommand_CanExecute);
     }
 
     #region Event Subscription
@@ -97,31 +96,31 @@ public class SoftMaskingViewModel : ViewModel
     
     #region Commands
 
-    #region SoftMaskingCommand
+    #region MaskingCommand
 
-    public Command? SoftMaskingCommand { get; }
+    public Command? MaskingCommand { get; }
 
-    private bool SoftMaskingCommand_CanExecute(object? parameter) => Picture is not null;
+    private bool MaskingCommand_CanExecute(object? parameter) => Picture is not null;
 
-    private void SoftMaskingCommand_OnExecuted(object? parameter)
+    private void MaskingCommand_OnExecuted(object? parameter)
     {
-        SoftMaskingVisibility = SoftMaskingVisibility is Visibility.Collapsed
+        Visibility = Visibility is Visibility.Collapsed
             ? Visibility.Visible
             : Visibility.Collapsed;
     }
 
     #endregion
     
-    #region MaskingCommand
+    #region SoftMaskingCommand
 
-    public Command? MaskingCommand { get; }
+    public Command? SoftMaskingCommand { get; }
 
-    private bool MaskingCommand_CanExecute(object? parameter) => 
+    private bool SoftMaskingCommand_CanExecute(object? parameter) => 
         Picture is not null &&
         Lambda is not null &&
         AntiAliasingPictureBytes is not null;
 
-    private void MaskingCommand_OnExecuted(object? parameter)
+    private void SoftMaskingCommand_OnExecuted(object? parameter)
     {
         var lambda = (double) Lambda!;
         
@@ -131,7 +130,7 @@ public class SoftMaskingViewModel : ViewModel
             var currentIntensity = Tools.GetPixelIntensity(PictureBytes, i);
             var intensity = (1 + lambda) * originalIntensity - lambda * currentIntensity;
             Tools.SetPixel(
-                Tools.GetPixel(PictureBytes, i), 
+                Tools.GetPixel(PictureBytes, i),
                 Tools.GetGrayPixel((byte) intensity));
         }
         

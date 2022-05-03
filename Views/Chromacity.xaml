@@ -11,86 +11,61 @@
     <UserControl.DataContext>
         <viewModel:ChromacityViewModel />
     </UserControl.DataContext>
-
+    
     <UserControl.Resources>
-        <Style TargetType="{x:Type TextBlock}">
-            <Setter Property="FontSize" Value="16" />
-            <Setter Property="TextWrapping" Value="Wrap" />
-            <Setter Property="TextAlignment" Value="Center" />
-            <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-        </Style>
-        <Style TargetType="{x:Type TextBox}">
-            <Setter Property="Height" Value="40" />
-            <Setter Property="FontSize" Value="16" />
-            <Setter Property="VerticalAlignment" Value="Stretch" />
-            <Setter Property="HorizontalAlignment" Value="Stretch" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="HorizontalContentAlignment" Value="Center" />
-        </Style>
-        <Style TargetType="{x:Type StackPanel}">
-            <Setter Property="Margin" Value="5" />
-        </Style>
-        <Style TargetType="{x:Type Button}">
-            <Setter Property="MinHeight" Value="40" />
-            <Setter Property="FontSize" Value="16" />
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/Button.xaml"/>
+                <ResourceDictionary Source="Styles/StackPanel.xaml"/>
+                <ResourceDictionary Source="Styles/TextBox.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </UserControl.Resources>
 
     <StackPanel Margin="3">
         <StackPanel>
             <TextBox
-                Text="{Binding BinaryThreshold, 
-                                UpdateSourceTrigger=PropertyChanged}"
+                Text="{Binding BinaryThreshold, UpdateSourceTrigger=PropertyChanged}"
                 MaxLength="3"
                 Tag="Пороговый уровень"
                 Margin="0, 0, 0, 2" />
-            <Button Command="{Binding BinaryTransformationCommand}">
-                <TextBlock Text="Бинарное преобразование" />
-            </Button>
+            <Button Content="Бинарное преобразование"
+                    Command="{Binding BinaryTransformationCommand}" />
         </StackPanel>
 
         <StackPanel>
             <StackPanel Orientation="Horizontal"
                         Margin="0, 0, 0, 1">
-                <TextBox
-                    Text="{Binding CutStart, 
-                                UpdateSourceTrigger=PropertyChanged}"
-                    MaxLength="3"
-                    Tag="Начало"
-                    Width="91"
-                    Margin="0, 0, 1, 2" />
-                <TextBox Text="{Binding CutEnd, 
-                                UpdateSourceTrigger=PropertyChanged}"
+                <TextBox Text="{Binding CutStart, UpdateSourceTrigger=PropertyChanged}"
+                         MaxLength="3"
+                         Tag="Начало"
+                         Width="91"
+                         Margin="0, 0, 1, 2" />
+                <TextBox Text="{Binding CutEnd, UpdateSourceTrigger=PropertyChanged}"
                          MaxLength="3"
                          Tag="Конец"
                          Width="91"
                          Margin="1, 0, 0, 2" />
             </StackPanel>
-            <Button Command="{Binding IntensityRangeCutCommand}">
-                <TextBlock Text="Вырезание диапазона яркости" />
-            </Button>
+            <Button Content="Вырезание диапазона яркости"
+                    Command="{Binding IntensityRangeCutCommand}" />
         </StackPanel>
 
         <StackPanel>
-            <TextBox Text="{Binding BinaryFlat, 
-                                UpdateSourceTrigger=PropertyChanged}"
+            <TextBox Text="{Binding BinaryFlat, UpdateSourceTrigger=PropertyChanged}"
                      MaxLength="1"
                      Tag="Номер бита"
                      Margin="0, 0, 0, 2" />
-            <Button Command="{Binding BinaryFlatCutCommand}">
-                <TextBlock Text="Вырезание битовой плоскости" />
-            </Button>
+            <Button Content="Вырезание битовой плоскости"
+                    Command="{Binding BinaryFlatCutCommand}" />
         </StackPanel>
 
-        <Button Command="{Binding LogarithmicTransformationCommand}"
-                Margin="5">
-            <TextBlock Text="Логарифмическое преобразование" />
-        </Button>
+        <Button Content="Логарифмическое преобразование"
+                Command="{Binding LogarithmicTransformationCommand}"
+                Margin="5" />
 
-        <Button Command="{Binding PowerTransformationCommand}"
-                Margin="5">
-            <TextBlock Text="Степенное преобразование" />
-        </Button>
+        <Button Content="Степенное преобразование"
+                Command="{Binding PowerTransformationCommand}"
+                Margin="5" />
     </StackPanel>
 </UserControl>

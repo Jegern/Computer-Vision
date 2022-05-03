@@ -29,9 +29,11 @@
     </Window.InputBindings>
     
     <Window.Resources>
-        <Style TargetType="{x:Type MenuItem}">
-            <Setter Property="Height" Value="25" />
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Views/Styles/MenuItem.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Window.Resources>
 
     <StackPanel>
@@ -47,7 +49,7 @@
                           InputGestureText="Backspace"
                           Command="{Binding ReturnOriginalImageCommand}" />
             </MenuItem>
-            
+
             <MenuItem Header="1 лаба">
                 <MenuItem x:Name="PixelInfoMenuItem"
                           Header="Информация о пикселе"
@@ -78,7 +80,7 @@
                     </MenuItem.DataContext>
                 </MenuItem>
             </MenuItem>
-            
+
             <MenuItem Header="2 лаба">
                 <MenuItem x:Name="ChromacityMenuItem"
                           Header="Цветность"
@@ -94,19 +96,18 @@
                         <viewModel:AntiAliasingViewModel />
                     </MenuItem.DataContext>
                 </MenuItem>
-                <MenuItem x:Name="SoftMaskingMenuItem"
+                <MenuItem x:Name="MaskingMenuItem"
                           Header="Маскирование"
-                          Command="{Binding SoftMaskingCommand}">
+                          Command="{Binding MaskingCommand}">
                     <MenuItem.DataContext>
-                        <viewModel:SoftMaskingViewModel />
+                        <viewModel:MaskingViewModel />
                     </MenuItem.DataContext>
                 </MenuItem>
             </MenuItem>
         </Menu>
 
         <StackPanel Orientation="Horizontal">
-            <Image x:Name="Picture"
-                   Source="{Binding Picture}"
+            <Image Source="{Binding Picture}"
                    Stretch="None">
                 <behaviours:Interaction.Triggers>
                     <behaviours:EventTrigger EventName="MouseMove">
@@ -124,48 +125,48 @@
                         <viewModel:PixelInfoViewModel />
                     </view:PixelInfo.DataContext>
                 </view:PixelInfo>
-                
+
                 <view:Magnifier x:Name="MagnifierControl"
                                 Visibility="{Binding Visibility}">
                     <view:Magnifier.DataContext>
                         <viewModel:MagnifierViewModel />
                     </view:Magnifier.DataContext>
                 </view:Magnifier>
-                
+
                 <view:MagnifierInfo x:Name="MagnifierInfoControl"
                                     Visibility="{Binding Visibility}">
                     <view:MagnifierInfo.DataContext>
                         <viewModel:MagnifierInfoViewModel />
                     </view:MagnifierInfo.DataContext>
                 </view:MagnifierInfo>
-                
+
                 <view:ImageManagement x:Name="ImageManagementControl"
-                                      Visibility="{Binding ImageManagementVisibility}">
+                                      Visibility="{Binding Visibility}">
                     <view:ImageManagement.DataContext>
                         <viewModel:ImageManagementViewModel />
                     </view:ImageManagement.DataContext>
                 </view:ImageManagement>
-                
+
                 <view:Chromacity x:Name="ChromacityControl"
-                                 Visibility="{Binding ChromacityVisibility}">
+                                 Visibility="{Binding Visibility}">
                     <view:Chromacity.DataContext>
                         <viewModel:ChromacityViewModel />
                     </view:Chromacity.DataContext>
                 </view:Chromacity>
-                
+
                 <view:AntiAliasing x:Name="AntiAliasingControl"
-                                 Visibility="{Binding AntiAliasingVisibility}">
+                                   Visibility="{Binding Visibility}">
                     <view:AntiAliasing.DataContext>
                         <viewModel:AntiAliasingViewModel />
                     </view:AntiAliasing.DataContext>
                 </view:AntiAliasing>
-                
-                <view:SoftMasking x:Name="SoftMaskingControl"
-                                  Visibility="{Binding SoftMaskingVisibility}">
-                    <view:SoftMasking.DataContext>
-                        <viewModel:SoftMaskingViewModel />
-                    </view:SoftMasking.DataContext>
-                </view:SoftMasking>
+
+                <view:Masking x:Name="MaskingControl"
+                              Visibility="{Binding Visibility}">
+                    <view:Masking.DataContext>
+                        <viewModel:MaskingViewModel />
+                    </view:Masking.DataContext>
+                </view:Masking>
             </StackPanel>
         </StackPanel>
     </StackPanel>

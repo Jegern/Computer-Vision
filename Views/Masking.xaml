@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Laboratory_work_1.Views.Magnifier"
+<UserControl x:Class="Laboratory_work_1.Views.Masking"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -9,12 +9,13 @@
              Width="200" Height="Auto">
 
     <UserControl.DataContext>
-        <viewModel:MagnifierViewModel />
+        <viewModel:MaskingViewModel />
     </UserControl.DataContext>
     
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/Button.xaml"/>
                 <ResourceDictionary Source="Styles/StackPanel.xaml"/>
                 <ResourceDictionary Source="Styles/TextBox.xaml"/>
             </ResourceDictionary.MergedDictionaries>
@@ -22,16 +23,11 @@
     </UserControl.Resources>
 
     <StackPanel Margin="8">
-        <Border BorderBrush="Black"
-                BorderThickness="1"
-                Width="184" Height="184"
-                Margin="0, 0, 0, 1">
-            <Image Source="{Binding Window}"
-                   RenderOptions.BitmapScalingMode="NearestNeighbor" />
-        </Border>
-        <TextBox Text="{Binding Size, 
-                                UpdateSourceTrigger=PropertyChanged}"
-                 MaxLength="2" 
-                 Margin="0, 0, 0, 0" />
+        <TextBox
+            Text="{Binding Lambda, UpdateSourceTrigger=PropertyChanged}"
+            Tag="Значение лябмда"
+            Margin="0, 0, 0, 2" />
+        <Button Content="Нерезкое маскирование"
+                Command="{Binding SoftMaskingCommand}" />
     </StackPanel>
 </UserControl>

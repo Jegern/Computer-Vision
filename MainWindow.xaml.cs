@@ -21,7 +21,7 @@ namespace Laboratory_work_1
             InitializeImageManagementViewModel(store);
             InitializeChromacityViewModel(store);
             InitializeAntiAliasingViewModel(store);
-            InitializeSoftMaskingViewModel(store);
+            InitializeMaskingViewModel(store);
         }
 
         private void InitializePixelInfoViewModel(ViewModelStore? store)
@@ -66,11 +66,11 @@ namespace Laboratory_work_1
             AntiAliasingMenuItem.DataContext = antiAliasingViewModel;
         }
         
-        private void InitializeSoftMaskingViewModel(ViewModelStore? store)
+        private void InitializeMaskingViewModel(ViewModelStore? store)
         {
-            var softMaskingViewModel = new SoftMaskingViewModel(store);
-            SoftMaskingControl.DataContext = softMaskingViewModel;
-            SoftMaskingMenuItem.DataContext = softMaskingViewModel;
+            var maskingViewModel = new MaskingViewModel(store);
+            MaskingControl.DataContext = maskingViewModel;
+            MaskingMenuItem.DataContext = maskingViewModel;
         }
     }
 }

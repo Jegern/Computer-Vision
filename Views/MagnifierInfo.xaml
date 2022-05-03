@@ -5,42 +5,46 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:viewModel="clr-namespace:Laboratory_work_1.ViewModels"
              mc:Ignorable="d"
-             
+
              Width="200" Height="Auto">
-    
+
     <UserControl.DataContext>
         <viewModel:MagnifierInfoViewModel />
     </UserControl.DataContext>
-    
+
     <UserControl.Resources>
-        <Style TargetType="{x:Type TextBlock}">
-            <Setter Property="Width" Value="100" />
-            <Setter Property="FontSize" Value="16" />
-            <Setter Property="TextWrapping" Value="Wrap" />
-            <Setter Property="TextAlignment" Value="Center" />
-            <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-        </Style>
-        <Style TargetType="{x:Type StackPanel}">
-            <Setter Property="Margin" Value="3" />
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/StackPanel.xaml" />
+                <ResourceDictionary Source="Styles/TextBlock.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </UserControl.Resources>
-    
-    <StackPanel Margin="7">
+
+    <StackPanel Margin="8">
         <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Среднее значение" />
+            <TextBlock Text="Среднее значение"
+                       Width="91"
+                       Margin="0, 0, 1, 0" />
             <TextBlock Text="{Binding Mean}"
-                       Width="80" />
+                       Width="91"
+                       Margin="1, 0, 0, 0" />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Стандартное отклонение" />
+            <TextBlock Text="Стандартное отклонение"
+                       Width="91"
+                       Margin="0, 0, 1, 0" />
             <TextBlock Text="{Binding Deviation}"
-                       Width="80" />
+                       Width="91"
+                       Margin="1, 0, 0, 0" />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Медиана" />
+            <TextBlock Text="Медиана"
+                       Width="91"
+                       Margin="0, 0, 1, 0" />
             <TextBlock Text="{Binding Median}"
-                       Width="80" />
+                       Width="91"
+                       Margin="1, 0, 0, 0" />
         </StackPanel>
     </StackPanel>
 </UserControl>

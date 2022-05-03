@@ -13,44 +13,54 @@
     </UserControl.DataContext>
     
     <UserControl.Resources>
-        <Style TargetType="{x:Type TextBlock}">
-            <Setter Property="Width" Value="100" />
-            <Setter Property="FontSize" Value="16" />
-            <Setter Property="TextWrapping" Value="Wrap" />
-            <Setter Property="TextAlignment" Value="Center" />
-            <Setter Property="HorizontalAlignment" Value="Center" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-        </Style>
-        <Style TargetType="{x:Type StackPanel}">
-            <Setter Property="Margin" Value="3" />
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/StackPanel.xaml"/>
+                <ResourceDictionary Source="Styles/TextBlock.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </UserControl.Resources>
 
-    <StackPanel Margin="7">
+    <StackPanel Margin="8">
         <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Координаты пикселя" />
+            <TextBlock Text="Координаты пикселя"
+                       Width="91"
+                       Margin="0, 0, 1, 0" />
             <TextBlock Text="{Binding Location}"
-                       Width="80" />
+                       Width="91"
+                       Margin="1, 0, 0, 0" />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Красный" />
+            <TextBlock Text="Красный"
+                       Width="91"
+                       Margin="0, 0, 1, 0" />
             <TextBlock Text="{Binding Red}"
-                       Width="80" />
+                       Width="91"
+                       Margin="1, 0, 0, 0" />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Зеленый" />
+            <TextBlock Text="Зеленый"
+                       Width="91"
+                       Margin="0, 0, 1, 0" />
             <TextBlock Text="{Binding Green}"
-                       Width="80" />
+                       Width="91"
+                       Margin="1, 0, 0, 0" />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Синий" />
+            <TextBlock Text="Синий"
+                       Width="91"
+                       Margin="0, 0, 1, 0" />
             <TextBlock Text="{Binding Blue}"
-                       Width="80" />
+                       Width="91"
+                       Margin="1, 0, 0, 0" />
         </StackPanel>
         <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Яркость" />
+            <TextBlock Text="Яркость"
+                       Width="91"
+                       Margin="0, 0, 1, 0" />
             <TextBlock Text="{Binding Intensity}"
-                       Width="80" />
+                       Width="91"
+                       Margin="1, 0, 0, 0" />
         </StackPanel>
     </StackPanel>
 </UserControl>

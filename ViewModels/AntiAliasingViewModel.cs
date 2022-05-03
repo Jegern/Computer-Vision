@@ -15,7 +15,8 @@ public class AntiAliasingViewModel : ViewModel
     private readonly ViewModelStore? _store;
     private BitmapSource? _picture;
     private byte[]? _pictureBytes;
-    private Visibility _antiAliasingVisibility = Visibility.Collapsed;
+    private byte[]? _antiAliasingPictureBytes;
+    private Visibility _visibility = Visibility.Collapsed;
 
     private bool _rectangleFilter3X3;
     private bool _rectangleFilter5X5;
@@ -38,10 +39,20 @@ public class AntiAliasingViewModel : ViewModel
         set => Set(ref _pictureBytes, value);
     }
 
-    public Visibility AntiAliasingVisibility
+    private byte[]? AntiAliasingPictureBytes
     {
-        get => _antiAliasingVisibility;
-        set => Set(ref _antiAliasingVisibility, value);
+        get => _antiAliasingPictureBytes;
+        set
+        {
+            if (Set(ref _antiAliasingPictureBytes, value))
+                _store?.TriggerAntiAliasingPictureBytesEvent(AntiAliasingPictureBytes!);
+        }
+    }
+
+    public Visibility Visibility
+    {
+        get => _visibility;
+        set => Set(ref _visibility, value);
     }
 
     public bool RectangleFilter3X3
@@ -73,7 +84,7 @@ public class AntiAliasingViewModel : ViewModel
         get => _gaussianFilterSigma;
         set => Set(ref _gaussianFilterSigma, value);
     }
-    
+
     public bool SigmaFilter3X3
     {
         get => _sigmaFilter3X3;
@@ -150,7 +161,7 @@ public class AntiAliasingViewModel : ViewModel
 
     private void AntiAliasingCommand_OnExecuted(object? parameter)
     {
-        AntiAliasingVisibility = AntiAliasingVisibility is Visibility.Collapsed
+        Visibility = Visibility is Visibility.Collapsed
             ? Visibility.Visible
             : Visibility.Collapsed;
     }
@@ -162,13 +173,12 @@ public class AntiAliasingViewModel : ViewModel
     public Command? RectangleFilterCommand { get; }
 
     private bool RectangleFilterCommand_CanExecute(object? parameter) =>
-        Picture is not null;
+        Picture is not null &&
+        (RectangleFilter3X3 || RectangleFilter5X5);
 
     private void RectangleFilterCommand_OnExecuted(object? parameter)
     {
-        _store?.TriggerAntiAliasingPictureBytesEvent((byte[]) PictureBytes!.Clone());
-        
-        var originalPictureBytes = (byte[]) PictureBytes!.Clone();
+        AntiAliasingPictureBytes = (byte[]) PictureBytes!.Clone();
         var width = Picture!.PixelWidth;
         var height = Picture!.PixelHeight;
         var side = RectangleFilter3X3 ? 3 : 5;
@@ -186,7 +196,7 @@ public class AntiAliasingViewModel : ViewModel
                 {
                     if (j + x < 0 | j + x >= width) continue;
                     var windowPixelIndex = (y + i) * width * 4 + (x + j) * 4;
-                    var windowPixelIntensity = Tools.GetPixelIntensity(originalPictureBytes, windowPixelIndex);
+                    var windowPixelIntensity = Tools.GetPixelIntensity(AntiAliasingPictureBytes, windowPixelIndex);
                     sum += windowPixelIntensity;
                     counter++;
                 }
@@ -207,13 +217,12 @@ public class AntiAliasingViewModel : ViewModel
     public Command? MedianFilterCommand { get; }
 
     private bool MedianFilterCommand_CanExecute(object? parameter) =>
-        Picture is not null;
+        Picture is not null &&
+        (MedianFilter3X3 || MedianFilter5X5);
 
     private void MedianFilterCommand_OnExecuted(object? parameter)
     {
-        _store?.TriggerAntiAliasingPictureBytesEvent((byte[]) PictureBytes!.Clone());
-        
-        var originalPictureBytes = (byte[]) PictureBytes!.Clone();
+        AntiAliasingPictureBytes = (byte[]) PictureBytes!.Clone();
         var width = Picture!.PixelWidth;
         var height = Picture!.PixelHeight;
         var side = MedianFilter3X3 ? 3 : 5;
@@ -231,7 +240,7 @@ public class AntiAliasingViewModel : ViewModel
                 {
                     if (j + x < 0 | j + x >= width) continue;
                     var windowPixelIndex = (y + i) * width * 4 + (x + j) * 4;
-                    windowPixelList.Add(Tools.GetPixelIntensity(originalPictureBytes, windowPixelIndex));
+                    windowPixelList.Add(Tools.GetPixelIntensity(AntiAliasingPictureBytes, windowPixelIndex));
                 }
             }
 
@@ -257,9 +266,7 @@ public class AntiAliasingViewModel : ViewModel
 
     private void GaussianFilterCommand_OnExecuted(object? parameter)
     {
-        _store?.TriggerAntiAliasingPictureBytesEvent((byte[]) PictureBytes!.Clone());
-        
-        var originalPictureBytes = (byte[]) PictureBytes!.Clone();
+        AntiAliasingPictureBytes = (byte[]) PictureBytes!.Clone();
         var width = Picture!.PixelWidth;
         var height = Picture!.PixelHeight;
         var sigma = (double) GaussianFilterSigma!;
@@ -278,13 +285,13 @@ public class AntiAliasingViewModel : ViewModel
                 {
                     if (j + x < 0 | j + x >= width) continue;
                     var windowPixelIndex = (y + i) * width * 4 + (x + j) * 4;
-                    var windowPixelIntensity = Tools.GetPixelIntensity(originalPictureBytes, windowPixelIndex);
+                    var windowPixelIntensity = Tools.GetPixelIntensity(AntiAliasingPictureBytes, windowPixelIndex);
                     var w = 1 / (Math.Exp((i * i + j * j) / (2 * sigma * sigma)) * (2 * Math.PI * sigma * sigma));
                     sum += w * windowPixelIntensity;
                 }
             }
 
-            var intensity = Tools.GetPixelIntensity(originalPictureBytes, y * width * 4 + x * 4);
+            var intensity = Tools.GetPixelIntensity(AntiAliasingPictureBytes, y * width * 4 + x * 4);
             Tools.SetPixel(
                 Tools.GetPixel(PictureBytes, y * width * 4 + x * 4),
                 Tools.GetGrayPixel((byte) (sum <= 255 ? sum : intensity)));
@@ -299,14 +306,13 @@ public class AntiAliasingViewModel : ViewModel
 
     public Command? SigmaFilterCommand { get; }
 
-    private bool SigmaFilterCommand_CanExecute(object? parameter) => Picture is not null;
+    private bool SigmaFilterCommand_CanExecute(object? parameter) => 
+        Picture is not null &&
+        (SigmaFilter3X3 || SigmaFilter5X5);
 
     private void SigmaFilterCommand_OnExecuted(object? parameter)
     {
-        _store?.TriggerAntiAliasingPictureBytesEvent((byte[]) PictureBytes!.Clone());
-
-        
-        var originalPictureBytes = (byte[]) PictureBytes!.Clone();
+        AntiAliasingPictureBytes = (byte[]) PictureBytes!.Clone();
         var width = Picture!.PixelWidth;
         var height = Picture!.PixelHeight;
         var side = SigmaFilter3X3 ? 3 : 5;
@@ -325,9 +331,9 @@ public class AntiAliasingViewModel : ViewModel
                 {
                     if (j + x < 0 | j + x >= width) continue;
                     var windowPixelIndex = (i + y) * width * 4 + (j + x) * 4;
-                    var windowPixelIntensity = Tools.GetPixelIntensity(originalPictureBytes, windowPixelIndex);
+                    var windowPixelIntensity = Tools.GetPixelIntensity(AntiAliasingPictureBytes, windowPixelIndex);
                     var midPixelIndex = y * width * 4 + x * 4;
-                    var midPixelIntensity = Tools.GetPixelIntensity(originalPictureBytes, midPixelIndex);
+                    var midPixelIntensity = Tools.GetPixelIntensity(AntiAliasingPictureBytes, midPixelIndex);
                     if (Math.Abs(midPixelIntensity - windowPixelIntensity) >= sigma) continue;
                     sum += windowPixelIntensity;
                     counter++;

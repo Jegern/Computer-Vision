@@ -13,7 +13,7 @@ public class ImageManagementViewModel : ViewModel
     private readonly ViewModelStore? _store;
     private BitmapSource? _picture;
     private byte[]? _pictureBytes;
-    private Visibility _imageManagementVisibility = Visibility.Collapsed;
+    private Visibility _visibility = Visibility.Collapsed;
 
     private int _intensity = 127;
     private int _channelCounter;
@@ -38,10 +38,10 @@ public class ImageManagementViewModel : ViewModel
         set => Set(ref _pictureBytes, value);
     }
 
-    public Visibility ImageManagementVisibility
+    public Visibility Visibility
     {
-        get => _imageManagementVisibility;
-        set => Set(ref _imageManagementVisibility, value);
+        get => _visibility;
+        set => Set(ref _visibility, value);
     }
 
     public int Intensity
@@ -184,7 +184,7 @@ public class ImageManagementViewModel : ViewModel
 
     private void ImageManagementCommand_OnExecuted(object? parameter)
     {
-        ImageManagementVisibility = ImageManagementVisibility is Visibility.Collapsed
+        Visibility = Visibility is Visibility.Collapsed
             ? Visibility.Visible
             : Visibility.Collapsed;
     }
