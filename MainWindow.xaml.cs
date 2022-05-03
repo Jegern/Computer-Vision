@@ -20,6 +20,7 @@ namespace Laboratory_work_1
             InitializeMagnifierInfoViewModel(store);
             InitializeImageManagementViewModel(store);
             InitializeChromacityViewModel(store);
+            InitializeAntiAliasingViewModel(store);
         }
 
         private void InitializePixelInfoViewModel(ViewModelStore? store)
@@ -55,6 +56,13 @@ namespace Laboratory_work_1
             var сhromacityViewModel = new ChromacityViewModel(store);
             ChromacityControl.DataContext = сhromacityViewModel;
             ChromacityMenuItem.DataContext = сhromacityViewModel;
+        }
+        
+        private void InitializeAntiAliasingViewModel(ViewModelStore? store)
+        {
+            var antiAliasingViewModel = new AntiAliasingViewModel(store);
+            AntiAliasingControl.DataContext = antiAliasingViewModel;
+            AntiAliasingMenuItem.DataContext = antiAliasingViewModel;
         }
     }
 }

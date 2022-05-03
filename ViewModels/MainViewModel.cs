@@ -18,6 +18,7 @@ public class MainViewModel : ViewModel
     private readonly DialogService _dialogService = new();
     private readonly ViewModelStore? _store;
     private BitmapSource? _picture;
+    private BitmapSource? _originalPicture;
     private byte[]? _pictureBytes;
     private Point _pictureMousePosition;
 
@@ -29,6 +30,12 @@ public class MainViewModel : ViewModel
             if (Set(ref _picture, value))
                 _store?.TriggerPictureEvent(Picture!);
         }
+    }
+
+    private BitmapSource? OriginalPicture
+    {
+        get => _originalPicture;
+        set => Set(ref _originalPicture, value);
     }
 
     private byte[]? PictureBytes
@@ -66,8 +73,15 @@ public class MainViewModel : ViewModel
         store.PictureChanged += Picture_OnChanged;
         _store = store;
 
-        OpenImageCommand = new Command(OpenImageCommand_OnExecuted, OpenImageCommand_CanExecute);
-        SaveImageCommand = new Command(SaveImageCommand_OnExecuted, SaveImageCommand_CanExecute);
+        OpenImageCommand = new Command(
+            OpenImageCommand_OnExecuted, 
+            OpenImageCommand_CanExecute);
+        SaveImageCommand = new Command(
+            SaveImageCommand_OnExecuted, 
+            SaveImageCommand_CanExecute);
+        ReturnOriginalImageCommand = new Command(
+            ReturnOriginalImageCommand_OnExecuted, 
+            ReturnOriginalImageCommand_CanExecute);
         MouseMoveCommand = new Command(MouseMoveCommand_OnExecuted, MouseMoveCommand_CanExecute);
     }
 
@@ -94,6 +108,7 @@ public class MainViewModel : ViewModel
         if (_fileService.Open(_dialogService.FilePath!))
         {
             Picture = _fileService.OpenedImage!;
+            OriginalPicture = Picture.Clone();
             PictureBytes = Tools.GetPixelBytes(Picture);
             Tools.ResizeAndCenterWindow(Application.Current.MainWindow);
         }
@@ -113,6 +128,19 @@ public class MainViewModel : ViewModel
     {
         if (!_dialogService.SaveFileDialog()) return;
         _fileService.Save(_dialogService.FilePath!, Picture!);
+    }
+
+    #endregion
+    
+    #region ReturnOriginalImageCommand
+
+    public Command? ReturnOriginalImageCommand { get; }
+
+    private bool ReturnOriginalImageCommand_CanExecute(object? parameter) => OriginalPicture is not null;
+
+    private void ReturnOriginalImageCommand_OnExecuted(object? parameter)
+    {
+        Picture = OriginalPicture;
     }
 
     #endregion

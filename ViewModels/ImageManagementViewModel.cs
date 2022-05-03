@@ -341,8 +341,8 @@ public class ImageManagementViewModel : ViewModel
                     if (j + x < 0 | j + x >= width) continue;
                     if (!mask[i + 1, j + 1]) continue;
                     var windowPixelIndex = (y + i) * width * 4 + (x + j) * 4;
-                    var windowPixel = Tools.GetPixelIntensity(originalPictureBytes, windowPixelIndex);
-                    sum += windowPixel;
+                    var windowPixelIntensity = Tools.GetPixelIntensity(originalPictureBytes, windowPixelIndex);
+                    sum += windowPixelIntensity;
                     counter++;
                 }
             }

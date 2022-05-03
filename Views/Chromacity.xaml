@@ -43,7 +43,8 @@
                 Text="{Binding BinaryThreshold, 
                                 UpdateSourceTrigger=PropertyChanged}"
                 MaxLength="3"
-                Tag="Пороговый уровень" />
+                Tag="Пороговый уровень"
+                Margin="0, 0, 0, 2" />
             <Button Command="{Binding BinaryTransformationCommand}">
                 <TextBlock Text="Бинарное преобразование" />
             </Button>
