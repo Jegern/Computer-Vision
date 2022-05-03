@@ -94,6 +94,13 @@
                         <viewModel:AntiAliasingViewModel />
                     </MenuItem.DataContext>
                 </MenuItem>
+                <MenuItem x:Name="SoftMaskingMenuItem"
+                          Header="Маскирование"
+                          Command="{Binding SoftMaskingCommand}">
+                    <MenuItem.DataContext>
+                        <viewModel:SoftMaskingViewModel />
+                    </MenuItem.DataContext>
+                </MenuItem>
             </MenuItem>
         </Menu>
 
@@ -152,6 +159,13 @@
                         <viewModel:AntiAliasingViewModel />
                     </view:AntiAliasing.DataContext>
                 </view:AntiAliasing>
+                
+                <view:SoftMasking x:Name="SoftMaskingControl"
+                                  Visibility="{Binding SoftMaskingVisibility}">
+                    <view:SoftMasking.DataContext>
+                        <viewModel:SoftMaskingViewModel />
+                    </view:SoftMasking.DataContext>
+                </view:SoftMasking>
             </StackPanel>
         </StackPanel>
     </StackPanel>

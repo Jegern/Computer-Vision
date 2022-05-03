@@ -82,7 +82,9 @@ public class MainViewModel : ViewModel
         ReturnOriginalImageCommand = new Command(
             ReturnOriginalImageCommand_OnExecuted, 
             ReturnOriginalImageCommand_CanExecute);
-        MouseMoveCommand = new Command(MouseMoveCommand_OnExecuted, MouseMoveCommand_CanExecute);
+        MouseMoveCommand = new Command(
+            MouseMoveCommand_OnExecuted, 
+            MouseMoveCommand_CanExecute);
     }
 
     #region Event Subscription

@@ -8,6 +8,7 @@ public class ViewModelStore
 {
     public event Action<BitmapSource>? PictureChanged;
     public event Action<byte[]>? PictureBytesChanged;
+    public event Action<byte[]>? AntiAliasingPictureBytesChanged;
     public event Action<Point>? MousePositionChanged;
     public event Action<Visibility>? MagnifierVisibilityChanged;
     public event Action<BitmapSource?>? MagnifierWindowChanged;
@@ -23,6 +24,7 @@ public class ViewModelStore
         PictureChanged?.Invoke(Tools.CreateImage(source, bytes));
     }
 
+    public void TriggerAntiAliasingPictureBytesEvent(byte[] bytes) => AntiAliasingPictureBytesChanged?.Invoke(bytes);
     public void TriggerMousePositionEvent(Point point) => MousePositionChanged?.Invoke(point);
     public void TriggerMagnifierVisibility(Visibility visibility) => MagnifierVisibilityChanged?.Invoke(visibility);
     public void TriggerMagnifierWindowEvent(BitmapSource? source) => MagnifierWindowChanged?.Invoke(source);

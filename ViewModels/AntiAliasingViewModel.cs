@@ -166,6 +166,8 @@ public class AntiAliasingViewModel : ViewModel
 
     private void RectangleFilterCommand_OnExecuted(object? parameter)
     {
+        _store?.TriggerAntiAliasingPictureBytesEvent((byte[]) PictureBytes!.Clone());
+        
         var originalPictureBytes = (byte[]) PictureBytes!.Clone();
         var width = Picture!.PixelWidth;
         var height = Picture!.PixelHeight;
@@ -209,6 +211,8 @@ public class AntiAliasingViewModel : ViewModel
 
     private void MedianFilterCommand_OnExecuted(object? parameter)
     {
+        _store?.TriggerAntiAliasingPictureBytesEvent((byte[]) PictureBytes!.Clone());
+        
         var originalPictureBytes = (byte[]) PictureBytes!.Clone();
         var width = Picture!.PixelWidth;
         var height = Picture!.PixelHeight;
@@ -253,6 +257,8 @@ public class AntiAliasingViewModel : ViewModel
 
     private void GaussianFilterCommand_OnExecuted(object? parameter)
     {
+        _store?.TriggerAntiAliasingPictureBytesEvent((byte[]) PictureBytes!.Clone());
+        
         var originalPictureBytes = (byte[]) PictureBytes!.Clone();
         var width = Picture!.PixelWidth;
         var height = Picture!.PixelHeight;
@@ -297,6 +303,9 @@ public class AntiAliasingViewModel : ViewModel
 
     private void SigmaFilterCommand_OnExecuted(object? parameter)
     {
+        _store?.TriggerAntiAliasingPictureBytesEvent((byte[]) PictureBytes!.Clone());
+
+        
         var originalPictureBytes = (byte[]) PictureBytes!.Clone();
         var width = Picture!.PixelWidth;
         var height = Picture!.PixelHeight;
