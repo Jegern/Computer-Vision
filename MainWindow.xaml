@@ -70,6 +70,13 @@
                         <viewModel:ImageManagementViewModel />
                     </MenuItem.DataContext>
                 </MenuItem>
+                <MenuItem x:Name="ChromacityMenuItem"
+                          Header="Цветность"
+                          Command="{Binding ChromacityCommand}">
+                    <MenuItem.DataContext>
+                        <viewModel:ChromacityViewModel />
+                    </MenuItem.DataContext>
+                </MenuItem>
             </MenuItem>
         </Menu>
 
@@ -111,6 +118,12 @@
                         <viewModel:ImageManagementViewModel />
                     </view:ImageManagement.DataContext>
                 </view:ImageManagement>
+                <view:Chromacity x:Name="ChromacityControl"
+                                 Visibility="{Binding ChromacityVisibility}">
+                    <view:Chromacity.DataContext>
+                        <viewModel:ChromacityViewModel />
+                    </view:Chromacity.DataContext>
+                </view:Chromacity>
             </StackPanel>
         </StackPanel>
     </StackPanel>

@@ -88,7 +88,7 @@ public static class Tools
             width * 4);
     }
 
-    public static double GetPixelIntensivity(byte[] bytes, int index) =>
+    public static double GetPixelIntensity(byte[] bytes, int index = 0) =>
         (bytes[index] + bytes[index + 1] + bytes[index + 2]) / 3.0;
 
 

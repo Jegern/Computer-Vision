@@ -38,7 +38,7 @@
     <StackPanel Margin="3">
         <StackPanel>
             <TextBlock Text="Яркость" />
-            <Slider Value="{Binding Intensivity}">
+            <Slider Value="{Binding Intensity}">
                 <behaviours:Interaction.Triggers>
                     <behaviours:EventTrigger EventName="ValueChanged">
                         <behaviours:InvokeCommandAction Command="{Binding ValueChangedCommand}"

@@ -96,13 +96,13 @@ public class MagnifierInfoViewModel : ViewModel
     }
     
     /// <summary>
-    /// The sum of the intensivity of all pixels divided by the number of pixels
+    /// The sum of the intensity of all pixels divided by the number of pixels
     /// </summary>
     private static double GetMagnifierMean(byte[] bytes, int length)
     {
         var intesivitySum = 0d;
         for (var i = 0; i < length; i++)
-            intesivitySum += Tools.GetPixelIntensivity(bytes, i * 4);
+            intesivitySum += Tools.GetPixelIntensity(bytes, i * 4);
         return Math.Round(intesivitySum / length, 3);
     }
     
@@ -115,19 +115,19 @@ public class MagnifierInfoViewModel : ViewModel
         var magnifierMean = GetMagnifierMean(bytes, length);
         var differenceSquareSum = 0d;
         for (var i = 0; i < length; i++)
-            differenceSquareSum += Math.Pow(Tools.GetPixelIntensivity(bytes, i * 4) - magnifierMean, 2);
+            differenceSquareSum += Math.Pow(Tools.GetPixelIntensity(bytes, i * 4) - magnifierMean, 2);
         return Math.Round(Math.Sqrt(differenceSquareSum / length), 3);
     }
     
     /// <summary>
-    /// The median of the intensivity of all pixels
+    /// The median of the intensity of all pixels
     /// </summary>
     private static double GetMagnifierMedian(byte[] bytes, int length)
     {
-        var intensivityList = new List<double>();
+        var intensityList = new List<double>();
         for (var i = 0; i < length; i += 4)
-            intensivityList.Add(Tools.GetPixelIntensivity(bytes, i * 4));
-        return Math.Round(Tools.GetMedianFromList(intensivityList), 3);
+            intensityList.Add(Tools.GetPixelIntensity(bytes, i * 4));
+        return Math.Round(Tools.GetMedianFromList(intensityList), 3);
     }
 
     #endregion

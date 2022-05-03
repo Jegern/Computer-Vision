@@ -15,7 +15,7 @@ public class ImageManagementViewModel : ViewModel
     private byte[]? _pictureBytes;
     private Visibility _imageManagementVisibility = Visibility.Collapsed;
 
-    private int _intensivity = 127;
+    private int _intensity = 127;
     private int _channelCounter;
     private bool _redChecked;
     private bool _greenChecked;
@@ -44,10 +44,10 @@ public class ImageManagementViewModel : ViewModel
         set => Set(ref _imageManagementVisibility, value);
     }
 
-    public int Intensivity
+    public int Intensity
     {
-        get => _intensivity;
-        set => Set(ref _intensivity, value);
+        get => _intensity;
+        set => Set(ref _intensity, value);
     }
 
     private int ChannelCounter
@@ -230,7 +230,7 @@ public class ImageManagementViewModel : ViewModel
         for (var i = 0; i < PictureBytes!.Length; i += 4)
             Tools.SetPixel(
                 Tools.GetPixel(PictureBytes, i),
-                Tools.GetGrayPixel((byte) Tools.GetPixelIntensivity(PictureBytes, i)));
+                Tools.GetGrayPixel((byte) Tools.GetPixelIntensity(PictureBytes, i)));
         
         _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
@@ -341,7 +341,7 @@ public class ImageManagementViewModel : ViewModel
                     if (j + x < 0 | j + x >= width) continue;
                     if (!mask[i + 1, j + 1]) continue;
                     var windowPixelIndex = (y + i) * width * 4 + (x + j) * 4;
-                    var windowPixel = Tools.GetPixelIntensivity(originalPictureBytes, windowPixelIndex);
+                    var windowPixel = Tools.GetPixelIntensity(originalPictureBytes, windowPixelIndex);
                     sum += windowPixel;
                     counter++;
                 }

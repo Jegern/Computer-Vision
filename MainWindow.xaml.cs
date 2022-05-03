@@ -19,6 +19,7 @@ namespace Laboratory_work_1
             InitializeMagnifierViewModel(store);
             InitializeMagnifierInfoViewModel(store);
             InitializeImageManagementViewModel(store);
+            InitializeChromacityViewModel(store);
         }
 
         private void InitializePixelInfoViewModel(ViewModelStore? store)
@@ -47,6 +48,13 @@ namespace Laboratory_work_1
             var imageManagementViewModel = new ImageManagementViewModel(store);
             ImageManagementControl.DataContext = imageManagementViewModel;
             ImageManagementMenuItem.DataContext = imageManagementViewModel;
+        }
+        
+        private void InitializeChromacityViewModel(ViewModelStore? store)
+        {
+            var сhromacityViewModel = new ChromacityViewModel(store);
+            ChromacityControl.DataContext = сhromacityViewModel;
+            ChromacityMenuItem.DataContext = сhromacityViewModel;
         }
     }
 }

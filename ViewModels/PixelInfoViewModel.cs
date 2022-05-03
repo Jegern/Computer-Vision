@@ -16,7 +16,7 @@ public class PixelInfoViewModel : ViewModel
     private byte _red;
     private byte _green;
     private byte _blue;
-    private byte _intensivity;
+    private byte _intensity;
     
     private BitmapSource? Picture
     {
@@ -54,10 +54,10 @@ public class PixelInfoViewModel : ViewModel
         set => Set(ref _blue, value);
     }
 
-    public byte Intensivity
+    public byte Intensity
     {
-        get => _intensivity;
-        set => Set(ref _intensivity, value);
+        get => _intensity;
+        set => Set(ref _intensity, value);
     }
 
     #endregion
@@ -101,7 +101,7 @@ public class PixelInfoViewModel : ViewModel
         Red = pixelColor.R;
         Green = pixelColor.G;
         Blue = pixelColor.B;
-        Intensivity = (byte) ((pixelColor.R + pixelColor.G + pixelColor.B) / 3);
+        Intensity = (byte) ((pixelColor.R + pixelColor.G + pixelColor.B) / 3);
     }
 
     #endregion

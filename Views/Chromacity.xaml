@@ -1,0 +1,95 @@
+<UserControl x:Class="Laboratory_work_1.Views.Chromacity"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewModel="clr-namespace:Laboratory_work_1.ViewModels"
+             mc:Ignorable="d"
+
+             Width="200" Height="Auto">
+
+    <UserControl.DataContext>
+        <viewModel:ChromacityViewModel />
+    </UserControl.DataContext>
+
+    <UserControl.Resources>
+        <Style TargetType="{x:Type TextBlock}">
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="TextAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+        <Style TargetType="{x:Type TextBox}">
+            <Setter Property="Height" Value="40" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="VerticalAlignment" Value="Stretch" />
+            <Setter Property="HorizontalAlignment" Value="Stretch" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="HorizontalContentAlignment" Value="Center" />
+        </Style>
+        <Style TargetType="{x:Type StackPanel}">
+            <Setter Property="Margin" Value="5" />
+        </Style>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="MinHeight" Value="40" />
+            <Setter Property="FontSize" Value="16" />
+        </Style>
+    </UserControl.Resources>
+
+    <StackPanel Margin="3">
+        <StackPanel>
+            <TextBox
+                Text="{Binding BinaryThreshold, 
+                                UpdateSourceTrigger=PropertyChanged}"
+                MaxLength="3"
+                Tag="Пороговый уровень" />
+            <Button Command="{Binding BinaryTransformationCommand}">
+                <TextBlock Text="Бинарное преобразование" />
+            </Button>
+        </StackPanel>
+
+        <StackPanel>
+            <StackPanel Orientation="Horizontal"
+                        Margin="0, 0, 0, 1">
+                <TextBox
+                    Text="{Binding CutStart, 
+                                UpdateSourceTrigger=PropertyChanged}"
+                    MaxLength="3"
+                    Tag="Начало"
+                    Width="91"
+                    Margin="0, 0, 1, 2" />
+                <TextBox Text="{Binding CutEnd, 
+                                UpdateSourceTrigger=PropertyChanged}"
+                         MaxLength="3"
+                         Tag="Конец"
+                         Width="91"
+                         Margin="1, 0, 0, 2" />
+            </StackPanel>
+            <Button Command="{Binding IntensityRangeCutCommand}">
+                <TextBlock Text="Вырезание диапазона яркости" />
+            </Button>
+        </StackPanel>
+
+        <StackPanel>
+            <TextBox Text="{Binding BinaryFlat, 
+                                UpdateSourceTrigger=PropertyChanged}"
+                     MaxLength="1"
+                     Tag="Номер бита"
+                     Margin="0, 0, 0, 2" />
+            <Button Command="{Binding BinaryFlatCutCommand}">
+                <TextBlock Text="Вырезание битовой плоскости" />
+            </Button>
+        </StackPanel>
+
+        <Button Command="{Binding LogarithmicTransformationCommand}"
+                Margin="5">
+            <TextBlock Text="Логарифмическое преобразование" />
+        </Button>
+
+        <Button Command="{Binding PowerTransformationCommand}"
+                Margin="5">
+            <TextBlock Text="Степенное преобразование" />
+        </Button>
+    </StackPanel>
+</UserControl>
