@@ -31,7 +31,7 @@
         <Border BorderBrush="Black"
                 BorderThickness="1"
                 Width="184" Height="184"
-                Margin="5">
+                Margin="5, 5, 5, 1">
             <Image Source="{Binding Window}"
                    SnapsToDevicePixels="True"
                    RenderOptions.BitmapScalingMode="NearestNeighbor" />
@@ -39,6 +39,6 @@
         <TextBox Text="{Binding Size, 
                                 UpdateSourceTrigger=PropertyChanged}"
                  MaxLength="2" 
-                 Margin="5" />
+                 Margin="5, 1, 5, 5" />
     </StackPanel>
 </UserControl>

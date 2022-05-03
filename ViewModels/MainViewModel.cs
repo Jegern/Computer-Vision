@@ -18,6 +18,7 @@ public class MainViewModel : ViewModel
     private readonly DialogService _dialogService = new();
     private readonly ViewModelStore? _store;
     private BitmapSource? _picture;
+    private byte[]? _pictureBytes;
     private Point _pictureMousePosition;
 
     public BitmapSource? Picture
@@ -26,16 +27,26 @@ public class MainViewModel : ViewModel
         set
         {
             if (Set(ref _picture, value))
-                _store?.TriggerPictureEvent(_picture);
+                _store?.TriggerPictureEvent(Picture!);
+        }
+    }
+
+    private byte[]? PictureBytes
+    {
+        set
+        {
+            if (Set(ref _pictureBytes, value) && Picture is not null)
+                _store?.TriggerPictureBytesEvent(Picture);
         }
     }
 
     private Point PictureMousePosition
     {
+        get => _pictureMousePosition;
         set
         {
             if (Set(ref _pictureMousePosition, value))
-                _store?.TriggerMousePositionEvent(_pictureMousePosition);
+                _store?.TriggerMousePositionEvent(PictureMousePosition);
         }
     }
 
@@ -59,12 +70,12 @@ public class MainViewModel : ViewModel
         SaveImageCommand = new Command(SaveImageCommand_OnExecuted, SaveImageCommand_CanExecute);
         MouseMoveCommand = new Command(MouseMoveCommand_OnExecuted, MouseMoveCommand_CanExecute);
     }
-    
+
     #region Event Subscription
 
-    private void Picture_OnChanged(BitmapSource? picture)
+    private void Picture_OnChanged(BitmapSource source)
     {
-        Picture = picture;
+        Picture = source;
     }
 
     #endregion
@@ -82,7 +93,8 @@ public class MainViewModel : ViewModel
         if (!_dialogService.OpenFileDialog()) return;
         if (_fileService.Open(_dialogService.FilePath!))
         {
-            Picture = _fileService.OpenedImage;
+            Picture = _fileService.OpenedImage!;
+            PictureBytes = Tools.GetPixelBytes(Picture);
             Tools.ResizeAndCenterWindow(Application.Current.MainWindow);
         }
         else

@@ -29,15 +29,13 @@ public class ImageManagementViewModel : ViewModel
     private BitmapSource? Picture
     {
         get => _picture;
-        set
-        {
-            if (!Set(ref _picture, value)) return;
-            _store?.TriggerPictureEvent(_picture);
-            if (_picture is not null)
-                _pictureBytes = _pictureBytes is null
-                    ? Tools.GetPixelBytes(_picture)
-                    : Tools.GetPixelBytes(_picture, _pictureBytes);
-        }
+        set => Set(ref _picture, value);
+    }
+
+    private byte[]? PictureBytes
+    {
+        get => _pictureBytes;
+        set => Set(ref _pictureBytes, value);
     }
 
     public Visibility ImageManagementVisibility
@@ -150,6 +148,7 @@ public class ImageManagementViewModel : ViewModel
         if (store is null) return;
 
         store.PictureChanged += Picture_OnChanged;
+        store.PictureBytesChanged += PictureBytes_OnChanged;
         _store = store;
 
         ImageManagementCommand = new Command(ImageManagementCommand_OnExecuted, ImageManagementCommand_CanExecute);
@@ -163,9 +162,14 @@ public class ImageManagementViewModel : ViewModel
 
     #region Event Subscription
 
-    private void Picture_OnChanged(BitmapSource? picture)
+    private void Picture_OnChanged(BitmapSource? source)
     {
-        Picture = picture;
+        Picture = source;
+    }
+
+    private void PictureBytes_OnChanged(byte[] bytes)
+    {
+        PictureBytes = bytes;
     }
 
     #endregion
@@ -199,19 +203,18 @@ public class ImageManagementViewModel : ViewModel
         if (e.OldValue - e.NewValue == 0) return;
 
         var difference = e.OldValue - e.NewValue;
-        var pictureBytes = Tools.GetPixelBytes(Picture!, _pictureBytes);
 
-        for (var i = 0; i < pictureBytes.Length; i += 4)
+        for (var i = 0; i < PictureBytes!.Length; i += 4)
         {
-            if (0 <= pictureBytes[i + 0] + difference && pictureBytes[i + 0] + difference <= 255)
-                pictureBytes[i + 0] = (byte)(pictureBytes[i + 0] + difference);
-            if (0 <= pictureBytes[i + 1] + difference && pictureBytes[i + 1] + difference <= 255)
-                pictureBytes[i + 1] = (byte)(pictureBytes[i + 1] + difference);
-            if (0 <= pictureBytes[i + 2] + difference && pictureBytes[i + 2] + difference <= 255)
-                pictureBytes[i + 2] = (byte)(pictureBytes[i + 2] + difference);
+            if (0 <= PictureBytes[i + 0] + difference && PictureBytes[i + 0] + difference <= 255)
+                PictureBytes[i + 0] = (byte)(PictureBytes[i + 0] + difference);
+            if (0 <= PictureBytes[i + 1] + difference && PictureBytes[i + 1] + difference <= 255)
+                PictureBytes[i + 1] = (byte)(PictureBytes[i + 1] + difference);
+            if (0 <= PictureBytes[i + 2] + difference && PictureBytes[i + 2] + difference <= 255)
+                PictureBytes[i + 2] = (byte)(PictureBytes[i + 2] + difference);
         }
 
-        Picture = Tools.CreateImage(Picture!, pictureBytes);
+        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 
     #endregion
@@ -224,12 +227,12 @@ public class ImageManagementViewModel : ViewModel
 
     private void BleachCommand_OnExecuted(object? parameter)
     {
-        var pictureBytes = Tools.GetPixelBytes(Picture!, _pictureBytes);
-        for (var i = 0; i < pictureBytes.Length; i += 4)
+        for (var i = 0; i < PictureBytes!.Length; i += 4)
             Tools.SetPixel(
-                Tools.GetPixel(pictureBytes, i),
-                Tools.GetGrayPixel((byte) Tools.GetPixelIntensivity(pictureBytes, i)));
-        Picture = Tools.CreateImage(Picture!, pictureBytes);
+                Tools.GetPixel(PictureBytes, i),
+                Tools.GetGrayPixel((byte) Tools.GetPixelIntensivity(PictureBytes, i)));
+        
+        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 
     #endregion
@@ -242,15 +245,14 @@ public class ImageManagementViewModel : ViewModel
 
     private void NegativeCommand_OnExecuted(object? parameter)
     {
-        var pictureBytes = Tools.GetPixelBytes(Picture!, _pictureBytes);
-        for (var i = 0; i < pictureBytes.Length; i += 4)
+        for (var i = 0; i < PictureBytes!.Length; i += 4)
         {
-            pictureBytes[i + 0] = (byte) (255 - pictureBytes[i + 0]);
-            pictureBytes[i + 1] = (byte) (255 - pictureBytes[i + 1]);
-            pictureBytes[i + 2] = (byte) (255 - pictureBytes[i + 2]);
+            PictureBytes[i + 0] = (byte) (255 - PictureBytes[i + 0]);
+            PictureBytes[i + 1] = (byte) (255 - PictureBytes[i + 1]);
+            PictureBytes[i + 2] = (byte) (255 - PictureBytes[i + 2]);
         }
 
-        Picture = Tools.CreateImage(Picture!, pictureBytes);
+        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 
     #endregion
@@ -263,13 +265,13 @@ public class ImageManagementViewModel : ViewModel
 
     private void SwapCommand_OnExecuted(object? parameter)
     {
-        var pictureBytes = Tools.GetPixelBytes(Picture!, _pictureBytes);
         var firstChannel = RedChecked ? 2 : 1;
         var secondChannel = BlueChecked ? 0 : 1;
 
-        for (var i = 0; i < pictureBytes.Length; i += 4)
-            Tools.Swap(ref pictureBytes[i + firstChannel], ref pictureBytes[i + secondChannel]);
-        Picture = Tools.CreateImage(Picture!, pictureBytes);
+        for (var i = 0; i < PictureBytes!.Length; i += 4)
+            Tools.Swap(ref PictureBytes[i + firstChannel], ref PictureBytes[i + secondChannel]);
+        
+        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 
     #endregion
@@ -284,7 +286,6 @@ public class ImageManagementViewModel : ViewModel
 
     private void SymmetryCommand_OnExecuted(object? parameter)
     {
-        var pictureBytes = Tools.GetPixelBytes(Picture!, _pictureBytes);
         var width = Picture!.PixelWidth;
         var height = Picture!.PixelHeight;
 
@@ -292,17 +293,17 @@ public class ImageManagementViewModel : ViewModel
             for (var i = 0; i < height / 2; i++)
             for (var j = 0; j < width; j++)
                 Tools.SwapPixels(
-                    Tools.GetPixel(pictureBytes, i * width * 4 + j * 4),
-                    Tools.GetPixel(pictureBytes, (height - 1 - i) * width * 4 + j * 4));
+                    Tools.GetPixel(PictureBytes!, i * width * 4 + j * 4),
+                    Tools.GetPixel(PictureBytes!, (height - 1 - i) * width * 4 + j * 4));
 
         if (VerticalChecked)
             for (var i = 0; i < height; i++)
             for (var j = 0; j < width / 2; j++)
                 Tools.SwapPixels(
-                    Tools.GetPixel(pictureBytes, i * width * 4 + j * 4),
-                    Tools.GetPixel(pictureBytes, i * width * 4 + (width - j - 1) * 4));
+                    Tools.GetPixel(PictureBytes!, i * width * 4 + j * 4),
+                    Tools.GetPixel(PictureBytes!, i * width * 4 + (width - j - 1) * 4));
 
-        Picture = Tools.CreateImage(Picture!, pictureBytes);
+        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 
     #endregion
@@ -317,8 +318,7 @@ public class ImageManagementViewModel : ViewModel
 
     private void VanishCommand_OnExecuted(object? parameter)
     {
-        var pictureBytes = Tools.GetPixelBytes(Picture!, _pictureBytes);
-        var originalPictureBytes = (byte[]) pictureBytes.Clone();
+        var originalPictureBytes = (byte[]) PictureBytes!.Clone();
         var width = Picture!.PixelWidth;
         var height = Picture!.PixelHeight;
         var mask = HorizontalVerticalChecked switch
@@ -348,11 +348,11 @@ public class ImageManagementViewModel : ViewModel
             }
 
             Tools.SetPixel(
-                Tools.GetPixel(pictureBytes, y * width * 4 + x * 4),
+                Tools.GetPixel(PictureBytes, y * width * 4 + x * 4),
                 Tools.GetGrayPixel((byte) (sum / counter)));
         }
 
-        Picture = Tools.CreateImage(Picture!, pictureBytes);
+        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 
     #endregion

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Laboratory_work_1.ViewModels.Base;
 
 namespace Laboratory_work_1;
 
@@ -18,15 +19,14 @@ public static class Tools
         window.Left = (SystemParameters.WorkArea.Width - window.Width) / 2;
     }
 
-    public static Color GetPixelColor(BitmapSource? source, Point? position)
+    public static Color GetPixelColor(BitmapSource? source, Point position)
     {
         if (source is null) throw new ArgumentNullException(nameof(source));
-        if (position is null) throw new ArgumentNullException(nameof(position));
 
         var bytes = GetPixelBytes(
             source,
-            (int) position.Value.X,
-            (int) position.Value.Y,
+            (int) position.X,
+            (int) position.Y,
             1,
             1);
         return Color.FromRgb(bytes[2], bytes[1], bytes[0]);
@@ -41,7 +41,7 @@ public static class Tools
         source.CopyPixels(new Int32Rect(0, 0, width, height), pixels, stride, 0);
         return pixels;
     }
-    
+
     public static byte[] GetPixelBytes(BitmapSource source, byte[] pixels)
     {
         var width = source.PixelWidth;
@@ -59,13 +59,24 @@ public static class Tools
         return pixels;
     }
 
-    public static BitmapSource CreateImage(BitmapSource source, byte[] pixels, int width = 0, int height = 0)
+    public static BitmapSource CreateImage(BitmapSource source, byte[] pixels)
     {
-        if (width == 0)
-            width = source.PixelWidth;
-        if (height == 0)
-            height = source.PixelHeight;
+        var width = source.PixelWidth;
+        var height = source.PixelHeight;
 
+        return BitmapSource.Create(
+            width,
+            height,
+            source.DpiX,
+            source.DpiY,
+            source.Format,
+            source.Palette,
+            pixels,
+            width * 4);
+    }
+
+    public static BitmapSource CreateImage(BitmapSource source, byte[] pixels, int width, int height)
+    {
         return BitmapSource.Create(
             width,
             height,
@@ -93,6 +104,7 @@ public static class Tools
 
     private static readonly byte[] GrayPixel = new byte[3];
 
+    // public static byte[] GetGrayPixel(byte value) => new[] {value, value, value};
     public static byte[] GetGrayPixel(byte value)
     {
         GrayPixel[0] = value;
@@ -101,7 +113,6 @@ public static class Tools
         return GrayPixel;
     }
 
-    // public static byte[] GetGrayPixel(byte value) => new[] {value, value, value};
 
     public static void SetPixel(ArraySegment<byte> left, IReadOnlyList<byte> right)
     {

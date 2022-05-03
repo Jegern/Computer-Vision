@@ -25,7 +25,7 @@
             <Setter Property="Margin" Value="5" />
         </Style>
         <Style TargetType="{x:Type Button}">
-            <Setter Property="Height" Value="40" />
+            <Setter Property="MinHeight" Value="40" />
             <Setter Property="FontSize" Value="16" />
         </Style>
         <Style TargetType="{x:Type Slider}">
