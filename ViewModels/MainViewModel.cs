@@ -143,6 +143,7 @@ public class MainViewModel : ViewModel
     private void ReturnOriginalImageCommand_OnExecuted(object? parameter)
     {
         Picture = OriginalPicture;
+        PictureBytes = Tools.GetPixelBytes(OriginalPicture!);
     }
 
     #endregion
