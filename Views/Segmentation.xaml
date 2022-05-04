@@ -16,7 +16,6 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Styles/Button.xaml" />
-                <ResourceDictionary Source="Styles/RadioButton.xaml"/>
                 <ResourceDictionary Source="Styles/StackPanel.xaml" />
                 <ResourceDictionary Source="Styles/TextBox.xaml" />
             </ResourceDictionary.MergedDictionaries>
@@ -25,18 +24,26 @@
 
     <StackPanel Margin="3">
         <StackPanel>
-            <StackPanel>
-                <RadioButton Content="P-tile"
-                             IsChecked="{Binding PTileChecked}" />
-                <RadioButton Content="Приближения"
-                             IsChecked="{Binding ApproximationsChecked}" />
-                <RadioButton Content="k-средних"
-                             IsChecked="{Binding KMeansChecked}" />
-                <RadioButton Content="Пики гистограммы"
-                             IsChecked="{Binding HistogramPeaksChecked}" />
-            </StackPanel>
-            <Button Content="Пороговый метод"
-                    Command="{Binding ThresholdMethodCommand}" />
+            <TextBox Text="{Binding AreaPercentage, UpdateSourceTrigger=PropertyChanged}"
+                     MaxLength="2"
+                     Tag="Процент площади"
+                     Margin="0, 0, 0, 2" />
+            <Button Content="P-Tile"
+                    Command="{Binding PTileCommand}" />
+        </StackPanel>
+        
+        <StackPanel>
+            <Button Content="Зависимость от гистограммы"
+                    Command="{Binding HistogramDependentCommand}" />
+        </StackPanel>
+        
+        <StackPanel>
+            <TextBox Text="{Binding KNeighbours, UpdateSourceTrigger=PropertyChanged}"
+                     MaxLength="2"
+                     Tag="Количество соседей"
+                     Margin="0, 0, 0, 2" />
+            <Button Content="K-средних"
+                    Command="{Binding KMeansCommand}" />
         </StackPanel>
     </StackPanel>
 </UserControl>

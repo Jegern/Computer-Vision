@@ -62,12 +62,14 @@
                     Command="{Binding SobelOperatorCommand}" />
         </StackPanel>
 
-        <Button Content="LoG-фильтр"
-                Command="{Binding LogOperatorCommand}"
-                Margin="5" />
+        <StackPanel>
+            <Button Content="LoG-фильтр"
+                    Command="{Binding LogOperatorCommand}" />
+        </StackPanel>
 
-        <Button Content="DoG-фильтр"
-                Command="{Binding DogOperatorCommand}"
-                Margin="5" />
+        <StackPanel>
+            <Button Content="DoG-фильтр"
+                    Command="{Binding DogOperatorCommand}" />
+        </StackPanel>
     </StackPanel>
 </UserControl>

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Laboratory_work_1.Commands.Base;
@@ -16,10 +17,8 @@ public class SegmentationViewModel : ViewModel
     private byte[]? _pictureBytes;
     private Visibility _visibility = Visibility.Collapsed;
 
-    private bool _pTileChecked;
-    private bool _approximationsChecked;
-    private bool _kMeansChecked;
-    private bool _histogramPeaksChecked;
+    private int? _areaPercentage;
+    private int? _kNeighbours;
 
     private BitmapSource? Picture
     {
@@ -30,8 +29,15 @@ public class SegmentationViewModel : ViewModel
     private byte[]? PictureBytes
     {
         get => _pictureBytes;
-        set => Set(ref _pictureBytes, value);
+        set
+        {
+            if (!Set(ref _pictureBytes, value)) return;
+            for (var i = 0; i < PictureBytes!.Length; i += 4)
+                Histogram[(byte) Tools.GetPixelIntensity(PictureBytes, i)]++;
+        }
     }
+
+    private static int[] Histogram { get; } = new int[256];
 
     public Visibility Visibility
     {
@@ -39,28 +45,16 @@ public class SegmentationViewModel : ViewModel
         set => Set(ref _visibility, value);
     }
 
-    public bool PTileChecked
+    public int? AreaPercentage
     {
-        get => _pTileChecked;
-        set => Set(ref _pTileChecked, value);
+        get => _areaPercentage;
+        set => Set(ref _areaPercentage, value);
     }
-
-    public bool ApproximationsChecked
+    
+    public int? KNeighbours
     {
-        get => _approximationsChecked;
-        set => Set(ref _approximationsChecked, value);
-    }
-
-    public bool KMeansChecked
-    {
-        get => _kMeansChecked;
-        set => Set(ref _kMeansChecked, value);
-    }
-
-    public bool HistogramPeaksChecked
-    {
-        get => _histogramPeaksChecked;
-        set => Set(ref _histogramPeaksChecked, value);
+        get => _kNeighbours;
+        set => Set(ref _kNeighbours, value);
     }
 
     #endregion
@@ -83,9 +77,15 @@ public class SegmentationViewModel : ViewModel
         SegmentationCommand = new Command(
             SegmentationCommand_OnExecuted,
             SegmentationCommand_CanExecute);
-        ThresholdMethodCommand = new Command(
-            ThresholdMethodCommand_OnExecuted,
-            ThresholdMethodCommand_CanExecute);
+        PTileCommand = new Command(
+            PTileCommand_OnExecuted,
+            PTileCommand_CanExecute);
+        HistogramDependentCommand = new Command(
+            HistogramDependentCommand_OnExecuted,
+            HistogramDependentCommand_CanExecute);
+        KMeansCommand = new Command(
+            KMeansCommand_OnExecuted,
+            KMeansCommand_CanExecute);
     }
 
     #region Event Subscription
@@ -119,30 +119,25 @@ public class SegmentationViewModel : ViewModel
 
     #endregion
 
-    #region ThresholdMethodCommand
+    #region PTileCommand
 
-    public Command? ThresholdMethodCommand { get; }
+    public Command? PTileCommand { get; }
 
-    private bool ThresholdMethodCommand_CanExecute(object? parameter) => Picture is not null;
+    private bool PTileCommand_CanExecute(object? parameter) =>
+        Picture is not null &&
+        AreaPercentage is not null;
 
-    private void ThresholdMethodCommand_OnExecuted(object? parameter)
+    private void PTileCommand_OnExecuted(object? parameter)
     {
-        var histogram = new int[256];
-        for (var i = 0; i < PictureBytes!.Length; i += 4)
-            histogram[(byte) Tools.GetPixelIntensity(PictureBytes, i)]++;
-
-        double maxSum;
-        var sum = maxSum = histogram.Sum();
-        var threshold = 0;
-        const double p = 0.5;
-        for (var i = 0; i < histogram.Length; i++)
+        var sum = Histogram.Sum();
+        var remainder = sum;
+        int threshold;
+        for (threshold = 0; threshold < 256; threshold++)
         {
-            sum -= histogram[i];
-            if (!(sum / maxSum < p)) continue;
-            threshold = i;
-            break;
+            remainder -= Histogram[threshold];
+            if (100 * remainder / sum < AreaPercentage) break;
         }
-        
+
         for (var i = 0; i < PictureBytes!.Length; i += 4)
         {
             var intensity = Tools.GetPixelIntensity(PictureBytes, i);
@@ -151,6 +146,64 @@ public class SegmentationViewModel : ViewModel
                 Tools.GetGrayPixel((byte) (intensity <= threshold ? 0 : 255)));
         }
 
+        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+    }
+
+    #endregion
+
+    #region HistogramDependentCommand
+
+    public Command? HistogramDependentCommand { get; }
+
+    private bool HistogramDependentCommand_CanExecute(object? parameter) => Picture is not null;
+
+    private void HistogramDependentCommand_OnExecuted(object? parameter)
+    {
+        var oldThreshold = 127;
+        var threshold = CalculateNewThreshold(oldThreshold);
+
+        while (Math.Abs(oldThreshold - threshold) == 0)
+        {
+            oldThreshold = threshold;
+            threshold = CalculateNewThreshold(oldThreshold);
+        }
+
+        for (var i = 0; i < PictureBytes!.Length; i += 4)
+        {
+            var intensity = Tools.GetPixelIntensity(PictureBytes, i);
+            Tools.SetPixel(
+                Tools.GetPixel(PictureBytes, i),
+                Tools.GetGrayPixel((byte) (intensity <= threshold ? 0 : 255)));
+        }
+
+        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+    }
+
+    private static int CalculateNewThreshold(int threshold)
+    {
+        var leftSum = 0;
+        for (var i = 0; i < threshold; i++)
+            leftSum += Histogram[i] * i;
+        var leftMean = leftSum / Histogram.Take(threshold).Sum();
+
+        var rightSum = 0;
+        for (var i = threshold; i < 256; i++)
+            rightSum += Histogram[i] * i;
+        var rightMean = rightSum / Histogram.Take(new Range(threshold, 256)).Sum();
+
+        return (leftMean + rightMean) / 2;
+    }
+
+    #endregion
+
+    #region KMeansCommand
+
+    public Command? KMeansCommand { get; }
+
+    private bool KMeansCommand_CanExecute(object? parameter) => Picture is not null;
+
+    private void KMeansCommand_OnExecuted(object? parameter)
+    {
         _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 

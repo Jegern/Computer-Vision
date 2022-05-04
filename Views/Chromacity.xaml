@@ -11,13 +11,13 @@
     <UserControl.DataContext>
         <viewModel:ChromacityViewModel />
     </UserControl.DataContext>
-    
+
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Styles/Button.xaml"/>
-                <ResourceDictionary Source="Styles/StackPanel.xaml"/>
-                <ResourceDictionary Source="Styles/TextBox.xaml"/>
+                <ResourceDictionary Source="Styles/Button.xaml" />
+                <ResourceDictionary Source="Styles/StackPanel.xaml" />
+                <ResourceDictionary Source="Styles/TextBox.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
@@ -60,12 +60,14 @@
                     Command="{Binding BinaryFlatCutCommand}" />
         </StackPanel>
 
-        <Button Content="Логарифмическое преобразование"
-                Command="{Binding LogarithmicTransformationCommand}"
-                Margin="5" />
+        <StackPanel>
+            <Button Content="Логарифмическое преобразование"
+                    Command="{Binding LogarithmicTransformationCommand}" />
+        </StackPanel>
 
-        <Button Content="Степенное преобразование"
-                Command="{Binding PowerTransformationCommand}"
-                Margin="5" />
+        <StackPanel>
+            <Button Content="Степенное преобразование"
+                    Command="{Binding PowerTransformationCommand}" />
+        </StackPanel>
     </StackPanel>
 </UserControl>

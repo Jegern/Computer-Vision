@@ -22,7 +22,7 @@
     </UserControl.Resources>
 
     <StackPanel Margin="8">
-        <Border BorderBrush="Black"
+        <Border BorderBrush="#BBB"
                 BorderThickness="1"
                 Width="184" Height="184"
                 Margin="0, 0, 0, 1">

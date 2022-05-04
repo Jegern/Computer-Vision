@@ -12,17 +12,17 @@
     <UserControl.DataContext>
         <viewModel:ImageManagementViewModel />
     </UserControl.DataContext>
-    
+
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Styles/Button.xaml"/>
-                <ResourceDictionary Source="Styles/CheckBox.xaml"/>
-                <ResourceDictionary Source="Styles/RadioButton.xaml"/>
-                <ResourceDictionary Source="Styles/Slider.xaml"/>
-                <ResourceDictionary Source="Styles/StackPanel.xaml"/>
-                <ResourceDictionary Source="Styles/TextBlock.xaml"/>
-                <ResourceDictionary Source="Styles/TextBox.xaml"/>
+                <ResourceDictionary Source="Styles/Button.xaml" />
+                <ResourceDictionary Source="Styles/CheckBox.xaml" />
+                <ResourceDictionary Source="Styles/RadioButton.xaml" />
+                <ResourceDictionary Source="Styles/Slider.xaml" />
+                <ResourceDictionary Source="Styles/StackPanel.xaml" />
+                <ResourceDictionary Source="Styles/TextBlock.xaml" />
+                <ResourceDictionary Source="Styles/TextBox.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
@@ -40,13 +40,15 @@
             </Slider>
         </StackPanel>
 
-        <Button Content="Обесцвечивание"
-                Command="{Binding BleachCommand}"
-                Margin="5" />
+        <StackPanel>
+            <Button Content="Обесцвечивание"
+                    Command="{Binding BleachCommand}" />
+        </StackPanel>
 
-        <Button Content="Негатив"
-                Command="{Binding NegativeCommand}"
-                Margin="5" />
+        <StackPanel>
+            <Button Content="Негатив"
+                    Command="{Binding NegativeCommand}" />
+        </StackPanel>
 
         <StackPanel>
             <StackPanel Margin="3">
