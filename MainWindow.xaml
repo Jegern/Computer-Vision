@@ -114,6 +114,16 @@
                     </MenuItem.DataContext>
                 </MenuItem>
             </MenuItem>
+            
+            <MenuItem Header="4 лаба">
+                <MenuItem x:Name="SegmentationMenuItem"
+                          Header="Сегментация"
+                          Command="{Binding SegmentationCommand}">
+                    <MenuItem.DataContext>
+                        <viewModel:SegmentationViewModel />
+                    </MenuItem.DataContext>
+                </MenuItem>
+            </MenuItem>
         </Menu>
 
         <StackPanel Orientation="Horizontal">
@@ -184,6 +194,13 @@
                         <viewModel:BorderDetectionViewModel />
                     </view:BorderDetection.DataContext>
                 </view:BorderDetection>
+                
+                <view:Segmentation x:Name="SegmentationControl"
+                                   Visibility="{Binding Visibility}">
+                    <view:Segmentation.DataContext>
+                        <viewModel:SegmentationViewModel />
+                    </view:Segmentation.DataContext>
+                </view:Segmentation>
             </StackPanel>
         </StackPanel>
     </StackPanel>

@@ -16,7 +16,6 @@ public class BorderDetectionViewModel : ViewModel
     private byte[]? _pictureBytes;
     private Visibility _visibility = Visibility.Collapsed;
 
-    
     private int? _hessianThreshold;
     private int? _harrisThreshold;
     private bool _sobelOperator3X3;

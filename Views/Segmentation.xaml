@@ -1,0 +1,41 @@
+﻿<UserControl x:Class="Laboratory_work_1.Views.Segmentation"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewModel="clr-namespace:Laboratory_work_1.ViewModels"
+             mc:Ignorable="d"
+
+             Width="200" Height="Auto">
+
+    <UserControl.DataContext>
+        <viewModel:SegmentationViewModel />
+    </UserControl.DataContext>
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/Button.xaml" />
+                <ResourceDictionary Source="Styles/StackPanel.xaml" />
+                <ResourceDictionary Source="Styles/TextBox.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <StackPanel Margin="3">
+        <StackPanel>
+            <StackPanel>
+                <RadioButton Content="P-tile"
+                             IsChecked="{Binding PTileChecked}" />
+                <RadioButton Content="Приближения"
+                             IsChecked="{Binding ApproximationsChecked}" />
+                <RadioButton Content="k-средних"
+                             IsChecked="{Binding KMeansChecked}" />
+                <RadioButton Content="Пики гистограммы"
+                             IsChecked="{Binding HistogramPeaksChecked}" />
+            </StackPanel>
+            <Button Content="Пороговый метод"
+                    Command="{Binding ThresholdMethodCommand}" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>
