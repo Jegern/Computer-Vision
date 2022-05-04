@@ -24,6 +24,14 @@
     </UserControl.Resources>
 
     <StackPanel Margin="3">
+        <Button Content="Оператор Хесса"
+                Command="{Binding HessianOperatorCommand}"
+                Margin="5" />
+        
+        <Button Content="Оператор Харрисона"
+                Command="{Binding HarrisOperatorCommand}"
+                Margin="5" />
+        
         <StackPanel>
             <StackPanel>
                 <RadioButton Content="Окно 3x3"

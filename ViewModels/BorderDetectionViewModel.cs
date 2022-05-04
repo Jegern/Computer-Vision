@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Laboratory_work_1.Commands.Base;
@@ -111,6 +110,12 @@ public class BorderDetectionViewModel : ViewModel
         BorderDetectionCommand = new Command(
             BorderDetectionCommand_OnExecuted,
             BorderDetectionCommand_CanExecute);
+        HessianOperatorCommand = new Command(
+            HessianOperatorCommand_OnExecuted,
+            HessianOperatorCommand_CanExecute);
+        HarrisOperatorCommand = new Command(
+            HarrisOperatorCommand_OnExecuted,
+            HarrisOperatorCommand_CanExecute);
         SobelOperatorCommand = new Command(
             SobelOperatorCommand_OnExecuted,
             SobelOperatorCommand_CanExecute);
@@ -149,6 +154,95 @@ public class BorderDetectionViewModel : ViewModel
         Visibility = Visibility is Visibility.Collapsed
             ? Visibility.Visible
             : Visibility.Collapsed;
+    }
+
+    #endregion
+
+    #region HessianOperatorCommand
+
+    public Command? HessianOperatorCommand { get; }
+
+    private bool HessianOperatorCommand_CanExecute(object? parameter) => Picture is not null;
+
+    private void HessianOperatorCommand_OnExecuted(object? parameter)
+    {
+        var originalPictureBytes = (byte[])PictureBytes!.Clone();
+        var width = Picture!.PixelWidth;
+        var height = Picture!.PixelHeight;
+
+        for (var y = 0; y < height; y++)
+        for (var x = 0; x < width; x++)
+        {
+            if (y - 1 < 0 | y + 1 >= height) continue;
+            if (x - 1 < 0 | x + 1 >= width) continue;
+            var index = y * width * 4 + x * 4;
+            var ixx = Tools.GetPixelIntensity(originalPictureBytes, index + 4) +
+                      Tools.GetPixelIntensity(originalPictureBytes, index - 4)
+                      - 2 * Tools.GetPixelIntensity(originalPictureBytes, index);
+            var ixy = Tools.GetPixelIntensity(originalPictureBytes, index + 4) +
+                      Tools.GetPixelIntensity(originalPictureBytes, index + 4 * width)
+                      - 2 * Tools.GetPixelIntensity(originalPictureBytes, index);
+            var iyy = Tools.GetPixelIntensity(originalPictureBytes, index - 4 * width) +
+                      Tools.GetPixelIntensity(originalPictureBytes, index + 4 * width)
+                      - 2 * Tools.GetPixelIntensity(originalPictureBytes, index);
+            var lambdas = SolveQuadraticEquation(new[,] { { ixx, ixy }, { ixy, iyy } });
+            const int greatNumber = 30;
+            Tools.SetPixel(
+                Tools.GetPixel(PictureBytes, index),
+                Tools.GetGrayPixel((byte)(Math.Abs(lambdas[0]) > greatNumber &&
+                                          Math.Abs(lambdas[1]) > greatNumber ? 0 : 255)));
+        }
+
+        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+    }
+
+    private static double[] SolveQuadraticEquation(double[,] matrix)
+    {
+        const double a = 1.0;
+        var b = -(matrix[0, 0] + matrix[1, 1]);
+        var c = -matrix[0, 1] * matrix[1, 0] + matrix[0, 0] * matrix[1, 1];
+        var d = b * b - 4 * a * c;
+        var x1 = (-b - Math.Sqrt(d)) / (2 * a);
+        var x2 = (-b + Math.Sqrt(d)) / (2 * a);
+        return new[] { x1, x2 };
+    }
+
+    #endregion
+
+    #region HarrisOperatorCommand
+
+    public Command? HarrisOperatorCommand { get; }
+
+    private bool HarrisOperatorCommand_CanExecute(object? parameter) => Picture is not null;
+
+    private void HarrisOperatorCommand_OnExecuted(object? parameter)
+    {
+        var originalPictureBytes = (byte[])PictureBytes!.Clone();
+        var width = Picture!.PixelWidth;
+        var height = Picture!.PixelHeight;
+
+        for (var y = 0; y < height; y++)
+        for (var x = 0; x < width; x++)
+        {
+            if (y - 1 < 0 | y + 1 >= height) continue;
+            if (x - 1 < 0 | x + 1 >= width) continue;
+            var index = y * width * 4 + x * 4;
+            var ix = Tools.GetPixelIntensity(originalPictureBytes, index + 4) -
+                     Tools.GetPixelIntensity(originalPictureBytes, index);
+            var iy = Tools.GetPixelIntensity(originalPictureBytes, index + 4 * width) -
+                     Tools.GetPixelIntensity(originalPictureBytes, index);
+            var l2X = ix * ix;
+            var lxy = ix * iy;
+            var l2Y = iy * iy;
+            var lambdas = SolveQuadraticEquation(new[,] { { l2X, lxy }, { lxy, l2Y } });
+            var ugol = 0.05 * lambdas[1];
+            const int greatNumber = 30;
+            Tools.SetPixel(
+                Tools.GetPixel(PictureBytes, index),
+                Tools.GetGrayPixel((byte)(ugol > greatNumber ? 0 : 255)));
+        }
+
+        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 
     #endregion
@@ -243,7 +337,7 @@ public class BorderDetectionViewModel : ViewModel
 
             Tools.SetPixel(
                 Tools.GetPixel(PictureBytes, index),
-                Tools.GetGrayPixel((byte) (g == 0 ? 0 : 255)));
+                Tools.GetGrayPixel((byte)(g == 0 ? 0 : 255)));
         }
 
         _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
@@ -255,15 +349,14 @@ public class BorderDetectionViewModel : ViewModel
 
     public Command? DogOperatorCommand { get; }
 
-    private bool DogOperatorCommand_CanExecute(object? parameter) =>
-        Picture is not null;
+    private bool DogOperatorCommand_CanExecute(object? parameter) => Picture is not null;
 
     private void DogOperatorCommand_OnExecuted(object? parameter)
     {
         var width = Picture!.PixelWidth;
         var height = Picture!.PixelHeight;
-        var vanishBytes = GaussianFilter(PictureBytes!, 0.5);
-        var vanishBytesAlpha = GaussianFilter(PictureBytes!, 0.5 * 1.6);
+        var vanishBytes = GaussianFilter((byte[])PictureBytes!.Clone(), 0.5);
+        var vanishBytesAlpha = GaussianFilter((byte[])PictureBytes!.Clone(), 0.5 * 1.6);
 
         for (var y = 0; y < height; y++)
         for (var x = 0; x < width; x++)
@@ -284,7 +377,7 @@ public class BorderDetectionViewModel : ViewModel
         var originalPictureBytes = (byte[])bytes.Clone();
         var width = Picture!.PixelWidth;
         var height = Picture!.PixelHeight;
-        var k = (int) Math.Ceiling((6 * sigma - 2) / 2);
+        var k = (int)Math.Ceiling((6 * sigma - 2) / 2);
         var side = 2 * k + 1;
         var radius = side / 2;
 
@@ -308,7 +401,7 @@ public class BorderDetectionViewModel : ViewModel
             var intensity = Tools.GetPixelIntensity(originalPictureBytes, y * width * 4 + x * 4);
             Tools.SetPixel(
                 Tools.GetPixel(bytes, y * width * 4 + x * 4),
-                Tools.GetGrayPixel((byte) (sum <= 255 ? sum : intensity)));
+                Tools.GetGrayPixel((byte)(sum <= 255 ? sum : intensity)));
         }
 
         return bytes;

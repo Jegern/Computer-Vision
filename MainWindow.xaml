@@ -181,7 +181,7 @@
                 <view:BorderDetection x:Name="BorderDetectionControl"
                                       Visibility="{Binding Visibility}">
                     <view:BorderDetection.DataContext>
-                        <viewModel:MaskingViewModel />
+                        <viewModel:BorderDetectionViewModel />
                     </view:BorderDetection.DataContext>
                 </view:BorderDetection>
             </StackPanel>
