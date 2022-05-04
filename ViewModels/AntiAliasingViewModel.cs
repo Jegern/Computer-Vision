@@ -194,7 +194,7 @@ public class AntiAliasingViewModel : ViewModel
                 if (y + i < 0 | y + i >= height) continue;
                 for (var j = -radius; j <= radius; j++)
                 {
-                    if (j + x < 0 | j + x >= width) continue;
+                    if (x + j < 0 | x + j >= width) continue;
                     var windowPixelIndex = (y + i) * width * 4 + (x + j) * 4;
                     var windowPixelIntensity = Tools.GetPixelIntensity(AntiAliasingPictureBytes, windowPixelIndex);
                     sum += windowPixelIntensity;
@@ -238,7 +238,7 @@ public class AntiAliasingViewModel : ViewModel
                 if (y + i < 0 | y + i >= height) continue;
                 for (var j = -radius; j <= radius; j++)
                 {
-                    if (j + x < 0 | j + x >= width) continue;
+                    if (x + j < 0 | x + j >= width) continue;
                     var windowPixelIndex = (y + i) * width * 4 + (x + j) * 4;
                     windowPixelList.Add(Tools.GetPixelIntensity(AntiAliasingPictureBytes, windowPixelIndex));
                 }
@@ -283,7 +283,7 @@ public class AntiAliasingViewModel : ViewModel
                 if (y + i < 0 | y + i >= height) continue;
                 for (var j = -radius; j <= radius; j++)
                 {
-                    if (j + x < 0 | j + x >= width) continue;
+                    if (x + j < 0 | x + j >= width) continue;
                     var windowPixelIndex = (y + i) * width * 4 + (x + j) * 4;
                     var windowPixelIntensity = Tools.GetPixelIntensity(AntiAliasingPictureBytes, windowPixelIndex);
                     var w = 1 / (Math.Exp((i * i + j * j) / (2 * sigma * sigma)) * (2 * Math.PI * sigma * sigma));
@@ -329,7 +329,7 @@ public class AntiAliasingViewModel : ViewModel
                 if (y + i < 0 | y + i >= height) continue;
                 for (var j = -radius; j <= radius; j++)
                 {
-                    if (j + x < 0 | j + x >= width) continue;
+                    if (x + j < 0 | x + j >= width) continue;
                     var windowPixelIndex = (i + y) * width * 4 + (j + x) * 4;
                     var windowPixelIntensity = Tools.GetPixelIntensity(AntiAliasingPictureBytes, windowPixelIndex);
                     var midPixelIndex = y * width * 4 + x * 4;

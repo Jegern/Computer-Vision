@@ -104,6 +104,16 @@
                     </MenuItem.DataContext>
                 </MenuItem>
             </MenuItem>
+            
+            <MenuItem Header="3 лаба">
+                <MenuItem x:Name="BorderDetectionMenuItem"
+                          Header="Определение границ"
+                          Command="{Binding BorderDetectionCommand}">
+                    <MenuItem.DataContext>
+                        <viewModel:BorderDetectionViewModel />
+                    </MenuItem.DataContext>
+                </MenuItem>
+            </MenuItem>
         </Menu>
 
         <StackPanel Orientation="Horizontal">
@@ -167,6 +177,13 @@
                         <viewModel:MaskingViewModel />
                     </view:Masking.DataContext>
                 </view:Masking>
+                
+                <view:BorderDetection x:Name="BorderDetectionControl"
+                                      Visibility="{Binding Visibility}">
+                    <view:BorderDetection.DataContext>
+                        <viewModel:MaskingViewModel />
+                    </view:BorderDetection.DataContext>
+                </view:BorderDetection>
             </StackPanel>
         </StackPanel>
     </StackPanel>

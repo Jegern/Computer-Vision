@@ -22,6 +22,7 @@ namespace Laboratory_work_1
             InitializeChromacityViewModel(store);
             InitializeAntiAliasingViewModel(store);
             InitializeMaskingViewModel(store);
+            InitializeBorderDetectionViewModel(store);
         }
 
         private void InitializePixelInfoViewModel(ViewModelStore? store)
@@ -71,6 +72,13 @@ namespace Laboratory_work_1
             var maskingViewModel = new MaskingViewModel(store);
             MaskingControl.DataContext = maskingViewModel;
             MaskingMenuItem.DataContext = maskingViewModel;
+        }
+        
+        private void InitializeBorderDetectionViewModel(ViewModelStore? store)
+        {
+            var borderDetectionViewModel = new BorderDetectionViewModel(store);
+            BorderDetectionControl.DataContext = borderDetectionViewModel;
+            BorderDetectionMenuItem.DataContext = borderDetectionViewModel;
         }
     }
 }
