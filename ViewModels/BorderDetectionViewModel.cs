@@ -16,6 +16,9 @@ public class BorderDetectionViewModel : ViewModel
     private byte[]? _pictureBytes;
     private Visibility _visibility = Visibility.Collapsed;
 
+    
+    private int? _hessianThreshold;
+    private int? _harrisThreshold;
     private bool _sobelOperator3X3;
     private bool _sobelOperator5X5;
     private bool _sobelOperator7X7;
@@ -37,6 +40,18 @@ public class BorderDetectionViewModel : ViewModel
     {
         get => _visibility;
         set => Set(ref _visibility, value);
+    }
+
+    public int? HessianThreshold
+    {
+        get => _hessianThreshold;
+        set => Set(ref _hessianThreshold, value);
+    }
+
+    public int? HarrisThreshold
+    {
+        get => _harrisThreshold;
+        set => Set(ref _harrisThreshold, value);
     }
 
     public bool SobelOperator3X3
@@ -162,7 +177,9 @@ public class BorderDetectionViewModel : ViewModel
 
     public Command? HessianOperatorCommand { get; }
 
-    private bool HessianOperatorCommand_CanExecute(object? parameter) => Picture is not null;
+    private bool HessianOperatorCommand_CanExecute(object? parameter) => 
+        Picture is not null &&
+        HessianThreshold is not null;
 
     private void HessianOperatorCommand_OnExecuted(object? parameter)
     {
@@ -186,11 +203,10 @@ public class BorderDetectionViewModel : ViewModel
                       Tools.GetPixelIntensity(originalPictureBytes, index + 4 * width)
                       - 2 * Tools.GetPixelIntensity(originalPictureBytes, index);
             var lambdas = SolveQuadraticEquation(new[,] { { ixx, ixy }, { ixy, iyy } });
-            const int greatNumber = 30;
             Tools.SetPixel(
                 Tools.GetPixel(PictureBytes, index),
-                Tools.GetGrayPixel((byte)(Math.Abs(lambdas[0]) > greatNumber &&
-                                          Math.Abs(lambdas[1]) > greatNumber ? 0 : 255)));
+                Tools.GetGrayPixel((byte)(Math.Abs(lambdas[0]) > HessianThreshold &&
+                                          Math.Abs(lambdas[1]) > HessianThreshold ? 0 : 255)));
         }
 
         _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
@@ -213,7 +229,9 @@ public class BorderDetectionViewModel : ViewModel
 
     public Command? HarrisOperatorCommand { get; }
 
-    private bool HarrisOperatorCommand_CanExecute(object? parameter) => Picture is not null;
+    private bool HarrisOperatorCommand_CanExecute(object? parameter) => 
+        Picture is not null &&
+        HarrisThreshold is not null;
 
     private void HarrisOperatorCommand_OnExecuted(object? parameter)
     {
@@ -235,11 +253,9 @@ public class BorderDetectionViewModel : ViewModel
             var lxy = ix * iy;
             var l2Y = iy * iy;
             var lambdas = SolveQuadraticEquation(new[,] { { l2X, lxy }, { lxy, l2Y } });
-            var ugol = 0.05 * lambdas[1];
-            const int greatNumber = 30;
             Tools.SetPixel(
                 Tools.GetPixel(PictureBytes, index),
-                Tools.GetGrayPixel((byte)(ugol > greatNumber ? 0 : 255)));
+                Tools.GetGrayPixel((byte)(0.05 * lambdas[1] > HarrisThreshold ? 0 : 255)));
         }
 
         _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);

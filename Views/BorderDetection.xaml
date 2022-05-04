@@ -24,14 +24,26 @@
     </UserControl.Resources>
 
     <StackPanel Margin="3">
-        <Button Content="Оператор Хесса"
-                Command="{Binding HessianOperatorCommand}"
-                Margin="5" />
-        
-        <Button Content="Оператор Харрисона"
-                Command="{Binding HarrisOperatorCommand}"
-                Margin="5" />
-        
+        <StackPanel>
+            <TextBox
+                Text="{Binding HessianThreshold, UpdateSourceTrigger=PropertyChanged}"
+                MaxLength="4"
+                Tag="Порог"
+                Margin="0, 0, 0, 2" />
+            <Button Content="Оператор Хесса"
+                    Command="{Binding HessianOperatorCommand}" />
+        </StackPanel>
+
+        <StackPanel>
+            <TextBox
+                Text="{Binding HarrisThreshold, UpdateSourceTrigger=PropertyChanged}"
+                MaxLength="4"
+                Tag="Порог"
+                Margin="0, 0, 0, 2" />
+            <Button Content="Оператор Харрисона"
+                    Command="{Binding HarrisOperatorCommand}" />
+        </StackPanel>
+
         <StackPanel>
             <StackPanel>
                 <RadioButton Content="Окно 3x3"
