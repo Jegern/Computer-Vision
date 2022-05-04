@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Linq;
+using System.Windows;
 using System.Windows.Media.Imaging;
 using Laboratory_work_1.Commands.Base;
 using Laboratory_work_1.ViewModels.Base;
@@ -14,7 +15,7 @@ public class SegmentationViewModel : ViewModel
     private BitmapSource? _picture;
     private byte[]? _pictureBytes;
     private Visibility _visibility = Visibility.Collapsed;
-    
+
     private bool _pTileChecked;
     private bool _approximationsChecked;
     private bool _kMeansChecked;
@@ -49,7 +50,7 @@ public class SegmentationViewModel : ViewModel
         get => _approximationsChecked;
         set => Set(ref _approximationsChecked, value);
     }
-    
+
     public bool KMeansChecked
     {
         get => _kMeansChecked;
@@ -126,6 +127,30 @@ public class SegmentationViewModel : ViewModel
 
     private void ThresholdMethodCommand_OnExecuted(object? parameter)
     {
+        var histogram = new int[256];
+        for (var i = 0; i < PictureBytes!.Length; i += 4)
+            histogram[(byte) Tools.GetPixelIntensity(PictureBytes, i)]++;
+
+        double maxSum;
+        var sum = maxSum = histogram.Sum();
+        var threshold = 0;
+        const double p = 0.5;
+        for (var i = 0; i < histogram.Length; i++)
+        {
+            sum -= histogram[i];
+            if (!(sum / maxSum < p)) continue;
+            threshold = i;
+            break;
+        }
+        
+        for (var i = 0; i < PictureBytes!.Length; i += 4)
+        {
+            var intensity = Tools.GetPixelIntensity(PictureBytes, i);
+            Tools.SetPixel(
+                Tools.GetPixel(PictureBytes, i),
+                Tools.GetGrayPixel((byte) (intensity <= threshold ? 0 : 255)));
+        }
+
         _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 
