@@ -19,10 +19,7 @@ public class ViewModelStore
         PictureBytesChanged?.Invoke(Tools.GetPixelBytes(source));
 
     public void TriggerPictureBytesEvent(BitmapSource source, byte[] bytes)
-    {
-        PictureBytesChanged?.Invoke(bytes);
-        PictureChanged?.Invoke(Tools.CreateImage(source, bytes));
-    }
+        => PictureChanged?.Invoke(Tools.CreateImage(source, bytes));
 
     public void TriggerAntiAliasingPictureBytesEvent(byte[] bytes) => AntiAliasingPictureBytesChanged?.Invoke(bytes);
     public void TriggerMousePositionEvent(Point point) => MousePositionChanged?.Invoke(point);
