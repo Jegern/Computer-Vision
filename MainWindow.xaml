@@ -8,6 +8,7 @@
         xmlns:viewModel="clr-namespace:Laboratory_work_1.ViewModels"
         mc:Ignorable="d"
 
+        Title="{Binding Title}"
         Width="400" Height="400"
         ResizeMode="CanMinimize"
         WindowStartupLocation="CenterScreen">
@@ -123,6 +124,13 @@
                         <viewModel:SegmentationViewModel />
                     </MenuItem.DataContext>
                 </MenuItem>
+                <MenuItem x:Name="HistogramMenuItem"
+                          Header="Гистограмма"
+                          Command="{Binding HistogramCommand}">
+                    <MenuItem.DataContext>
+                        <viewModel:HistogramViewModel />
+                    </MenuItem.DataContext>
+                </MenuItem>
             </MenuItem>
         </Menu>
 
@@ -201,6 +209,13 @@
                         <viewModel:SegmentationViewModel />
                     </view:Segmentation.DataContext>
                 </view:Segmentation>
+                
+                <view:Histogram x:Name="HistogramControl"
+                                Visibility="{Binding Visibility}">
+                    <view:Histogram.DataContext>
+                        <viewModel:HistogramViewModel />
+                    </view:Histogram.DataContext>
+                </view:Histogram>
             </StackPanel>
         </StackPanel>
     </StackPanel>

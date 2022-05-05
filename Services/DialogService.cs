@@ -5,7 +5,7 @@ namespace Laboratory_work_1.Services;
 
 public class DialogService
 {
-    public string? FilePath { get; set; }
+    public string? FilePath { get; private set; }
  
     public bool OpenFileDialog()
     {
@@ -30,7 +30,7 @@ public class DialogService
         return true;
     }
  
-    public void ShowError(string message)
+    public static void ShowError(string message)
     {
         MessageBox.Show(
             message,

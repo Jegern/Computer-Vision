@@ -24,6 +24,7 @@ namespace Laboratory_work_1
             InitializeMaskingViewModel(store);
             InitializeBorderDetectionViewModel(store);
             InitializeSegmentationViewModel(store);
+            InitializeHistogramViewModel(store);
         }
 
         private void InitializePixelInfoViewModel(ViewModelStore? store)
@@ -82,13 +83,18 @@ namespace Laboratory_work_1
             BorderDetectionMenuItem.DataContext = borderDetectionViewModel;
         }
         
-        
-        
         private void InitializeSegmentationViewModel(ViewModelStore? store)
         {
             var segmentationViewModel = new SegmentationViewModel(store);
             SegmentationControl.DataContext = segmentationViewModel;
             SegmentationMenuItem.DataContext = segmentationViewModel;
+        }
+        
+        private void InitializeHistogramViewModel(ViewModelStore? store)
+        {
+            var histogramViewModel = new HistogramViewModel(store);
+            HistogramControl.DataContext = histogramViewModel;
+            HistogramMenuItem.DataContext = histogramViewModel;
         }
     }
 }

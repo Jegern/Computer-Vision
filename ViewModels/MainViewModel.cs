@@ -20,6 +20,7 @@ public class MainViewModel : ViewModel
     private BitmapSource? _picture;
     private BitmapSource? _originalPicture;
     private byte[]? _pictureBytes;
+    private string? _title;
     private Point _pictureMousePosition;
 
     public BitmapSource? Picture
@@ -45,6 +46,12 @@ public class MainViewModel : ViewModel
             if (Set(ref _pictureBytes, value) && Picture is not null)
                 _store?.TriggerPictureBytesEvent(Picture);
         }
+    }
+    
+    public string? Title
+    {
+        get => _title;
+        set => Set(ref _title, value);
     }
 
     private Point PictureMousePosition
@@ -112,10 +119,11 @@ public class MainViewModel : ViewModel
             Picture = _fileService.OpenedImage!;
             OriginalPicture = Picture.Clone();
             PictureBytes = Tools.GetPixelBytes(Picture);
+            Title = _fileService.ImageName;
             Tools.ResizeAndCenterWindow(Application.Current.MainWindow);
         }
         else
-            _dialogService.ShowError("Приложение не поддерживает картинки больше 1600x900");
+            DialogService.ShowError("Приложение не поддерживает картинки больше 1600x900");
     }
 
     #endregion

@@ -1,0 +1,20 @@
+﻿<UserControl x:Class="Laboratory_work_1.Views.Histogram"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewModel="clr-namespace:Laboratory_work_1.ViewModels"
+             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+             mc:Ignorable="d"
+
+             Width="200" Height="Auto">
+
+    <UserControl.DataContext>
+        <viewModel:HistogramViewModel />
+    </UserControl.DataContext>
+
+    <StackPanel>
+        <lvc:CartesianChart Series="{Binding Series}"
+                            Height="200"/>
+    </StackPanel>
+</UserControl>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
 namespace Laboratory_work_1.Services;
@@ -7,12 +8,14 @@ namespace Laboratory_work_1.Services;
 public class FileService
 {
     public BitmapImage? OpenedImage { get; private set; }
+    public string? ImageName { get; private set; }
     
     public bool Open(string filePath)
     {
         var (imageWidth, imageHeight) = GetSizeOfPicture(filePath);
         if (imageWidth > 1600 || imageHeight > 900) return false;
         OpenedImage = new BitmapImage(new Uri(filePath));
+        ImageName = Path.GetFileNameWithoutExtension(filePath);
         return true;
     }
     
