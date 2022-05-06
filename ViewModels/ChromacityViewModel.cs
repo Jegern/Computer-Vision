@@ -1,6 +1,4 @@
 using System;
-using System.Windows;
-using System.Windows.Media.Imaging;
 using Laboratory_work_1.Commands.Base;
 using Laboratory_work_1.ViewModels.Base;
 using Laboratory_work_1.ViewModels.Store;
@@ -11,33 +9,10 @@ public class ChromacityViewModel : ViewModel
 {
     #region Fields
 
-    private readonly ViewModelStore? _store;
-    private BitmapSource? _picture;
-    private byte[]? _pictureBytes;
-    private Visibility _visibility = Visibility.Collapsed;
-
     private byte? _binaryThreshold;
     private byte? _cutStart;
     private byte? _cutEnd;
     private int? _binaryFlat;
-
-    private BitmapSource? Picture
-    {
-        get => _picture;
-        set => Set(ref _picture, value);
-    }
-
-    private byte[]? PictureBytes
-    {
-        get => _pictureBytes;
-        set => Set(ref _pictureBytes, value);
-    }
-
-    public Visibility Visibility
-    {
-        get => _visibility;
-        set => Set(ref _visibility, value);
-    }
 
     public byte? BinaryThreshold
     {
@@ -72,17 +47,8 @@ public class ChromacityViewModel : ViewModel
     {
     }
 
-    public ChromacityViewModel(ViewModelStore? store)
+    public ChromacityViewModel(ViewModelStore? store) : base(store)
     {
-        if (store is null) return;
-
-        store.PictureChanged += Picture_OnChanged;
-        store.PictureBytesChanged += PictureBytes_OnChanged;
-        _store = store;
-
-        ChromacityCommand = new Command(
-            ChromacityCommand_OnExecuted,
-            ChromacityCommand_CanExecute);
         BinaryTransformationCommand = new Command(
             BinaryTransformationCommand_OnExecuted,
             BinaryTransformationCommand_CanExecute);
@@ -100,36 +66,7 @@ public class ChromacityViewModel : ViewModel
             PowerTransformationCommand_CanExecute);
     }
 
-    #region Event Subscription
-
-    private void Picture_OnChanged(BitmapSource? source)
-    {
-        Picture = source;
-    }
-
-    private void PictureBytes_OnChanged(byte[] bytes)
-    {
-        PictureBytes = bytes;
-    }
-
-    #endregion
-
     #region Commands
-
-    #region ChromacityCommand
-
-    public Command? ChromacityCommand { get; }
-
-    private bool ChromacityCommand_CanExecute(object? parameter) => Picture is not null;
-
-    private void ChromacityCommand_OnExecuted(object? parameter)
-    {
-        Visibility = Visibility is Visibility.Collapsed
-            ? Visibility.Visible
-            : Visibility.Collapsed;
-    }
-
-    #endregion
 
     #region BinaryTransformationCommand
 
@@ -149,7 +86,7 @@ public class ChromacityViewModel : ViewModel
                 Tools.GetGrayPixel((byte) (intensity <= BinaryThreshold ? 0 : 255)));
         }
 
-        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 
     #endregion
@@ -173,7 +110,7 @@ public class ChromacityViewModel : ViewModel
                 Tools.GetGrayPixel((byte) (CutStart <= intensity && intensity <= CutEnd ? 0 : 255)));
         }
 
-        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 
     #endregion
@@ -196,7 +133,7 @@ public class ChromacityViewModel : ViewModel
                 Tools.GetGrayPixel((byte) ((((int) intensity >> (int) BinaryFlat!) & 1) * 255)));
         }
 
-        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 
     #endregion
@@ -217,7 +154,7 @@ public class ChromacityViewModel : ViewModel
                 Tools.GetGrayPixel((byte) (41 * Math.Log(1 + intensity))));
         }
 
-        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 
     #endregion
@@ -238,7 +175,7 @@ public class ChromacityViewModel : ViewModel
                 Tools.GetGrayPixel((byte) (Math.Pow(intensity, 2) / 255)));
         }
 
-        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 
     #endregion

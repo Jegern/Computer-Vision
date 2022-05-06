@@ -3,35 +3,65 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:viewModel="clr-namespace:Laboratory_work_1.ViewModels"
+             xmlns:vms="clr-namespace:Laboratory_work_1.ViewModels"
              mc:Ignorable="d"
 
              Width="200" Height="Auto">
 
     <UserControl.DataContext>
-        <viewModel:MagnifierViewModel />
+        <vms:MagnifierViewModel />
     </UserControl.DataContext>
     
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Styles/StackPanel.xaml"/>
+                <ResourceDictionary Source="Styles/TextBlock.xaml" />
                 <ResourceDictionary Source="Styles/TextBox.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <StackPanel Margin="8">
-        <Border BorderBrush="#BBB"
-                BorderThickness="1"
-                Width="184" Height="184"
-                Margin="0, 0, 0, 1">
-            <Image Source="{Binding Window}"
-                   RenderOptions.BitmapScalingMode="NearestNeighbor" />
-        </Border>
-        <TextBox Text="{Binding Size, 
+    <StackPanel Margin="3">
+        <StackPanel>
+            <Border BorderBrush="#BBB"
+                    BorderThickness="1"
+                    Width="184" Height="184"
+                    Margin="0, 0, 0, 1">
+                <Image Source="{Binding Window}"
+                       RenderOptions.BitmapScalingMode="NearestNeighbor" />
+            </Border>
+
+            <TextBox Text="{Binding Size, 
                                 UpdateSourceTrigger=PropertyChanged}"
-                 MaxLength="2" 
-                 Margin="0, 0, 0, 0" />
+                     MaxLength="2" />
+        </StackPanel>
+        
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Среднее значение"
+                       Width="91"
+                       Margin="0, 0, 1, 0" />
+            <TextBlock Text="{Binding Mean}"
+                       Width="91"
+                       Margin="1, 0, 0, 0" />
+        </StackPanel>
+        
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Стандартное отклонение"
+                       Width="91"
+                       Margin="0, 0, 1, 0" />
+            <TextBlock Text="{Binding Deviation}"
+                       Width="91"
+                       Margin="1, 0, 0, 0" />
+        </StackPanel>
+        
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Медиана"
+                       Width="91"
+                       Margin="0, 0, 1, 0" />
+            <TextBlock Text="{Binding Median}"
+                       Width="91"
+                       Margin="1, 0, 0, 0" />
+        </StackPanel>
     </StackPanel>
 </UserControl>

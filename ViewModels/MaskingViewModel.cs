@@ -1,5 +1,3 @@
-using System.Windows;
-using System.Windows.Media.Imaging;
 using Laboratory_work_1.Commands.Base;
 using Laboratory_work_1.ViewModels.Base;
 using Laboratory_work_1.ViewModels.Store;
@@ -11,36 +9,13 @@ public class MaskingViewModel : ViewModel
     
     #region Fields
 
-    private readonly ViewModelStore? _store;
-    private BitmapSource? _picture;
-    private byte[]? _pictureBytes;
     private byte[]? _antiAliasingPictureBytes;
-    private Visibility _visibility = Visibility.Collapsed;
-
     private double? _lambda;
-
-    private BitmapSource? Picture
-    {
-        get => _picture;
-        set => Set(ref _picture, value);
-    }
-
-    private byte[]? PictureBytes
-    {
-        get => _pictureBytes;
-        set => Set(ref _pictureBytes, value);
-    }
     
     private byte[]? AntiAliasingPictureBytes
     {
         get => _antiAliasingPictureBytes;
         set => Set(ref _antiAliasingPictureBytes, value);
-    }
-
-    public Visibility Visibility
-    {
-        get => _visibility;
-        set => Set(ref _visibility, value);
     }
 
     public double? Lambda
@@ -58,34 +33,16 @@ public class MaskingViewModel : ViewModel
     {
     }
 
-    public MaskingViewModel(ViewModelStore? store)
+    public MaskingViewModel(ViewModelStore? store) : base(store)
     {
-        if (store is null) return;
-
-        store.PictureChanged += Picture_OnChanged;
-        store.PictureBytesChanged += PictureBytes_OnChanged;
-        store.AntiAliasingPictureBytesChanged += AntiAliasingPictureBytes_OnChanged;
-        _store = store;
-
-        MaskingCommand = new Command(
-            MaskingCommand_OnExecuted,
-            MaskingCommand_CanExecute);
+        if (store is not null) store.AntiAliasingPictureBytesChanged += AntiAliasingPictureBytes_OnChanged;
+        
         SoftMaskingCommand = new Command(
             SoftMaskingCommand_OnExecuted,
             SoftMaskingCommand_CanExecute);
     }
 
     #region Event Subscription
-
-    private void Picture_OnChanged(BitmapSource? source)
-    {
-        Picture = source;
-    }
-
-    private void PictureBytes_OnChanged(byte[] bytes)
-    {
-        PictureBytes = bytes;
-    }
 
     private void AntiAliasingPictureBytes_OnChanged(byte[] bytes)
     {
@@ -95,21 +52,6 @@ public class MaskingViewModel : ViewModel
     #endregion
     
     #region Commands
-
-    #region MaskingCommand
-
-    public Command? MaskingCommand { get; }
-
-    private bool MaskingCommand_CanExecute(object? parameter) => Picture is not null;
-
-    private void MaskingCommand_OnExecuted(object? parameter)
-    {
-        Visibility = Visibility is Visibility.Collapsed
-            ? Visibility.Visible
-            : Visibility.Collapsed;
-    }
-
-    #endregion
     
     #region SoftMaskingCommand
 
@@ -134,7 +76,7 @@ public class MaskingViewModel : ViewModel
                 Tools.GetGrayPixel((byte) intensity));
         }
         
-        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 
     #endregion

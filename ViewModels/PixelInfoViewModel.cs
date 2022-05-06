@@ -1,6 +1,4 @@
 using System.Windows;
-using System.Windows.Media.Imaging;
-using Laboratory_work_1.Commands.Base;
 using Laboratory_work_1.ViewModels.Base;
 using Laboratory_work_1.ViewModels.Store;
 
@@ -10,25 +8,11 @@ public class PixelInfoViewModel : ViewModel
 {
     #region Fields
 
-    private BitmapSource? _picture;
-    private Visibility _visibility = Visibility.Collapsed;
     private Point _location;
     private byte _red;
     private byte _green;
     private byte _blue;
     private byte _intensity;
-    
-    private BitmapSource? Picture
-    {
-        get => _picture;
-        set => Set(ref _picture, value);
-    }
-
-    public Visibility Visibility
-    {
-        get => _visibility;
-        set => Set(ref _visibility, value);
-    }
 
     public Point Location
     {
@@ -70,22 +54,12 @@ public class PixelInfoViewModel : ViewModel
         
     }
 
-    public PixelInfoViewModel(ViewModelStore? store)
+    public PixelInfoViewModel(ViewModelStore? store) : base(store)
     {
-        if (store is null) return;
-        
-        store.PictureChanged += Picture_OnChanged;
-        store.MousePositionChanged += MousePosition_OnChanged;
-        
-        PixelInfoCommand = new Command(PixelInfoCommand_OnExecuted, PixelInfoCommand_CanExecute);
+        if (store is not null) store.MousePositionChanged += MousePosition_OnChanged;
     }
 
     #region Event Subscription
-
-    private void Picture_OnChanged(BitmapSource? source)
-    {
-        Picture = source;
-    }
 
     private void MousePosition_OnChanged(Point point)
     {
@@ -102,21 +76,6 @@ public class PixelInfoViewModel : ViewModel
         Green = pixelColor.G;
         Blue = pixelColor.B;
         Intensity = (byte) ((pixelColor.R + pixelColor.G + pixelColor.B) / 3);
-    }
-
-    #endregion
-    
-    #region PixelInfoCommand
-
-    public Command? PixelInfoCommand { get; }
-
-    private bool PixelInfoCommand_CanExecute(object? parameter) => Picture is not null;
-
-    private void PixelInfoCommand_OnExecuted(object? parameter)
-    {
-        Visibility = Visibility is Visibility.Collapsed
-            ? Visibility.Visible
-            : Visibility.Collapsed;
     }
 
     #endregion

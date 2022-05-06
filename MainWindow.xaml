@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:behaviours="http://schemas.microsoft.com/xaml/behaviors"
         xmlns:view="clr-namespace:Laboratory_work_1.Views"
-        xmlns:viewModel="clr-namespace:Laboratory_work_1.ViewModels"
+        xmlns:vms="clr-namespace:Laboratory_work_1.ViewModels"
         mc:Ignorable="d"
 
         Title="{Binding Title}"
@@ -14,7 +14,7 @@
         WindowStartupLocation="CenterScreen">
 
     <Window.DataContext>
-        <viewModel:MainViewModel />
+        <vms:MainViewModel />
     </Window.DataContext>
 
     <Window.InputBindings>
@@ -28,11 +28,11 @@
             Key="Back"
             Command="{Binding ReturnOriginalImageCommand}" />
     </Window.InputBindings>
-    
+
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Views/Styles/MenuItem.xaml"/>
+                <ResourceDictionary Source="Views/Styles/MenuItem.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
@@ -54,83 +54,40 @@
             <MenuItem Header="1 лаба">
                 <MenuItem x:Name="PixelInfoMenuItem"
                           Header="Информация о пикселе"
-                          Command="{Binding PixelInfoCommand}">
-                    <MenuItem.DataContext>
-                        <viewModel:PixelInfoViewModel />
-                    </MenuItem.DataContext>
-                </MenuItem>
+                          Command="{Binding ChangeVisibilityCommand}" />
                 <MenuItem x:Name="MagnifierMenuItem"
                           Header="Увеличительное стекло"
-                          Command="{Binding MagnifierCommand}">
-                    <MenuItem.DataContext>
-                        <viewModel:MagnifierViewModel />
-                    </MenuItem.DataContext>
-                </MenuItem>
-                <MenuItem x:Name="MagnifierInfoMenuItem"
-                          Header="Информация об увеличительном стекле"
-                          Command="{Binding MagnifierInfoCommand}">
-                    <MenuItem.DataContext>
-                        <viewModel:MagnifierInfoViewModel />
-                    </MenuItem.DataContext>
-                </MenuItem>
+                          Command="{Binding ChangeVisibilityCommand}" />
                 <MenuItem x:Name="ImageManagementMenuItem"
                           Header="Управление изображением"
-                          Command="{Binding ImageManagementCommand}">
-                    <MenuItem.DataContext>
-                        <viewModel:ImageManagementViewModel />
-                    </MenuItem.DataContext>
-                </MenuItem>
+                          Command="{Binding ChangeVisibilityCommand}" />
             </MenuItem>
 
             <MenuItem Header="2 лаба">
                 <MenuItem x:Name="ChromacityMenuItem"
                           Header="Цветность"
-                          Command="{Binding ChromacityCommand}">
-                    <MenuItem.DataContext>
-                        <viewModel:ChromacityViewModel />
-                    </MenuItem.DataContext>
-                </MenuItem>
+                          Command="{Binding ChangeVisibilityCommand}" />
                 <MenuItem x:Name="AntiAliasingMenuItem"
                           Header="Сглаживание"
-                          Command="{Binding AntiAliasingCommand}">
-                    <MenuItem.DataContext>
-                        <viewModel:AntiAliasingViewModel />
-                    </MenuItem.DataContext>
-                </MenuItem>
+                          Command="{Binding ChangeVisibilityCommand}" />
                 <MenuItem x:Name="MaskingMenuItem"
                           Header="Маскирование"
-                          Command="{Binding MaskingCommand}">
-                    <MenuItem.DataContext>
-                        <viewModel:MaskingViewModel />
-                    </MenuItem.DataContext>
-                </MenuItem>
+                          Command="{Binding ChangeVisibilityCommand}" />
             </MenuItem>
-            
+
             <MenuItem Header="3 лаба">
                 <MenuItem x:Name="BorderDetectionMenuItem"
                           Header="Определение границ"
-                          Command="{Binding BorderDetectionCommand}">
-                    <MenuItem.DataContext>
-                        <viewModel:BorderDetectionViewModel />
-                    </MenuItem.DataContext>
-                </MenuItem>
+                          Command="{Binding ChangeVisibilityCommand}" />
             </MenuItem>
-            
+
             <MenuItem Header="4 лаба">
                 <MenuItem x:Name="SegmentationMenuItem"
                           Header="Сегментация"
-                          Command="{Binding SegmentationCommand}">
-                    <MenuItem.DataContext>
-                        <viewModel:SegmentationViewModel />
-                    </MenuItem.DataContext>
-                </MenuItem>
+                          Command="{Binding ChangeVisibilityCommand}" />
                 <MenuItem x:Name="HistogramMenuItem"
                           Header="Гистограмма"
-                          Command="{Binding HistogramCommand}">
-                    <MenuItem.DataContext>
-                        <viewModel:HistogramViewModel />
-                    </MenuItem.DataContext>
-                </MenuItem>
+                          Command="{Binding ChangeVisibilityCommand}" />
             </MenuItem>
         </Menu>
 
@@ -148,74 +105,23 @@
             <StackPanel Width="Auto"
                         Background="WhiteSmoke">
                 <view:PixelInfo x:Name="PixelInfoControl"
-                                Visibility="{Binding Visibility}">
-                    <view:PixelInfo.DataContext>
-                        <viewModel:PixelInfoViewModel />
-                    </view:PixelInfo.DataContext>
-                </view:PixelInfo>
-
+                                Visibility="{Binding Visibility}" />
                 <view:Magnifier x:Name="MagnifierControl"
-                                Visibility="{Binding Visibility}">
-                    <view:Magnifier.DataContext>
-                        <viewModel:MagnifierViewModel />
-                    </view:Magnifier.DataContext>
-                </view:Magnifier>
-
-                <view:MagnifierInfo x:Name="MagnifierInfoControl"
-                                    Visibility="{Binding Visibility}">
-                    <view:MagnifierInfo.DataContext>
-                        <viewModel:MagnifierInfoViewModel />
-                    </view:MagnifierInfo.DataContext>
-                </view:MagnifierInfo>
-
+                                Visibility="{Binding Visibility}" />
                 <view:ImageManagement x:Name="ImageManagementControl"
-                                      Visibility="{Binding Visibility}">
-                    <view:ImageManagement.DataContext>
-                        <viewModel:ImageManagementViewModel />
-                    </view:ImageManagement.DataContext>
-                </view:ImageManagement>
-
+                                      Visibility="{Binding Visibility}" />
                 <view:Chromacity x:Name="ChromacityControl"
-                                 Visibility="{Binding Visibility}">
-                    <view:Chromacity.DataContext>
-                        <viewModel:ChromacityViewModel />
-                    </view:Chromacity.DataContext>
-                </view:Chromacity>
-
+                                 Visibility="{Binding Visibility}" />
                 <view:AntiAliasing x:Name="AntiAliasingControl"
-                                   Visibility="{Binding Visibility}">
-                    <view:AntiAliasing.DataContext>
-                        <viewModel:AntiAliasingViewModel />
-                    </view:AntiAliasing.DataContext>
-                </view:AntiAliasing>
-
+                                   Visibility="{Binding Visibility}" />
                 <view:Masking x:Name="MaskingControl"
-                              Visibility="{Binding Visibility}">
-                    <view:Masking.DataContext>
-                        <viewModel:MaskingViewModel />
-                    </view:Masking.DataContext>
-                </view:Masking>
-                
+                              Visibility="{Binding Visibility}" />
                 <view:BorderDetection x:Name="BorderDetectionControl"
-                                      Visibility="{Binding Visibility}">
-                    <view:BorderDetection.DataContext>
-                        <viewModel:BorderDetectionViewModel />
-                    </view:BorderDetection.DataContext>
-                </view:BorderDetection>
-                
+                                      Visibility="{Binding Visibility}" />
                 <view:Segmentation x:Name="SegmentationControl"
-                                   Visibility="{Binding Visibility}">
-                    <view:Segmentation.DataContext>
-                        <viewModel:SegmentationViewModel />
-                    </view:Segmentation.DataContext>
-                </view:Segmentation>
-                
+                                   Visibility="{Binding Visibility}" />
                 <view:Histogram x:Name="HistogramControl"
-                                Visibility="{Binding Visibility}">
-                    <view:Histogram.DataContext>
-                        <viewModel:HistogramViewModel />
-                    </view:Histogram.DataContext>
-                </view:Histogram>
+                                Visibility="{Binding Visibility}" />
             </StackPanel>
         </StackPanel>
     </StackPanel>

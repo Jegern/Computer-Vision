@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Windows;
-using System.Windows.Media.Imaging;
 using Laboratory_work_1.Commands.Base;
 using Laboratory_work_1.ViewModels.Base;
 using Laboratory_work_1.ViewModels.Store;
@@ -11,35 +9,12 @@ public class BorderDetectionViewModel : ViewModel
 {
     #region Fields
 
-    private readonly ViewModelStore? _store;
-    private BitmapSource? _picture;
-    private byte[]? _pictureBytes;
-    private Visibility _visibility = Visibility.Collapsed;
-
     private int? _hessianThreshold;
     private int? _harrisThreshold;
     private bool _sobelOperator3X3;
     private bool _sobelOperator5X5;
     private bool _sobelOperator7X7;
     private int? _sobelThreshold;
-
-    private BitmapSource? Picture
-    {
-        get => _picture;
-        set => Set(ref _picture, value);
-    }
-
-    private byte[]? PictureBytes
-    {
-        get => _pictureBytes;
-        set => Set(ref _pictureBytes, value);
-    }
-
-    public Visibility Visibility
-    {
-        get => _visibility;
-        set => Set(ref _visibility, value);
-    }
 
     public int? HessianThreshold
     {
@@ -113,17 +88,8 @@ public class BorderDetectionViewModel : ViewModel
     {
     }
 
-    public BorderDetectionViewModel(ViewModelStore? store)
+    public BorderDetectionViewModel(ViewModelStore? store) : base(store)
     {
-        if (store is null) return;
-
-        store.PictureChanged += Picture_OnChanged;
-        store.PictureBytesChanged += PictureBytes_OnChanged;
-        _store = store;
-
-        BorderDetectionCommand = new Command(
-            BorderDetectionCommand_OnExecuted,
-            BorderDetectionCommand_CanExecute);
         HessianOperatorCommand = new Command(
             HessianOperatorCommand_OnExecuted,
             HessianOperatorCommand_CanExecute);
@@ -141,36 +107,7 @@ public class BorderDetectionViewModel : ViewModel
             DogOperatorCommand_CanExecute);
     }
 
-    #region Event Subscription
-
-    private void Picture_OnChanged(BitmapSource? source)
-    {
-        Picture = source;
-    }
-
-    private void PictureBytes_OnChanged(byte[] bytes)
-    {
-        PictureBytes = bytes;
-    }
-
-    #endregion
-
     #region Commands
-
-    #region BorderDetectionCommand
-
-    public Command? BorderDetectionCommand { get; }
-
-    private bool BorderDetectionCommand_CanExecute(object? parameter) => Picture is not null;
-
-    private void BorderDetectionCommand_OnExecuted(object? parameter)
-    {
-        Visibility = Visibility is Visibility.Collapsed
-            ? Visibility.Visible
-            : Visibility.Collapsed;
-    }
-
-    #endregion
 
     #region HessianOperatorCommand
 
@@ -208,7 +145,7 @@ public class BorderDetectionViewModel : ViewModel
                                           Math.Abs(lambdas[1]) > HessianThreshold ? 0 : 255)));
         }
 
-        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 
     private static double[] SolveQuadraticEquation(double[,] matrix)
@@ -257,7 +194,7 @@ public class BorderDetectionViewModel : ViewModel
                 Tools.GetGrayPixel((byte)(0.05 * lambdas[1] > HarrisThreshold ? 0 : 255)));
         }
 
-        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 
     #endregion
@@ -316,7 +253,7 @@ public class BorderDetectionViewModel : ViewModel
                 Tools.GetGrayPixel((byte)(f > threshold ? 0 : 255)));
         }
 
-        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 
     #endregion
@@ -355,7 +292,7 @@ public class BorderDetectionViewModel : ViewModel
                 Tools.GetGrayPixel((byte)(g == 0 ? 0 : 255)));
         }
 
-        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 
     #endregion
@@ -384,7 +321,7 @@ public class BorderDetectionViewModel : ViewModel
                 Tools.GetGrayPixel((byte)(vanishBytes[index] == vanishBytesAlpha[index] ? 0 : 255)));
         }
 
-        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 
     private byte[] GaussianFilter(byte[] bytes, double sigma)

@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Windows;
-using System.Windows.Media.Imaging;
 using Laboratory_work_1.Commands.Base;
 using Laboratory_work_1.ViewModels.Base;
 using Laboratory_work_1.ViewModels.Store;
@@ -12,12 +10,7 @@ public class AntiAliasingViewModel : ViewModel
 {
     #region Fields
 
-    private readonly ViewModelStore? _store;
-    private BitmapSource? _picture;
-    private byte[]? _pictureBytes;
     private byte[]? _antiAliasingPictureBytes;
-    private Visibility _visibility = Visibility.Collapsed;
-
     private bool _rectangleFilter3X3;
     private bool _rectangleFilter5X5;
     private bool _medianFilter3X3;
@@ -27,32 +20,14 @@ public class AntiAliasingViewModel : ViewModel
     private bool _sigmaFilter5X5;
     private double? _sigmaFilterSigma;
 
-    private BitmapSource? Picture
-    {
-        get => _picture;
-        set => Set(ref _picture, value);
-    }
-
-    private byte[]? PictureBytes
-    {
-        get => _pictureBytes;
-        set => Set(ref _pictureBytes, value);
-    }
-
     private byte[]? AntiAliasingPictureBytes
     {
         get => _antiAliasingPictureBytes;
         set
         {
             if (Set(ref _antiAliasingPictureBytes, value))
-                _store?.TriggerAntiAliasingPictureBytesEvent(AntiAliasingPictureBytes!);
+                Store?.TriggerAntiAliasingPictureBytesEvent(AntiAliasingPictureBytes!);
         }
-    }
-
-    public Visibility Visibility
-    {
-        get => _visibility;
-        set => Set(ref _visibility, value);
     }
 
     public bool RectangleFilter3X3
@@ -112,17 +87,8 @@ public class AntiAliasingViewModel : ViewModel
     {
     }
 
-    public AntiAliasingViewModel(ViewModelStore? store)
+    public AntiAliasingViewModel(ViewModelStore? store) : base(store)
     {
-        if (store is null) return;
-
-        store.PictureChanged += Picture_OnChanged;
-        store.PictureBytesChanged += PictureBytes_OnChanged;
-        _store = store;
-
-        AntiAliasingCommand = new Command(
-            AntiAliasingCommand_OnExecuted,
-            AntiAliasingCommand_CanExecute);
         RectangleFilterCommand = new Command(
             RectangleFilterCommand_OnExecuted,
             RectangleFilterCommand_CanExecute);
@@ -137,36 +103,7 @@ public class AntiAliasingViewModel : ViewModel
             SigmaFilterCommand_CanExecute);
     }
 
-    #region Event Subscription
-
-    private void Picture_OnChanged(BitmapSource? source)
-    {
-        Picture = source;
-    }
-
-    private void PictureBytes_OnChanged(byte[] bytes)
-    {
-        PictureBytes = bytes;
-    }
-
-    #endregion
-
     #region Commands
-
-    #region AntiAliasingCommand
-
-    public Command? AntiAliasingCommand { get; }
-
-    private bool AntiAliasingCommand_CanExecute(object? parameter) => Picture is not null;
-
-    private void AntiAliasingCommand_OnExecuted(object? parameter)
-    {
-        Visibility = Visibility is Visibility.Collapsed
-            ? Visibility.Visible
-            : Visibility.Collapsed;
-    }
-
-    #endregion
 
     #region RectangleFilterCommand
 
@@ -207,7 +144,7 @@ public class AntiAliasingViewModel : ViewModel
                 Tools.GetGrayPixel((byte) (sum / counter)));
         }
 
-        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 
     #endregion
@@ -251,7 +188,7 @@ public class AntiAliasingViewModel : ViewModel
                 Tools.GetGrayPixel((byte) windowPixelList[windowPixelList.Count / 2]));
         }
 
-        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 
     #endregion
@@ -297,7 +234,7 @@ public class AntiAliasingViewModel : ViewModel
                 Tools.GetGrayPixel((byte) (sum <= 255 ? sum : intensity)));
         }
 
-        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 
     #endregion
@@ -345,7 +282,7 @@ public class AntiAliasingViewModel : ViewModel
                 Tools.GetGrayPixel((byte) (sum / counter)));
         }
 
-        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 
     #endregion

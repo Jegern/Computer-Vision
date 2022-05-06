@@ -1,5 +1,4 @@
 using System.Windows;
-using System.Windows.Media.Imaging;
 using Laboratory_work_1.Commands.Base;
 using Laboratory_work_1.ViewModels.Base;
 using Laboratory_work_1.ViewModels.Store;
@@ -10,11 +9,6 @@ public class ImageManagementViewModel : ViewModel
 {
     #region Fields
 
-    private readonly ViewModelStore? _store;
-    private BitmapSource? _picture;
-    private byte[]? _pictureBytes;
-    private Visibility _visibility = Visibility.Collapsed;
-
     private int _intensity = 127;
     private int _channelCounter;
     private bool _redChecked;
@@ -24,25 +18,6 @@ public class ImageManagementViewModel : ViewModel
     private bool _verticalChecked;
     private bool _horizontalVerticalChecked;
     private bool _diagonalChecked;
-
-
-    private BitmapSource? Picture
-    {
-        get => _picture;
-        set => Set(ref _picture, value);
-    }
-
-    private byte[]? PictureBytes
-    {
-        get => _pictureBytes;
-        set => Set(ref _pictureBytes, value);
-    }
-
-    public Visibility Visibility
-    {
-        get => _visibility;
-        set => Set(ref _visibility, value);
-    }
 
     public int Intensity
     {
@@ -143,15 +118,8 @@ public class ImageManagementViewModel : ViewModel
     {
     }
 
-    public ImageManagementViewModel(ViewModelStore? store)
+    public ImageManagementViewModel(ViewModelStore? store) : base(store)
     {
-        if (store is null) return;
-
-        store.PictureChanged += Picture_OnChanged;
-        store.PictureBytesChanged += PictureBytes_OnChanged;
-        _store = store;
-
-        ImageManagementCommand = new Command(ImageManagementCommand_OnExecuted, ImageManagementCommand_CanExecute);
         ValueChangedCommand = new Command(ValueChangedCommand_OnExecuted, ValueChangedCommand_CanExecute);
         BleachCommand = new Command(BleachCommand_OnExecuted, BleachCommand_CanExecute);
         NegativeCommand = new Command(NegativeCommand_OnExecuted, NegativeCommand_CanExecute);
@@ -160,36 +128,7 @@ public class ImageManagementViewModel : ViewModel
         VanishCommand = new Command(VanishCommand_OnExecuted, VanishCommand_CanExecute);
     }
 
-    #region Event Subscription
-
-    private void Picture_OnChanged(BitmapSource? source)
-    {
-        Picture = source;
-    }
-
-    private void PictureBytes_OnChanged(byte[] bytes)
-    {
-        PictureBytes = bytes;
-    }
-
-    #endregion
-
     #region Commands
-
-    #region ImageManagementCommand
-
-    public Command? ImageManagementCommand { get; }
-
-    private bool ImageManagementCommand_CanExecute(object? parameter) => Picture is not null;
-
-    private void ImageManagementCommand_OnExecuted(object? parameter)
-    {
-        Visibility = Visibility is Visibility.Collapsed
-            ? Visibility.Visible
-            : Visibility.Collapsed;
-    }
-
-    #endregion
 
     #region ValueChangedCommand
 
@@ -214,7 +153,7 @@ public class ImageManagementViewModel : ViewModel
                 PictureBytes[i + 2] = (byte)(PictureBytes[i + 2] + difference);
         }
 
-        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 
     #endregion
@@ -232,7 +171,7 @@ public class ImageManagementViewModel : ViewModel
                 Tools.GetPixel(PictureBytes, i),
                 Tools.GetGrayPixel((byte) Tools.GetPixelIntensity(PictureBytes, i)));
         
-        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 
     #endregion
@@ -252,7 +191,7 @@ public class ImageManagementViewModel : ViewModel
             PictureBytes[i + 2] = (byte) (255 - PictureBytes[i + 2]);
         }
 
-        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 
     #endregion
@@ -271,7 +210,7 @@ public class ImageManagementViewModel : ViewModel
         for (var i = 0; i < PictureBytes!.Length; i += 4)
             Tools.Swap(ref PictureBytes[i + firstChannel], ref PictureBytes[i + secondChannel]);
         
-        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 
     #endregion
@@ -303,7 +242,7 @@ public class ImageManagementViewModel : ViewModel
                     Tools.GetPixel(PictureBytes!, i * width * 4 + j * 4),
                     Tools.GetPixel(PictureBytes!, i * width * 4 + (width - j - 1) * 4));
 
-        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 
     #endregion
@@ -352,7 +291,7 @@ public class ImageManagementViewModel : ViewModel
                 Tools.GetGrayPixel((byte) (sum / counter)));
         }
 
-        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 
     #endregion

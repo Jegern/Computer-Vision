@@ -17,7 +17,6 @@ namespace Laboratory_work_1
             DataContext = new MainViewModel(store);
             InitializePixelInfoViewModel(store);
             InitializeMagnifierViewModel(store);
-            InitializeMagnifierInfoViewModel(store);
             InitializeImageManagementViewModel(store);
             InitializeChromacityViewModel(store);
             InitializeAntiAliasingViewModel(store);
@@ -39,13 +38,6 @@ namespace Laboratory_work_1
             var magnifierViewModel = new MagnifierViewModel(store);
             MagnifierControl.DataContext = magnifierViewModel;
             MagnifierMenuItem.DataContext = magnifierViewModel;
-        }
-        
-        private void InitializeMagnifierInfoViewModel(ViewModelStore? store)
-        {
-            var magnifierInfoViewModel = new MagnifierInfoViewModel(store);
-            MagnifierInfoControl.DataContext = magnifierInfoViewModel;
-            MagnifierInfoMenuItem.DataContext = magnifierInfoViewModel;
         }
         
         private void InitializeImageManagementViewModel(ViewModelStore? store)

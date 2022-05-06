@@ -4,13 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:behaviours="http://schemas.microsoft.com/xaml/behaviors"
-             xmlns:viewModel="clr-namespace:Laboratory_work_1.ViewModels"
+             xmlns:vms="clr-namespace:Laboratory_work_1.ViewModels"
              mc:Ignorable="d"
 
              Width="200" Height="Auto">
 
     <UserControl.DataContext>
-        <viewModel:ImageManagementViewModel />
+        <vms:ImageManagementViewModel />
     </UserControl.DataContext>
 
     <UserControl.Resources>

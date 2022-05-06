@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Windows;
-using System.Windows.Media.Imaging;
+using System.Collections.Generic;
 using Laboratory_work_1.Commands.Base;
 using Laboratory_work_1.ViewModels.Base;
 using Laboratory_work_1.ViewModels.Store;
@@ -13,44 +11,10 @@ public class SegmentationViewModel : ViewModel
 {
     #region Fields
 
-    private readonly ViewModelStore? _store;
-    private BitmapSource? _picture;
-    private byte[]? _pictureBytes;
-    private Visibility _visibility = Visibility.Collapsed;
-
     private int? _areaPercentage;
     private int? _kNeighbours;
 
-    private BitmapSource? Picture
-    {
-        get => _picture;
-        set => Set(ref _picture, value);
-    }
-
-    private byte[]? PictureBytes
-    {
-        get => _pictureBytes;
-        set
-        {
-            if (Set(ref _pictureBytes, value))
-                FillHistogram();
-        }
-    }
-
-    private void FillHistogram()
-    {
-        Array.Clear(Histogram, 0, Histogram.Length);
-        for (var i = 0; i < PictureBytes!.Length; i += 4)
-            Histogram[(byte) Tools.GetPixelIntensity(PictureBytes, i)]++;
-    }
-
     private int[] Histogram { get; } = new int[256];
-
-    public Visibility Visibility
-    {
-        get => _visibility;
-        set => Set(ref _visibility, value);
-    }
 
     public int? AreaPercentage
     {
@@ -73,17 +37,8 @@ public class SegmentationViewModel : ViewModel
     {
     }
 
-    public SegmentationViewModel(ViewModelStore? store)
+    public SegmentationViewModel(ViewModelStore? store) : base(store)
     {
-        if (store is null) return;
-
-        store.PictureChanged += Picture_OnChanged;
-        store.PictureBytesChanged += PictureBytes_OnChanged;
-        _store = store;
-
-        SegmentationCommand = new Command(
-            SegmentationCommand_OnExecuted,
-            SegmentationCommand_CanExecute);
         PTileCommand = new Command(
             PTileCommand_OnExecuted,
             PTileCommand_CanExecute);
@@ -95,36 +50,7 @@ public class SegmentationViewModel : ViewModel
             KMeansCommand_CanExecute);
     }
 
-    #region Event Subscription
-
-    private void Picture_OnChanged(BitmapSource? source)
-    {
-        Picture = source;
-    }
-
-    private void PictureBytes_OnChanged(byte[] bytes)
-    {
-        PictureBytes = bytes;
-    }
-
-    #endregion
-
     #region Commands
-
-    #region SegmentationCommand
-
-    public Command? SegmentationCommand { get; }
-
-    private bool SegmentationCommand_CanExecute(object? parameter) => Picture is not null;
-
-    private void SegmentationCommand_OnExecuted(object? parameter)
-    {
-        Visibility = Visibility is Visibility.Collapsed
-            ? Visibility.Visible
-            : Visibility.Collapsed;
-    }
-
-    #endregion
 
     #region PTileCommand
 
@@ -146,7 +72,7 @@ public class SegmentationViewModel : ViewModel
         }
 
         ThresholdingSegmentation(threshold);
-        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 
     private void ThresholdingSegmentation(int threshold)
@@ -180,7 +106,7 @@ public class SegmentationViewModel : ViewModel
         }
 
         ThresholdingSegmentation(threshold);
-        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 
     private int CalculateNewThreshold(int threshold)
@@ -240,7 +166,7 @@ public class SegmentationViewModel : ViewModel
                 Tools.GetGrayPixel((byte) palette[thresholdIndex]));
         }
 
-        _store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
     }
 
     private int[] InitializeCentroids(int count, int? first = null, int? last = null)

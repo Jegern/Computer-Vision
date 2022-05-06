@@ -11,9 +11,6 @@ namespace Laboratory_work_1.ViewModels;
 
 public class HistogramViewModel : ViewModel
 {
-    private byte[]? _pictureBytes;
-    private Visibility _visibility = Visibility.Collapsed;
-
     private ISeries[] _series =
     {
         new ColumnSeries<int>
@@ -21,16 +18,6 @@ public class HistogramViewModel : ViewModel
             Values = new int[256]
         }
     };
-
-    private byte[]? PictureBytes
-    {
-        get => _pictureBytes;
-        set
-        {
-            if (Set(ref _pictureBytes, value))
-                FillHistogram();
-        }
-    }
 
     private void FillHistogram()
     {
@@ -41,12 +28,6 @@ public class HistogramViewModel : ViewModel
     }
 
     private int[] Histogram { get; } = new int[256];
-
-    public Visibility Visibility
-    {
-        get => _visibility;
-        set => Set(ref _visibility, value);
-    }
 
     public ISeries[] Series
     {
@@ -61,42 +42,11 @@ public class HistogramViewModel : ViewModel
     {
     }
 
-    public HistogramViewModel(ViewModelStore? store)
+    public HistogramViewModel(ViewModelStore? store) : base(store)
     {
-        if (store is null) return;
-
-        store.PictureBytesChanged += PictureBytes_OnChanged;
-
-        HistogramCommand = new Command(
-            HistogramCommand_OnExecuted,
-            HistogramCommand_CanExecute);
     }
-
-    #region Event Subscription
-
-    private void PictureBytes_OnChanged(byte[] bytes)
-    {
-        PictureBytes = bytes;
-    }
-
-    #endregion
 
     #region Commands
-
-    #region HistogramCommand
-
-    public Command? HistogramCommand { get; }
-
-    private bool HistogramCommand_CanExecute(object? parameter) => PictureBytes is not null;
-
-    private void HistogramCommand_OnExecuted(object? parameter)
-    {
-        Visibility = Visibility is Visibility.Collapsed
-            ? Visibility.Visible
-            : Visibility.Collapsed;
-    }
-
-    #endregion
 
     #endregion
 }

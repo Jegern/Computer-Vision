@@ -16,22 +16,12 @@ public class MainViewModel : ViewModel
 
     private readonly FileService _fileService = new();
     private readonly DialogService _dialogService = new();
-    private readonly ViewModelStore? _store;
-    private BitmapSource? _picture;
     private BitmapSource? _originalPicture;
     private byte[]? _pictureBytes;
-    private string? _title;
+    // private int[]? _histogram;
     private Point _pictureMousePosition;
-
-    public BitmapSource? Picture
-    {
-        get => _picture;
-        set
-        {
-            if (Set(ref _picture, value))
-                _store?.TriggerPictureEvent(Picture!);
-        }
-    }
+    
+    private string? _title;
 
     private BitmapSource? OriginalPicture
     {
@@ -39,20 +29,23 @@ public class MainViewModel : ViewModel
         set => Set(ref _originalPicture, value);
     }
 
-    private byte[]? PictureBytes
+    private new byte[]? PictureBytes
     {
         set
         {
-            if (Set(ref _pictureBytes, value) && Picture is not null)
-                _store?.TriggerPictureBytesEvent(Picture);
+            if (Set(ref _pictureBytes, value))
+                Store?.TriggerPictureBytesEvent(_pictureBytes!);
         }
     }
-    
-    public string? Title
-    {
-        get => _title;
-        set => Set(ref _title, value);
-    }
+
+    // private int[]? Histogram
+    // {
+    //     set
+    //     {
+    //         if (Set(ref _histogram, value)) ;
+    //         //_store?.TriggerHistogramEvent()
+    //     }
+    // }
 
     private Point PictureMousePosition
     {
@@ -60,8 +53,14 @@ public class MainViewModel : ViewModel
         set
         {
             if (Set(ref _pictureMousePosition, value))
-                _store?.TriggerMousePositionEvent(PictureMousePosition);
+                Store?.TriggerMousePositionEvent(PictureMousePosition);
         }
+    }
+    
+    public string? Title
+    {
+        get => _title;
+        set => Set(ref _title, value);
     }
 
     #endregion
@@ -73,13 +72,8 @@ public class MainViewModel : ViewModel
     {
     }
 
-    public MainViewModel(ViewModelStore? store)
+    public MainViewModel(ViewModelStore? store) : base(store)
     {
-        if (store is null) return;
-
-        store.PictureChanged += Picture_OnChanged;
-        _store = store;
-
         OpenImageCommand = new Command(
             OpenImageCommand_OnExecuted, 
             OpenImageCommand_CanExecute);
@@ -93,15 +87,6 @@ public class MainViewModel : ViewModel
             MouseMoveCommand_OnExecuted, 
             MouseMoveCommand_CanExecute);
     }
-
-    #region Event Subscription
-
-    private void Picture_OnChanged(BitmapSource source)
-    {
-        Picture = source;
-    }
-
-    #endregion
 
     #region Commands
 
