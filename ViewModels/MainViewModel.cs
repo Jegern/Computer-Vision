@@ -17,9 +17,16 @@ public class MainViewModel : ViewModel
     private FileService FileService { get; } = new();
     private DialogService DialogService { get; } = new();
 
+    private BitmapSource? _picture;
     private BitmapSource? _originalPicture;
     private Point _pictureMousePosition;
     private string? _title;
+
+    public BitmapSource? Picture
+    {
+        get => _picture;
+        set => Set(ref _picture, value);
+    }
 
     private BitmapSource? OriginalPicture
     {
@@ -59,6 +66,8 @@ public class MainViewModel : ViewModel
 
     public MainViewModel(ViewModelStore? store) : base(store)
     {
+        if (store is not null) store.PictureChanged += source => Picture = source;
+        
         OpenImageCommand = new Command(
             OpenImageCommand_OnExecuted,
             OpenImageCommand_CanExecute);

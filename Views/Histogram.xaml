@@ -23,8 +23,8 @@
 
     <StackPanel Margin="3">
         <StackPanel>
-            <WpfPlot x:Name="Plot"
-                     Height="200" />
+            <WpfPlot x:Name="WpfPlot"
+                     Width="184" Height="184" />
         </StackPanel>
     </StackPanel>
 </UserControl>
