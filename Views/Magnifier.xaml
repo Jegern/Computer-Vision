@@ -32,7 +32,7 @@
                        RenderOptions.BitmapScalingMode="NearestNeighbor" />
             </Border>
 
-            <TextBox Text="{Binding Size, 
+            <TextBox Text="{Binding WindowSide, 
                                 UpdateSourceTrigger=PropertyChanged}"
                      MaxLength="2" />
         </StackPanel>

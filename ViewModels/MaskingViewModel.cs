@@ -58,7 +58,7 @@ public class MaskingViewModel : ViewModel
     public Command? SoftMaskingCommand { get; }
 
     private bool SoftMaskingCommand_CanExecute(object? parameter) => 
-        Picture is not null &&
+        !PictureSize.IsEmpty &&
         Lambda is not null &&
         AntiAliasingPictureBytes is not null;
 
@@ -76,7 +76,7 @@ public class MaskingViewModel : ViewModel
                 Tools.GetGrayPixel((byte) intensity));
         }
         
-        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(PictureBytes!, PictureSize);
     }
 
     #endregion

@@ -1,24 +1,25 @@
-﻿using System;
-using System.IO;
-using System.Windows.Controls;
+﻿using System.IO;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 using System.Windows.Media.Imaging;
 
 namespace Laboratory_work_1.Services;
 
 public class FileService
 {
-    public BitmapImage? OpenedImage { get; private set; }
+    public BitmapSource? OpenedImage { get; private set; }
     public string? ImageName { get; private set; }
-    
+
     public bool Open(string filePath)
     {
         var (imageWidth, imageHeight) = GetSizeOfPicture(filePath);
         if (imageWidth > 1600 || imageHeight > 900) return false;
-        OpenedImage = new BitmapImage(new Uri(filePath));
+        OpenedImage = Tools.CreateImage(ReadByte(filePath), imageWidth, imageHeight);
         ImageName = Path.GetFileNameWithoutExtension(filePath);
         return true;
     }
-    
+
     private static (int, int) GetSizeOfPicture(string filePath)
     {
         using var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
@@ -27,8 +28,22 @@ public class FileService
         var pixelHeight = bitmapFrame.PixelHeight;
         return (pixelWidth, pixelHeight);
     }
- 
-    public void Save(string filePath, BitmapSource source)
+
+    private static byte[] ReadByte(string filePath)
+    {
+        var bitmap = new Bitmap(filePath);
+        var bitmapData = bitmap.LockBits(
+            new Rectangle(0, 0, bitmap.Width, bitmap.Height),
+            ImageLockMode.ReadOnly,
+            PixelFormat.Format32bppRgb);
+        var length = bitmapData.Stride * bitmapData.Height;
+        var bytes = new byte[length];
+        Marshal.Copy(bitmapData.Scan0, bytes, 0, length);
+        bitmap.UnlockBits(bitmapData);
+        return bytes;
+    }
+
+    public static void Save(string filePath, BitmapSource source)
     {
         var fileExtension = Path.GetExtension(filePath);
         BitmapEncoder? encoder = fileExtension switch
@@ -40,7 +55,7 @@ public class FileService
             _ => null
         };
         if (encoder is null) return;
-        
+
         using var fileStream = new FileStream(filePath, FileMode.Create);
         encoder.Frames.Add(BitmapFrame.Create(source));
         encoder.Save(fileStream);

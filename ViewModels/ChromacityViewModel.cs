@@ -1,4 +1,5 @@
 using System;
+using System.Windows;
 using Laboratory_work_1.Commands.Base;
 using Laboratory_work_1.ViewModels.Base;
 using Laboratory_work_1.ViewModels.Store;
@@ -73,7 +74,7 @@ public class ChromacityViewModel : ViewModel
     public Command? BinaryTransformationCommand { get; }
 
     private bool BinaryTransformationCommand_CanExecute(object? parameter) =>
-        Picture is not null &&
+        !PictureSize.IsEmpty &&
         BinaryThreshold is not null;
 
     private void BinaryTransformationCommand_OnExecuted(object? parameter)
@@ -86,7 +87,7 @@ public class ChromacityViewModel : ViewModel
                 Tools.GetGrayPixel((byte) (intensity <= BinaryThreshold ? 0 : 255)));
         }
 
-        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(PictureBytes!, PictureSize);
     }
 
     #endregion
@@ -96,7 +97,7 @@ public class ChromacityViewModel : ViewModel
     public Command? IntensityRangeCutCommand { get; }
 
     private bool IntensityRangeCutCommand_CanExecute(object? parameter) =>
-        Picture is not null &&
+        !PictureSize.IsEmpty &&
         CutStart is not null &&
         CutEnd is not null;
 
@@ -110,7 +111,7 @@ public class ChromacityViewModel : ViewModel
                 Tools.GetGrayPixel((byte) (CutStart <= intensity && intensity <= CutEnd ? 0 : 255)));
         }
 
-        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(PictureBytes!, PictureSize);
     }
 
     #endregion
@@ -120,7 +121,7 @@ public class ChromacityViewModel : ViewModel
     public Command? BinaryFlatCutCommand { get; }
 
     private bool BinaryFlatCutCommand_CanExecute(object? parameter) =>
-        Picture is not null &&
+        !PictureSize.IsEmpty &&
         BinaryFlat is >= 0 and <= 7;
 
     private void BinaryFlatCutCommand_OnExecuted(object? parameter)
@@ -133,7 +134,7 @@ public class ChromacityViewModel : ViewModel
                 Tools.GetGrayPixel((byte) ((((int) intensity >> (int) BinaryFlat!) & 1) * 255)));
         }
 
-        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(PictureBytes!, PictureSize);
     }
 
     #endregion
@@ -142,7 +143,7 @@ public class ChromacityViewModel : ViewModel
 
     public Command? LogarithmicTransformationCommand { get; }
 
-    private bool LogarithmicTransformationCommand_CanExecute(object? parameter) => Picture is not null;
+    private bool LogarithmicTransformationCommand_CanExecute(object? parameter) => !PictureSize.IsEmpty;
 
     private void LogarithmicTransformationCommand_OnExecuted(object? parameter)
     {
@@ -154,7 +155,7 @@ public class ChromacityViewModel : ViewModel
                 Tools.GetGrayPixel((byte) (41 * Math.Log(1 + intensity))));
         }
 
-        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(PictureBytes!, PictureSize);
     }
 
     #endregion
@@ -163,7 +164,7 @@ public class ChromacityViewModel : ViewModel
 
     public Command? PowerTransformationCommand { get; }
 
-    private bool PowerTransformationCommand_CanExecute(object? parameter) => Picture is not null;
+    private bool PowerTransformationCommand_CanExecute(object? parameter) => !PictureSize.IsEmpty;
 
     private void PowerTransformationCommand_OnExecuted(object? parameter)
     {
@@ -175,7 +176,7 @@ public class ChromacityViewModel : ViewModel
                 Tools.GetGrayPixel((byte) (Math.Pow(intensity, 2) / 255)));
         }
 
-        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(PictureBytes!, PictureSize);
     }
 
     #endregion

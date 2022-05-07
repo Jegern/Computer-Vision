@@ -14,13 +14,11 @@ public class MainViewModel : ViewModel
 {
     #region Fields
 
-    private readonly FileService _fileService = new();
-    private readonly DialogService _dialogService = new();
+    private FileService FileService { get; } = new();
+    private DialogService DialogService { get; } = new();
+
     private BitmapSource? _originalPicture;
-    private byte[]? _pictureBytes;
-    // private int[]? _histogram;
     private Point _pictureMousePosition;
-    
     private string? _title;
 
     private BitmapSource? OriginalPicture
@@ -31,21 +29,8 @@ public class MainViewModel : ViewModel
 
     private new byte[]? PictureBytes
     {
-        set
-        {
-            if (Set(ref _pictureBytes, value))
-                Store?.TriggerPictureBytesEvent(_pictureBytes!);
-        }
+        set => Store?.TriggerPictureBytesEvent(value!);
     }
-
-    // private int[]? Histogram
-    // {
-    //     set
-    //     {
-    //         if (Set(ref _histogram, value)) ;
-    //         //_store?.TriggerHistogramEvent()
-    //     }
-    // }
 
     private Point PictureMousePosition
     {
@@ -56,7 +41,7 @@ public class MainViewModel : ViewModel
                 Store?.TriggerMousePositionEvent(PictureMousePosition);
         }
     }
-    
+
     public string? Title
     {
         get => _title;
@@ -75,16 +60,16 @@ public class MainViewModel : ViewModel
     public MainViewModel(ViewModelStore? store) : base(store)
     {
         OpenImageCommand = new Command(
-            OpenImageCommand_OnExecuted, 
+            OpenImageCommand_OnExecuted,
             OpenImageCommand_CanExecute);
         SaveImageCommand = new Command(
-            SaveImageCommand_OnExecuted, 
+            SaveImageCommand_OnExecuted,
             SaveImageCommand_CanExecute);
         ReturnOriginalImageCommand = new Command(
-            ReturnOriginalImageCommand_OnExecuted, 
+            ReturnOriginalImageCommand_OnExecuted,
             ReturnOriginalImageCommand_CanExecute);
         MouseMoveCommand = new Command(
-            MouseMoveCommand_OnExecuted, 
+            MouseMoveCommand_OnExecuted,
             MouseMoveCommand_CanExecute);
     }
 
@@ -98,17 +83,36 @@ public class MainViewModel : ViewModel
 
     private void OpenImageCommand_OnExecuted(object? parameter)
     {
-        if (!_dialogService.OpenFileDialog()) return;
-        if (_fileService.Open(_dialogService.FilePath!))
+        if (!DialogService.OpenFileDialog()) return;
+        if (FileService.Open(DialogService.FilePath!))
         {
-            Picture = _fileService.OpenedImage!;
-            OriginalPicture = Picture.Clone();
-            PictureBytes = Tools.GetPixelBytes(Picture);
-            Title = _fileService.ImageName;
-            Tools.ResizeAndCenterWindow(Application.Current.MainWindow);
+            Picture = FileService.OpenedImage;
+            PictureSize = new Size(Picture!.Width, Picture!.Height);
+            OriginalPicture = Picture!.Clone();
+            PictureBytes = GetPictureBytes();
+            Title = FileService.ImageName;
+            ResizeAndCenterWindow();
         }
         else
             DialogService.ShowError("Приложение не поддерживает картинки больше 1600x900");
+    }
+
+    private byte[] GetPictureBytes()
+    {
+        var width = (int) PictureSize.Width;
+        var height = (int) PictureSize.Height;
+        var pixels = new byte[height * width * 4];
+        Picture!.CopyPixels(new Int32Rect(0, 0, width, height), pixels, width * 4, 0);
+        return pixels;
+    }
+
+    private static void ResizeAndCenterWindow()
+    {
+        var window = Application.Current.MainWindow;
+        if (window is null) return;
+        window.SizeToContent = SizeToContent.WidthAndHeight;
+        window.Top = (SystemParameters.WorkArea.Height - window.Height) / 2;
+        window.Left = (SystemParameters.WorkArea.Width - window.Width) / 2;
     }
 
     #endregion
@@ -121,12 +125,12 @@ public class MainViewModel : ViewModel
 
     private void SaveImageCommand_OnExecuted(object? parameter)
     {
-        if (!_dialogService.SaveFileDialog()) return;
-        _fileService.Save(_dialogService.FilePath!, Picture!);
+        if (!DialogService.SaveFileDialog()) return;
+        FileService.Save(DialogService.FilePath!, Picture!);
     }
 
     #endregion
-    
+
     #region ReturnOriginalImageCommand
 
     public Command? ReturnOriginalImageCommand { get; }
@@ -136,7 +140,7 @@ public class MainViewModel : ViewModel
     private void ReturnOriginalImageCommand_OnExecuted(object? parameter)
     {
         Picture = OriginalPicture;
-        PictureBytes = Tools.GetPixelBytes(OriginalPicture!);
+        PictureBytes = GetPictureBytes();
     }
 
     #endregion
@@ -146,7 +150,8 @@ public class MainViewModel : ViewModel
     public Command? MouseMoveCommand { get; }
 
     private bool MouseMoveCommand_CanExecute(object? parameter) =>
-        Picture is not null && ((MouseEventArgs) parameter!).Source is Image;
+        !PictureSize.IsEmpty &&
+        ((MouseEventArgs) parameter!).Source is Image;
 
     private void MouseMoveCommand_OnExecuted(object? parameter)
     {

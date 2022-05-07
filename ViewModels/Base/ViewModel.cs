@@ -1,7 +1,7 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Media.Imaging;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using Laboratory_work_1.Commands.Base;
 using Laboratory_work_1.ViewModels.Store;
 
@@ -9,12 +9,12 @@ namespace Laboratory_work_1.ViewModels.Base;
 
 public abstract class ViewModel : INotifyPropertyChanged
 {
+    #region PropertyChangedEvent
+
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    private void OnPropertyChanged([CallerMemberName] string propertyName = "")
-    {
+    private void OnPropertyChanged([CallerMemberName] string propertyName = "") =>
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
 
     protected bool Set<T>(ref T field, T value, [CallerMemberName] string propertyName = "")
     {
@@ -24,35 +24,49 @@ public abstract class ViewModel : INotifyPropertyChanged
         return true;
     }
 
+    #endregion
+
+    #region Fields
 
     private BitmapSource? _picture;
+    private Size _pictureSize = Size.Empty;
     private byte[]? _pictureBytes;
     private Visibility _visibility = Visibility.Collapsed;
 
-    protected ViewModelStore? Store { get; init; }
+    public ViewModelStore? Store { get; }
 
     public BitmapSource? Picture
     {
         get => _picture;
+        set => Set(ref _picture, value);
+    }
+
+    protected Size PictureSize
+    {
+        get => _pictureSize;
         set
         {
-            if (Set(ref _picture, value))
-                Store?.TriggerPictureEvent(_picture!);
+            if (Set(ref _pictureSize, value))
+                Store?.TriggerPictureSizeEvent(_pictureSize);
         }
     }
 
     protected byte[]? PictureBytes
     {
         get => _pictureBytes;
-        set => Set(ref _pictureBytes, value);
+        private set => Set(ref _pictureBytes, value);
     }
-    
+
     public Visibility Visibility
     {
         get => _visibility;
         set => Set(ref _visibility, value);
     }
-    
+
+    #endregion
+
+    #region Constructors
+
     /// <summary>
     /// Default constructor for code suggestions
     /// </summary>
@@ -64,36 +78,28 @@ public abstract class ViewModel : INotifyPropertyChanged
     {
         if (store is null) return;
         Store = store;
-        Store.PictureChanged += Picture_OnChanged;
-        Store.PictureBytesChanged += PictureBytes_OnChanged;
+        Store.PictureChanged += source => Picture = source;
+        Store.PictureSizeChanged += size => PictureSize = size;
+        Store.PictureBytesChanged += bytes => PictureBytes = bytes;
 
         ChangeVisibilityCommand = new Command(
             ChangeVisibilityCommand_OnExecuted,
             ChangeVisibilityCommand_CanExecute);
     }
 
-    protected virtual void Picture_OnChanged(BitmapSource? source)
-    {
-        Picture = source;
-    }
+    #endregion
 
-    protected virtual void PictureBytes_OnChanged(byte[] bytes)
-    {
-        PictureBytes = bytes;
-    }
-    
     #region ChangeVisibilityCommand
 
     public Command? ChangeVisibilityCommand { get; init; }
 
-    private bool ChangeVisibilityCommand_CanExecute(object? parameter) => Picture is not null;
+    private bool ChangeVisibilityCommand_CanExecute(object? parameter) => !PictureSize.IsEmpty;
 
     private void ChangeVisibilityCommand_OnExecuted(object? parameter)
     {
         Visibility = Visibility is Visibility.Collapsed
             ? Visibility.Visible
             : Visibility.Collapsed;
-        Tools.ResizeAndCenterWindow(Application.Current.MainWindow);
     }
 
     #endregion

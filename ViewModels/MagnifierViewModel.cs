@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media.Imaging;
@@ -13,7 +14,8 @@ public class MagnifierViewModel : ViewModel
 
     private BitmapSource? _window;
     private Point _location;
-    private uint _size = 11;
+    private byte[] _windowBytes = new byte[11 * 11 * 4];
+    private int _windowSide = 11;
     private double _mean;
     private double _deviation;
     private double _median;
@@ -30,10 +32,20 @@ public class MagnifierViewModel : ViewModel
         set => Set(ref _window, value);
     }
 
-    public uint Size
+    private byte[] WindowBytes
     {
-        get => _size;
-        set => Set(ref _size, value);
+        get => _windowBytes;
+        set => Set(ref _windowBytes, value);
+    }
+
+    public int WindowSide
+    {
+        get => _windowSide;
+        set
+        {
+            if (Set(ref _windowSide, value))
+                WindowBytes = new byte[_windowSide * _windowSide * 4];
+        }
     }
 
     public double Mean
@@ -81,67 +93,80 @@ public class MagnifierViewModel : ViewModel
 
     private void UpdateMagnifierWindow()
     {
-        if (Location.X - Size / 2.0 < 0 ||
-            Location.X + Size / 2.0 > Picture!.PixelWidth) return;
-        if (Location.Y - Size / 2.0 < 0 ||
-            Location.Y + Size / 2.0 > Picture!.PixelHeight) return;
+        var width = (int) PictureSize.Width;
+        var height = (int) PictureSize.Height;
+        var i = (int) (Location.Y - WindowSide / 2.0);
+        var j = (int) (Location.X - WindowSide / 2.0);
+        for (var y = i; y < i + WindowSide; y++)
+        for (var x = j; x < j + WindowSide; x++)
+        {
+            var magnifierPixelIndex = ((y - i) * WindowSide + x - j) * 4;
+            if (y < 0 | y >= height || x < 0 | x >= width)
+            {
+                Tools.SetPixel(
+                    Tools.GetPixel(WindowBytes, magnifierPixelIndex),
+                    Tools.GetGrayPixel(0));
+            }
+            else
+            {
+                var windowPixelIndex = y * width * 4 + x * 4;
+                Tools.SetPixel(
+                    Tools.GetPixel(WindowBytes, magnifierPixelIndex),
+                    Tools.GetPixel(PictureBytes!, windowPixelIndex));
+            }
+        }
 
-        var size = (int) Size;
-        var magnifierPixels = Tools.GetPixelBytes(
-            Picture!,
-            (int) (Location.X - Size / 2.0),
-            (int) (Location.Y - Size / 2.0),
-            size,
-            size);
-        Window = Tools.CreateImage(
-            Picture!,
-            magnifierPixels,
-            size,
-            size);
+        Window = Tools.CreateImage(WindowBytes, WindowSide, WindowSide);
     }
 
     private void UpdateMagnifierInfo()
     {
-        var magnifierWindowBytes = Tools.GetPixelBytes(Window!);
-        var magnifierWindowLength = Window!.PixelWidth * Window!.PixelHeight;
-        Mean = GetMagnifierMean(magnifierWindowBytes, magnifierWindowLength);
-        Deviation = GetMagnifierDeviation(magnifierWindowBytes, magnifierWindowLength);
-        Median = GetMagnifierMedian(magnifierWindowBytes, magnifierWindowLength);
+        Mean = GetMagnifierMean();
+        Deviation = GetMagnifierDeviation();
+        Median = GetMagnifierMedian();
     }
 
     /// <summary>
     /// The sum of the intensity of all pixels divided by the number of pixels
     /// </summary>
-    private static double GetMagnifierMean(byte[] bytes, int length)
+    private double GetMagnifierMean()
     {
         var intesivitySum = 0d;
-        for (var i = 0; i < length; i++)
-            intesivitySum += Tools.GetPixelIntensity(bytes, i * 4);
-        return Math.Round(intesivitySum / length, 3);
+        for (var i = 0; i < WindowBytes.Length; i += 4)
+            intesivitySum += Tools.GetPixelIntensity(WindowBytes, i);
+        return Math.Round(intesivitySum * 4 / WindowBytes.Length, 3);
     }
 
     /// <summary>
     /// The square root of the sum of the squares of
     /// the difference in pixel intensity and the average intensity of all pixels
     /// </summary>
-    private static double GetMagnifierDeviation(byte[] bytes, int length)
+    private double GetMagnifierDeviation()
     {
-        var magnifierMean = GetMagnifierMean(bytes, length);
+        var magnifierMean = GetMagnifierMean();
         var differenceSquareSum = 0d;
-        for (var i = 0; i < length; i++)
-            differenceSquareSum += Math.Pow(Tools.GetPixelIntensity(bytes, i * 4) - magnifierMean, 2);
-        return Math.Round(Math.Sqrt(differenceSquareSum / length), 3);
+        for (var i = 0; i < WindowBytes.Length; i += 4)
+            differenceSquareSum += Math.Pow(Tools.GetPixelIntensity(WindowBytes, i) - magnifierMean, 2);
+        return Math.Round(Math.Sqrt(differenceSquareSum * 4 / WindowBytes.Length), 3);
     }
 
     /// <summary>
     /// The median of the intensity of all pixels
     /// </summary>
-    private static double GetMagnifierMedian(byte[] bytes, int length)
+    private double GetMagnifierMedian()
     {
         var intensityList = new List<double>();
-        for (var i = 0; i < length; i += 4)
-            intensityList.Add(Tools.GetPixelIntensity(bytes, i * 4));
-        return Math.Round(Tools.GetMedianFromList(intensityList), 3);
+        for (var i = 0; i < WindowBytes.Length; i += 4)
+            intensityList.Add(Tools.GetPixelIntensity(WindowBytes, i));
+        return Math.Round(GetMedianFromList(intensityList), 3);
+    }
+
+    private static double GetMedianFromList(IEnumerable<double> list)
+    {
+        var data = list.OrderBy(x => x).ToArray();
+        if (data.Length % 2 == 0)
+            return (data[data.Length / 2 - 1] + data[data.Length / 2]) / 2.0;
+        return data[data.Length / 2];
     }
 
     #endregion
