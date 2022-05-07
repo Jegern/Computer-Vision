@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Drawing;
+using System.Windows;
 using Laboratory_work_1.ViewModels;
 
 namespace Laboratory_work_1.Views;
@@ -17,12 +18,19 @@ public partial class Histogram
     {
         ViewModel = (HistogramViewModel) DataContext;
         if (ViewModel.Store is not null) ViewModel.Store.HistogramChanged += Histogram_OnChanged;
+        WpfPlot.Configuration.Zoom = false;
+        WpfPlot.Configuration.LockVerticalAxis = true;
+        WpfPlot.Configuration.LockHorizontalAxis = true;
+        WpfPlot.Plot.XAxis.IsVisible = false;
+        WpfPlot.Plot.XAxis2.IsVisible = false;
+        WpfPlot.Plot.YAxis.IsVisible = false;
+        WpfPlot.Plot.YAxis2.IsVisible = false;
     }
 
     private void Histogram_OnChanged(double[] histogram)
     {
-        Plot.Plot.Clear();
-        Plot.Plot.AddBar(histogram);
-        Plot.Refresh();
+        WpfPlot.Plot.Clear();
+        WpfPlot.Plot.AddBar(histogram, Color.Black);
+        WpfPlot.Refresh();
     }
 }

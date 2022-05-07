@@ -28,18 +28,11 @@ public abstract class ViewModel : INotifyPropertyChanged
 
     #region Fields
 
-    private BitmapSource? _picture;
     private Size _pictureSize = Size.Empty;
     private byte[]? _pictureBytes;
     private Visibility _visibility = Visibility.Collapsed;
 
     public ViewModelStore? Store { get; }
-
-    public BitmapSource? Picture
-    {
-        get => _picture;
-        set => Set(ref _picture, value);
-    }
 
     protected Size PictureSize
     {
@@ -78,7 +71,6 @@ public abstract class ViewModel : INotifyPropertyChanged
     {
         if (store is null) return;
         Store = store;
-        Store.PictureChanged += source => Picture = source;
         Store.PictureSizeChanged += size => PictureSize = size;
         Store.PictureBytesChanged += bytes => PictureBytes = bytes;
 
