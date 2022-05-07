@@ -24,6 +24,10 @@
 
     <StackPanel Margin="3">
         <StackPanel>
+            <TextBox Text="{Binding CannyThreshold, UpdateSourceTrigger=PropertyChanged}"
+                     MaxLength="4"
+                     Tag="Порог кенни"
+                     Margin="0, 0, 0, 2" />
             <Button Content="КЕЕЕЕЕЕЕНННННИИИИИ"
                     Command="{Binding CannyMethodCommand}" />
         </StackPanel>

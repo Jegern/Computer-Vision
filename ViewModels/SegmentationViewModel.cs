@@ -14,6 +14,8 @@ public class SegmentationViewModel : ViewModel
     private double[]? _histogram;
     private int? _areaPercentage;
     private int? _kNeighbours;
+    private int? _cannyThreshold;
+    
 
     private double[]? Histogram
     {
@@ -27,6 +29,12 @@ public class SegmentationViewModel : ViewModel
         set => Set(ref _areaPercentage, value);
     }
 
+    public int? CannyThreshold
+    {
+        get => _cannyThreshold;
+        set => Set(ref _cannyThreshold, value);
+    }
+    
     public int? KNeighbours
     {
         get => _kNeighbours;
@@ -262,18 +270,19 @@ public class SegmentationViewModel : ViewModel
     public Command? CannyMethodCommand { get; }
 
     private bool CannyMethodCommand_CanExecute(object? parameter) =>
-        Picture is not null;
+        !PictureSize.IsEmpty &&
+        CannyThreshold > 0;
 
     private void CannyMethodCommand_OnExecuted(object? parameter)
     {
         var originalPictureBytes = (byte[]) PictureBytes!.Clone();
-        var width = Picture!.PixelWidth;
-        var height = Picture!.PixelHeight;
+        var width = (int)PictureSize.Width;
+        var height = (int)PictureSize.Height;
         var mask = SobelMask3X3;
-        var grad = new double[height, width, 2];
+        var grad = new double [height,  width, 2];
 
-        for (var y = 100; y < height; y++)
-        for (var x = 100; x < width; x++)
+        for (var y = 0; y < height; y++)
+        for (var x = 0; x < width; x++)
         {
             var gx = 0d;
             var gy = 0d;
@@ -293,7 +302,7 @@ public class SegmentationViewModel : ViewModel
 
             var f = Math.Sqrt(gx * gx + gy * gy);
             var direction = ((Math.Round(Math.Atan2(gx, gy) / (Math.PI / 4)) * (Math.PI / 4) - Math.PI / 2)/(Math.PI/4) + 8) % 8;
-            var threshold = 100d;
+            var threshold = CannyThreshold;
             Tools.SetPixel(
                 Tools.GetPixel(PictureBytes, y * width * 4 + x * 4),
                 Tools.GetGrayPixel((byte) (f > threshold ? 0 : 255)));
@@ -305,7 +314,7 @@ public class SegmentationViewModel : ViewModel
         for (var y = 0; y < height; y++)
         for (var x = 0; x < width; x++)
         {
-            if (Tools.GetPixelIntensity(PictureBytes, y*width*4 + x * 4) == 255) continue;
+            if ((int)Tools.GetPixelIntensity(PictureBytes, y*width*4 + x * 4) == 255) continue;
             if (y - 1 < 0 | y + 1 >= height) continue;
             if (x - 1 < 0 | x + 1 >= width) continue;
             int direct = (int)grad[y, x, 1];
@@ -314,7 +323,8 @@ public class SegmentationViewModel : ViewModel
                 0 => (grad[y, x - 1, 0], grad[y, x + 1, 0]),
                 1 => (grad[y - 1, x + 1, 0], grad[y + 1, x - 1, 0]),
                 2 => (grad[y + 1, x , 0], grad[y - 1, x, 0]),
-                3 => (grad[y - 1, x - 1, 0], grad[y + 1, x + 1, 0])
+                3 => (grad[y - 1, x - 1, 0], grad[y + 1, x + 1, 0]),
+                _ => throw new ArgumentOutOfRangeException() 
             };
             if (grad[y, x, 0] <= comparison[0] && grad[y, x, 0] <= comparison[1])
             {
@@ -324,7 +334,7 @@ public class SegmentationViewModel : ViewModel
             }
         }
         
-        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(PictureBytes!, PictureSize);
         
     }
     #endregion
