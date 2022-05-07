@@ -24,6 +24,10 @@
 
     <StackPanel Margin="3">
         <StackPanel>
+            <Button Content="КЕЕЕЕЕЕЕНННННИИИИИ"
+                    Command="{Binding CannyMethodCommand}" />
+        </StackPanel>
+        <StackPanel>
             <TextBox Text="{Binding AreaPercentage, UpdateSourceTrigger=PropertyChanged}"
                      MaxLength="2"
                      Tag="Процент площади"
