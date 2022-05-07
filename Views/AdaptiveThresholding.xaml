@@ -1,0 +1,52 @@
+﻿<UserControl x:Class="Laboratory_work_1.Views.AdaptiveThresholding"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:vms="clr-namespace:Laboratory_work_1.ViewModels"
+             mc:Ignorable="d"
+
+             Width="200" Height="Auto">
+    
+    <UserControl.DataContext>
+        <vms:AdaptiveThresholdingViewModel />
+    </UserControl.DataContext>
+    
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/Button.xaml" />
+                <ResourceDictionary Source="Styles/RadioButton.xaml" />
+                <ResourceDictionary Source="Styles/StackPanel.xaml" />
+                <ResourceDictionary Source="Styles/TextBox.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    
+    <StackPanel Margin="3">
+        <StackPanel>
+            <TextBox
+                Text="{Binding Threshold, UpdateSourceTrigger=PropertyChanged}"
+                MaxLength="3"
+                Tag="Сторона окна"
+                Margin="0, 0, 0, 2" />
+            <TextBox
+                Text="{Binding Radius, UpdateSourceTrigger=PropertyChanged}"
+                MaxLength="2"
+                Tag="Сторона окна"
+                Margin="0, 0, 0, 2" />
+        </StackPanel>
+        <StackPanel>
+            <Button Content="Средний адаптивный порог"
+                    Command="{Binding MeanThresholdingCommand}" />
+        </StackPanel>
+        <StackPanel>
+            <Button Content="Медианный адаптивный порог"
+                    Command="{Binding MedianThresholdingCommand}" />
+        </StackPanel>
+        <StackPanel>
+            <Button Content="Минмаксный адаптивный порог"
+                    Command="{Binding MinMaxThresholdingCommand}" />
+        </StackPanel>
+    </StackPanel>
+</UserControl>

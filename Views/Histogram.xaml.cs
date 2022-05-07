@@ -18,9 +18,8 @@ public partial class Histogram
     {
         ViewModel = (HistogramViewModel) DataContext;
         if (ViewModel.Store is not null) ViewModel.Store.HistogramChanged += Histogram_OnChanged;
+        WpfPlot.Configuration.Pan = false;
         WpfPlot.Configuration.Zoom = false;
-        WpfPlot.Configuration.LockVerticalAxis = true;
-        WpfPlot.Configuration.LockHorizontalAxis = true;
         WpfPlot.Plot.XAxis.IsVisible = false;
         WpfPlot.Plot.XAxis2.IsVisible = false;
         WpfPlot.Plot.YAxis.IsVisible = false;

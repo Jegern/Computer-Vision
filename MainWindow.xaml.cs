@@ -24,6 +24,7 @@ namespace Laboratory_work_1
             InitializeBorderDetectionViewModel(store);
             InitializeSegmentationViewModel(store);
             InitializeHistogramViewModel(store);
+            InitializeAdaptiveThresholdingViewModel(store);
         }
 
         private void InitializePixelInfoViewModel(ViewModelStore? store)
@@ -87,6 +88,13 @@ namespace Laboratory_work_1
             var histogramViewModel = new HistogramViewModel(store);
             HistogramControl.DataContext = histogramViewModel;
             HistogramMenuItem.DataContext = histogramViewModel;
+        }
+        
+        private void InitializeAdaptiveThresholdingViewModel(ViewModelStore? store)
+        {
+            var adaptiveThresholdingViewModel = new AdaptiveThresholdingViewModel(store);
+            AdaptiveThresholdingControl.DataContext = adaptiveThresholdingViewModel;
+            AdaptiveThresholdingMenuItem.DataContext = adaptiveThresholdingViewModel;
         }
     }
 }
