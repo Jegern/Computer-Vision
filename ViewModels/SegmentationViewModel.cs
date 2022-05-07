@@ -27,6 +27,13 @@ public class SegmentationViewModel : ViewModel
         get => _kNeighbours;
         set => Set(ref _kNeighbours, value);
     }
+    
+    private int[,] SobelMask3X3 { get; } =
+    {
+        { -1, -2, -1 },
+        { 0, 0, 0 },
+        { 1, 2, 1 }
+    };
 
     #endregion
 
@@ -48,6 +55,9 @@ public class SegmentationViewModel : ViewModel
         KMeansCommand = new Command(
             KMeansCommand_OnExecuted,
             KMeansCommand_CanExecute);
+        CannyMethodCommand = new Command(
+            CannyMethodCommand_OnExecuted,
+            CannyMethodCommand_CanExecute);
     }
 
     #region Commands
@@ -240,5 +250,76 @@ public class SegmentationViewModel : ViewModel
 
     #endregion
 
+    #region CannyMethodCommand
+
+    public Command? CannyMethodCommand { get; }
+
+    private bool CannyMethodCommand_CanExecute(object? parameter) =>
+        Picture is not null;
+
+    private void CannyMethodCommand_OnExecuted(object? parameter)
+    {
+        var originalPictureBytes = (byte[]) PictureBytes!.Clone();
+        var width = Picture!.PixelWidth;
+        var height = Picture!.PixelHeight;
+        var mask = SobelMask3X3;
+        var grad = new double[height, width, 2];
+
+        for (var y = 100; y < height; y++)
+        for (var x = 100; x < width; x++)
+        {
+            var gx = 0d;
+            var gy = 0d;
+            for (var i = -1; i <= 1; i++)
+            {
+                if (y + i < 0 | y + i >= height) continue;
+                for (var j = -1; j <= 1; j++)
+                {
+                    if (x + j < 0 | x + j >= width) continue;
+                    var windowPixelIndex = (i + y) * width * 4 + (j + x) * 4;
+                    gx += Tools.GetPixelIntensity(originalPictureBytes, windowPixelIndex) *
+                          mask[i + 1, j + 1];
+                    gy += Tools.GetPixelIntensity(originalPictureBytes, windowPixelIndex) *
+                          mask[j + 1, i + 1];
+                }
+            }
+
+            var f = Math.Sqrt(gx * gx + gy * gy);
+            var direction = ((Math.Round(Math.Atan2(gx, gy) / (Math.PI / 4)) * (Math.PI / 4) - Math.PI / 2)/(Math.PI/4) + 8) % 8;
+            var threshold = 100d;
+            Tools.SetPixel(
+                Tools.GetPixel(PictureBytes, y * width * 4 + x * 4),
+                Tools.GetGrayPixel((byte) (f > threshold ? 0 : 255)));
+            grad[y, x, 0] = f;
+            grad[y, x, 1] = direction;
+        }
+
+        var comparison = new double[2];
+        for (var y = 0; y < height; y++)
+        for (var x = 0; x < width; x++)
+        {
+            if (Tools.GetPixelIntensity(PictureBytes, y*width*4 + x * 4) == 255) continue;
+            if (y - 1 < 0 | y + 1 >= height) continue;
+            if (x - 1 < 0 | x + 1 >= width) continue;
+            int direct = (int)grad[y, x, 1];
+            (comparison[0], comparison[1]) = (direct % 4) switch
+            {
+                0 => (grad[y, x - 1, 0], grad[y, x + 1, 0]),
+                1 => (grad[y - 1, x + 1, 0], grad[y + 1, x - 1, 0]),
+                2 => (grad[y + 1, x , 0], grad[y - 1, x, 0]),
+                3 => (grad[y - 1, x - 1, 0], grad[y + 1, x + 1, 0])
+            };
+            if (grad[y, x, 0] <= comparison[0] && grad[y, x, 0] <= comparison[1])
+            {
+                Tools.SetPixel(
+                    Tools.GetPixel(PictureBytes, y * width * 4 + x * 4),
+                    Tools.GetGrayPixel(255));   
+            }
+        }
+        
+        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        
+    }
+    #endregion
     #endregion
 }
