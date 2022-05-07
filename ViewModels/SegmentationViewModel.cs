@@ -11,10 +11,15 @@ public class SegmentationViewModel : ViewModel
 {
     #region Fields
 
+    private double[]? _histogram;
     private int? _areaPercentage;
     private int? _kNeighbours;
 
-    private int[] Histogram { get; } = new int[256];
+    private double[]? Histogram
+    {
+        get => _histogram;
+        set => Set(ref _histogram, value);
+    }
 
     public int? AreaPercentage
     {
@@ -39,6 +44,8 @@ public class SegmentationViewModel : ViewModel
 
     public SegmentationViewModel(ViewModelStore? store) : base(store)
     {
+        if (store is not null) store.HistogramChanged += histogram => Histogram = histogram;
+        
         PTileCommand = new Command(
             PTileCommand_OnExecuted,
             PTileCommand_CanExecute);
@@ -57,22 +64,22 @@ public class SegmentationViewModel : ViewModel
     public Command? PTileCommand { get; }
 
     private bool PTileCommand_CanExecute(object? parameter) =>
-        Picture is not null &&
+        !PictureSize.IsEmpty &&
         AreaPercentage is not null;
 
     private void PTileCommand_OnExecuted(object? parameter)
     {
-        var sum = Histogram.Sum();
+        var sum = Histogram!.Sum();
         var remainder = sum;
         int threshold;
         for (threshold = 0; threshold < 256; threshold++)
         {
-            remainder -= Histogram[threshold];
+            remainder -= Histogram![threshold];
             if (100 * remainder / sum < AreaPercentage) break;
         }
 
         ThresholdingSegmentation(threshold);
-        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(PictureBytes!, PictureSize);
     }
 
     private void ThresholdingSegmentation(int threshold)
@@ -92,7 +99,7 @@ public class SegmentationViewModel : ViewModel
 
     public Command? HistogramDependentCommand { get; }
 
-    private bool HistogramDependentCommand_CanExecute(object? parameter) => Picture is not null;
+    private bool HistogramDependentCommand_CanExecute(object? parameter) => !PictureSize.IsEmpty;
 
     private void HistogramDependentCommand_OnExecuted(object? parameter)
     {
@@ -106,20 +113,20 @@ public class SegmentationViewModel : ViewModel
         }
 
         ThresholdingSegmentation(threshold);
-        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(PictureBytes!, PictureSize);
     }
 
     private int CalculateNewThreshold(int threshold)
     {
         var leftSum = 0;
         for (var i = 0; i < threshold; i++)
-            leftSum += Histogram[i] * i;
-        var leftMean = leftSum / Histogram.Take(threshold).Sum();
+            leftSum += (int) Histogram![i] * i;
+        var leftMean = leftSum / (int) Histogram!.Take(threshold).Sum();
 
         var rightSum = 0;
         for (var i = threshold; i < 256; i++)
-            rightSum += Histogram[i] * i;
-        var rightMean = rightSum / Histogram.Take(new Range(threshold, 256)).Sum();
+            rightSum += (int) Histogram![i] * i;
+        var rightMean = rightSum / (int) Histogram!.Take(new Range(threshold, 256)).Sum();
 
         return (leftMean + rightMean) / 2;
     }
@@ -131,7 +138,7 @@ public class SegmentationViewModel : ViewModel
     public Command? KMeansCommand { get; }
 
     private bool KMeansCommand_CanExecute(object? parameter) =>
-        Picture is not null &&
+        !PictureSize.IsEmpty &&
         KNeighbours >= 2;
 
     private void KMeansCommand_OnExecuted(object? parameter)
@@ -166,7 +173,7 @@ public class SegmentationViewModel : ViewModel
                 Tools.GetGrayPixel((byte) palette[thresholdIndex]));
         }
 
-        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(PictureBytes!, PictureSize);
     }
 
     private int[] InitializeCentroids(int count, int? first = null, int? last = null)
@@ -182,7 +189,7 @@ public class SegmentationViewModel : ViewModel
     private int GetHistogramMin()
     {
         var min = 0;
-        for (; min < Histogram.Length; min++)
+        for (; min < Histogram!.Length; min++)
             if (Histogram[min] > 0)
                 break;
         return min;
@@ -192,7 +199,7 @@ public class SegmentationViewModel : ViewModel
     {
         var max = 255;
         for (; max >= 0; max--)
-            if (Histogram[max] > 0)
+            if (Histogram![max] > 0)
                 break;
         return max;
     }
@@ -216,7 +223,7 @@ public class SegmentationViewModel : ViewModel
         var counter = 0d;
         for (var i = start; i < end; i++)
         {
-            sum += Histogram[i] * i;
+            sum += Histogram![i] * i;
             counter += Histogram[i];
         }
 

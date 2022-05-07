@@ -1,3 +1,4 @@
+using System;
 using System.Windows;
 using Laboratory_work_1.Commands.Base;
 using Laboratory_work_1.ViewModels.Base;
@@ -134,7 +135,7 @@ public class ImageManagementViewModel : ViewModel
 
     public Command? ValueChangedCommand { get; }
 
-    private bool ValueChangedCommand_CanExecute(object? parameter) => Picture is not null;
+    private bool ValueChangedCommand_CanExecute(object? parameter) => !PictureSize.IsEmpty;
 
     private void ValueChangedCommand_OnExecuted(object? parameter)
     {
@@ -153,7 +154,7 @@ public class ImageManagementViewModel : ViewModel
                 PictureBytes[i + 2] = (byte)(PictureBytes[i + 2] + difference);
         }
 
-        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(PictureBytes!, PictureSize);
     }
 
     #endregion
@@ -162,7 +163,7 @@ public class ImageManagementViewModel : ViewModel
 
     public Command? BleachCommand { get; }
 
-    private bool BleachCommand_CanExecute(object? parameter) => Picture is not null;
+    private bool BleachCommand_CanExecute(object? parameter) => !PictureSize.IsEmpty;
 
     private void BleachCommand_OnExecuted(object? parameter)
     {
@@ -171,7 +172,7 @@ public class ImageManagementViewModel : ViewModel
                 Tools.GetPixel(PictureBytes, i),
                 Tools.GetGrayPixel((byte) Tools.GetPixelIntensity(PictureBytes, i)));
         
-        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(PictureBytes!, PictureSize);
     }
 
     #endregion
@@ -180,7 +181,7 @@ public class ImageManagementViewModel : ViewModel
 
     public Command? NegativeCommand { get; }
 
-    private bool NegativeCommand_CanExecute(object? parameter) => Picture is not null;
+    private bool NegativeCommand_CanExecute(object? parameter) => !PictureSize.IsEmpty;
 
     private void NegativeCommand_OnExecuted(object? parameter)
     {
@@ -191,7 +192,7 @@ public class ImageManagementViewModel : ViewModel
             PictureBytes[i + 2] = (byte) (255 - PictureBytes[i + 2]);
         }
 
-        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(PictureBytes!, PictureSize);
     }
 
     #endregion
@@ -200,7 +201,7 @@ public class ImageManagementViewModel : ViewModel
 
     public Command? SwapCommand { get; }
 
-    private bool SwapCommand_CanExecute(object? parameter) => Picture is not null && ChannelCounter == 2;
+    private bool SwapCommand_CanExecute(object? parameter) => !PictureSize.IsEmpty && ChannelCounter == 2;
 
     private void SwapCommand_OnExecuted(object? parameter)
     {
@@ -208,9 +209,14 @@ public class ImageManagementViewModel : ViewModel
         var secondChannel = BlueChecked ? 0 : 1;
 
         for (var i = 0; i < PictureBytes!.Length; i += 4)
-            Tools.Swap(ref PictureBytes[i + firstChannel], ref PictureBytes[i + secondChannel]);
+            Swap(ref PictureBytes[i + firstChannel], ref PictureBytes[i + secondChannel]);
         
-        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(PictureBytes!, PictureSize);
+    }
+
+    private static void Swap<T>(ref T left, ref T right)
+    {
+        (left, right) = (right, left);
     }
 
     #endregion
@@ -220,29 +226,35 @@ public class ImageManagementViewModel : ViewModel
     public Command? SymmetryCommand { get; }
 
     private bool SymmetryCommand_CanExecute(object? parameter) =>
-        Picture is not null &&
+        !PictureSize.IsEmpty &&
         (HorizontalChecked || VerticalChecked);
 
     private void SymmetryCommand_OnExecuted(object? parameter)
     {
-        var width = Picture!.PixelWidth;
-        var height = Picture!.PixelHeight;
+        var width = (int) PictureSize.Width;
+        var height = (int) PictureSize.Height;
 
         if (HorizontalChecked)
             for (var i = 0; i < height / 2; i++)
             for (var j = 0; j < width; j++)
-                Tools.SwapPixels(
+                SwapPixels(
                     Tools.GetPixel(PictureBytes!, i * width * 4 + j * 4),
                     Tools.GetPixel(PictureBytes!, (height - 1 - i) * width * 4 + j * 4));
 
         if (VerticalChecked)
             for (var i = 0; i < height; i++)
             for (var j = 0; j < width / 2; j++)
-                Tools.SwapPixels(
+                SwapPixels(
                     Tools.GetPixel(PictureBytes!, i * width * 4 + j * 4),
                     Tools.GetPixel(PictureBytes!, i * width * 4 + (width - j - 1) * 4));
 
-        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(PictureBytes!, PictureSize);
+    }
+
+    private static void SwapPixels(ArraySegment<byte> left, ArraySegment<byte> right)
+    {
+        for (var i = 0; i < left.Count; i++)
+            (left[i], right[i]) = (right[i], left[i]);
     }
 
     #endregion
@@ -252,14 +264,14 @@ public class ImageManagementViewModel : ViewModel
     public Command? VanishCommand { get; }
 
     private bool VanishCommand_CanExecute(object? parameter) =>
-        Picture is not null &&
+        !PictureSize.IsEmpty &&
         (HorizontalVerticalChecked || DiagonalChecked);
 
     private void VanishCommand_OnExecuted(object? parameter)
     {
         var originalPictureBytes = (byte[]) PictureBytes!.Clone();
-        var width = Picture!.PixelWidth;
-        var height = Picture!.PixelHeight;
+        var width = (int) PictureSize.Width;
+        var height = (int) PictureSize.Height;
         var mask = HorizontalVerticalChecked switch
         {
             true when DiagonalChecked => AllMask,
@@ -291,7 +303,7 @@ public class ImageManagementViewModel : ViewModel
                 Tools.GetGrayPixel((byte) (sum / counter)));
         }
 
-        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(PictureBytes!, PictureSize);
     }
 
     #endregion

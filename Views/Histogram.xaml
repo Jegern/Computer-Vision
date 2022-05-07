@@ -4,17 +4,27 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vms="clr-namespace:Laboratory_work_1.ViewModels"
-             xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
              mc:Ignorable="d"
 
-             Width="200" Height="Auto">
+             Width="200" Height="Auto"
+             Loaded="Histogram_OnLoaded">
 
     <UserControl.DataContext>
         <vms:HistogramViewModel />
     </UserControl.DataContext>
 
-    <StackPanel>
-        <lvc:CartesianChart Series="{Binding Series}"
-                            Height="200"/>
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/StackPanel.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <StackPanel Margin="3">
+        <StackPanel>
+            <WpfPlot x:Name="Plot"
+                     Height="200" />
+        </StackPanel>
     </StackPanel>
 </UserControl>

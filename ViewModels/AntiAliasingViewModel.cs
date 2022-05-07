@@ -110,14 +110,14 @@ public class AntiAliasingViewModel : ViewModel
     public Command? RectangleFilterCommand { get; }
 
     private bool RectangleFilterCommand_CanExecute(object? parameter) =>
-        Picture is not null &&
+        !PictureSize.IsEmpty &&
         (RectangleFilter3X3 || RectangleFilter5X5);
 
     private void RectangleFilterCommand_OnExecuted(object? parameter)
     {
         AntiAliasingPictureBytes = (byte[]) PictureBytes!.Clone();
-        var width = Picture!.PixelWidth;
-        var height = Picture!.PixelHeight;
+        var width = (int) PictureSize.Width;
+        var height = (int) PictureSize.Height;
         var side = RectangleFilter3X3 ? 3 : 5;
         var radius = side / 2;
 
@@ -144,7 +144,7 @@ public class AntiAliasingViewModel : ViewModel
                 Tools.GetGrayPixel((byte) (sum / counter)));
         }
 
-        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(PictureBytes!, PictureSize);
     }
 
     #endregion
@@ -154,14 +154,14 @@ public class AntiAliasingViewModel : ViewModel
     public Command? MedianFilterCommand { get; }
 
     private bool MedianFilterCommand_CanExecute(object? parameter) =>
-        Picture is not null &&
+        !PictureSize.IsEmpty &&
         (MedianFilter3X3 || MedianFilter5X5);
 
     private void MedianFilterCommand_OnExecuted(object? parameter)
     {
         AntiAliasingPictureBytes = (byte[]) PictureBytes!.Clone();
-        var width = Picture!.PixelWidth;
-        var height = Picture!.PixelHeight;
+        var width = (int) PictureSize.Width;
+        var height = (int) PictureSize.Height;
         var side = MedianFilter3X3 ? 3 : 5;
         var radius = side / 2;
         var windowPixelList = new List<double>(side * side);
@@ -188,7 +188,7 @@ public class AntiAliasingViewModel : ViewModel
                 Tools.GetGrayPixel((byte) windowPixelList[windowPixelList.Count / 2]));
         }
 
-        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(PictureBytes!, PictureSize);
     }
 
     #endregion
@@ -198,14 +198,14 @@ public class AntiAliasingViewModel : ViewModel
     public Command? GaussianFilterCommand { get; }
 
     private bool GaussianFilterCommand_CanExecute(object? parameter) =>
-        Picture is not null &&
+        !PictureSize.IsEmpty &&
         GaussianFilterSigma is not null;
 
     private void GaussianFilterCommand_OnExecuted(object? parameter)
     {
         AntiAliasingPictureBytes = (byte[]) PictureBytes!.Clone();
-        var width = Picture!.PixelWidth;
-        var height = Picture!.PixelHeight;
+        var width = (int) PictureSize.Width;
+        var height = (int) PictureSize.Height;
         var sigma = (double) GaussianFilterSigma!;
         var k = (int) Math.Ceiling((6 * sigma - 2) / 2);
         var side = 2 * k + 1;
@@ -234,7 +234,7 @@ public class AntiAliasingViewModel : ViewModel
                 Tools.GetGrayPixel((byte) (sum <= 255 ? sum : intensity)));
         }
 
-        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(PictureBytes!, PictureSize);
     }
 
     #endregion
@@ -244,14 +244,14 @@ public class AntiAliasingViewModel : ViewModel
     public Command? SigmaFilterCommand { get; }
 
     private bool SigmaFilterCommand_CanExecute(object? parameter) => 
-        Picture is not null &&
+        !PictureSize.IsEmpty &&
         (SigmaFilter3X3 || SigmaFilter5X5);
 
     private void SigmaFilterCommand_OnExecuted(object? parameter)
     {
         AntiAliasingPictureBytes = (byte[]) PictureBytes!.Clone();
-        var width = Picture!.PixelWidth;
-        var height = Picture!.PixelHeight;
+        var width = (int) PictureSize.Width;
+        var height = (int) PictureSize.Height;
         var side = SigmaFilter3X3 ? 3 : 5;
         var radius = side / 2;
         var sigma = (double) SigmaFilterSigma!;
@@ -282,7 +282,7 @@ public class AntiAliasingViewModel : ViewModel
                 Tools.GetGrayPixel((byte) (sum / counter)));
         }
 
-        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(PictureBytes!, PictureSize);
     }
 
     #endregion

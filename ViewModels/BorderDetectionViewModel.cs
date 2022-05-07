@@ -114,14 +114,14 @@ public class BorderDetectionViewModel : ViewModel
     public Command? HessianOperatorCommand { get; }
 
     private bool HessianOperatorCommand_CanExecute(object? parameter) => 
-        Picture is not null &&
+        !PictureSize.IsEmpty &&
         HessianThreshold is not null;
 
     private void HessianOperatorCommand_OnExecuted(object? parameter)
     {
         var originalPictureBytes = (byte[])PictureBytes!.Clone();
-        var width = Picture!.PixelWidth;
-        var height = Picture!.PixelHeight;
+        var width = (int) PictureSize.Width;
+        var height = (int) PictureSize.Height;
 
         for (var y = 0; y < height; y++)
         for (var x = 0; x < width; x++)
@@ -145,7 +145,7 @@ public class BorderDetectionViewModel : ViewModel
                                           Math.Abs(lambdas[1]) > HessianThreshold ? 0 : 255)));
         }
 
-        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(PictureBytes!, PictureSize);
     }
 
     private static double[] SolveQuadraticEquation(double[,] matrix)
@@ -166,14 +166,14 @@ public class BorderDetectionViewModel : ViewModel
     public Command? HarrisOperatorCommand { get; }
 
     private bool HarrisOperatorCommand_CanExecute(object? parameter) => 
-        Picture is not null &&
+        !PictureSize.IsEmpty &&
         HarrisThreshold is not null;
 
     private void HarrisOperatorCommand_OnExecuted(object? parameter)
     {
         var originalPictureBytes = (byte[])PictureBytes!.Clone();
-        var width = Picture!.PixelWidth;
-        var height = Picture!.PixelHeight;
+        var width = (int) PictureSize.Width;
+        var height = (int) PictureSize.Height;
 
         for (var y = 0; y < height; y++)
         for (var x = 0; x < width; x++)
@@ -194,7 +194,7 @@ public class BorderDetectionViewModel : ViewModel
                 Tools.GetGrayPixel((byte)(0.05 * lambdas[1] > HarrisThreshold ? 0 : 255)));
         }
 
-        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(PictureBytes!, PictureSize);
     }
 
     #endregion
@@ -204,15 +204,15 @@ public class BorderDetectionViewModel : ViewModel
     public Command? SobelOperatorCommand { get; }
 
     private bool SobelOperatorCommand_CanExecute(object? parameter) =>
-        Picture is not null &&
+        !PictureSize.IsEmpty &&
         SobelThreshold is not null &&
         (SobelOperator3X3 || SobelOperator5X5 || SobelOperator7X7);
 
     private void SobelOperatorCommand_OnExecuted(object? parameter)
     {
         var originalPictureBytes = (byte[])PictureBytes!.Clone();
-        var width = Picture!.PixelWidth;
-        var height = Picture!.PixelHeight;
+        var width = (int) PictureSize.Width;
+        var height = (int) PictureSize.Height;
 
         var mask = SobelOperator3X3 switch
         {
@@ -253,7 +253,7 @@ public class BorderDetectionViewModel : ViewModel
                 Tools.GetGrayPixel((byte)(f > threshold ? 0 : 255)));
         }
 
-        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(PictureBytes!, PictureSize);
     }
 
     #endregion
@@ -262,13 +262,13 @@ public class BorderDetectionViewModel : ViewModel
 
     public Command? LogOperatorCommand { get; }
 
-    private bool LogOperatorCommand_CanExecute(object? parameter) => Picture is not null;
+    private bool LogOperatorCommand_CanExecute(object? parameter) => !PictureSize.IsEmpty;
 
     private void LogOperatorCommand_OnExecuted(object? parameter)
     {
         var originalPictureBytes = (byte[])PictureBytes!.Clone();
-        var width = Picture!.PixelWidth;
-        var height = Picture!.PixelHeight;
+        var width = (int) PictureSize.Width;
+        var height = (int) PictureSize.Height;
         var labmdaSquare = Math.Pow(0.5 / Math.Sqrt(2), 2);
 
         for (var y = 0; y < height; y++)
@@ -292,7 +292,7 @@ public class BorderDetectionViewModel : ViewModel
                 Tools.GetGrayPixel((byte)(g == 0 ? 0 : 255)));
         }
 
-        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(PictureBytes!, PictureSize);
     }
 
     #endregion
@@ -301,12 +301,12 @@ public class BorderDetectionViewModel : ViewModel
 
     public Command? DogOperatorCommand { get; }
 
-    private bool DogOperatorCommand_CanExecute(object? parameter) => Picture is not null;
+    private bool DogOperatorCommand_CanExecute(object? parameter) => !PictureSize.IsEmpty;
 
     private void DogOperatorCommand_OnExecuted(object? parameter)
     {
-        var width = Picture!.PixelWidth;
-        var height = Picture!.PixelHeight;
+        var width = (int) PictureSize.Width;
+        var height = (int) PictureSize.Height;
         var vanishBytes = GaussianFilter((byte[])PictureBytes!.Clone(), 0.5);
         var vanishBytesAlpha = GaussianFilter((byte[])PictureBytes!.Clone(), 0.5 * 1.6);
 
@@ -321,14 +321,14 @@ public class BorderDetectionViewModel : ViewModel
                 Tools.GetGrayPixel((byte)(vanishBytes[index] == vanishBytesAlpha[index] ? 0 : 255)));
         }
 
-        Store?.TriggerPictureBytesEvent(Picture!, PictureBytes!);
+        Store?.TriggerPictureBytesEvent(PictureBytes!, PictureSize);
     }
 
     private byte[] GaussianFilter(byte[] bytes, double sigma)
     {
         var originalPictureBytes = (byte[])bytes.Clone();
-        var width = Picture!.PixelWidth;
-        var height = Picture!.PixelHeight;
+        var width = (int) PictureSize.Width;
+        var height = (int) PictureSize.Height;
         var k = (int)Math.Ceiling((6 * sigma - 2) / 2);
         var side = 2 * k + 1;
         var radius = side / 2;

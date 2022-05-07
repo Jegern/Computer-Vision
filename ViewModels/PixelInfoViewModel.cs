@@ -1,6 +1,8 @@
 using System.Windows;
+using System.Windows.Media;
 using Laboratory_work_1.ViewModels.Base;
 using Laboratory_work_1.ViewModels.Store;
+using Point = System.Windows.Point;
 
 namespace Laboratory_work_1.ViewModels;
 
@@ -71,11 +73,18 @@ public class PixelInfoViewModel : ViewModel
 
     private void UpdatePixelInfo(Point point)
     {
-        var pixelColor = Tools.GetPixelColor(Picture, point);
+        var pixelColor = GetPixelColor(point);
         Red = pixelColor.R;
         Green = pixelColor.G;
         Blue = pixelColor.B;
         Intensity = (byte) ((pixelColor.R + pixelColor.G + pixelColor.B) / 3);
+    }
+
+    private Color GetPixelColor(Point position)
+    {
+        var byteIndex = (int) (position.Y * PictureSize.Width * 4 + position.X * 4);
+        var pixelByte = Tools.GetPixel(PictureBytes!, byteIndex);
+        return Color.FromRgb(pixelByte[2], pixelByte[1], pixelByte[0]);
     }
 
     #endregion
