@@ -11,6 +11,7 @@ public class AdaptiveThresholdingViewModel : ViewModel
 
     private int? _threshold;
     private int? _radius;
+    private int? _c;
 
     public int? Threshold
     {
@@ -22,6 +23,12 @@ public class AdaptiveThresholdingViewModel : ViewModel
     {
         get => _radius;
         set => Set(ref _radius, value);
+    }
+    
+    public int? C
+    {
+        get => _c;
+        set => Set(ref _c, value);
     }
 
     #endregion
@@ -41,6 +48,9 @@ public class AdaptiveThresholdingViewModel : ViewModel
         MinMaxThresholdingCommand = new Command(
             MinMaxThresholdingCommand_OnExecuted,
             MinMaxThresholdingCommand_CanExecute);
+        ThresholdingCommand = new Command(
+            ThresholdingCommand_OnExecuted,
+            ThresholdingCommand_CanExecute);
     }
 
     #region Commands
@@ -52,7 +62,7 @@ public class AdaptiveThresholdingViewModel : ViewModel
     private bool MeanThresholdingCommand_CanExecute(object? parameter) =>
         !PictureSize.IsEmpty &&
         Radius > 0 &&
-        Threshold > 0;
+        Threshold >= 0;
 
     private void MeanThresholdingCommand_OnExecuted(object? parameter)
     {
@@ -99,7 +109,7 @@ public class AdaptiveThresholdingViewModel : ViewModel
     private bool MedianThresholdingCommand_CanExecute(object? parameter) =>
         !PictureSize.IsEmpty &&
         Radius > 0 &&
-        Threshold > 0;
+        Threshold >= 0;
 
     private void MedianThresholdingCommand_OnExecuted(object? parameter)
     {
@@ -147,7 +157,7 @@ public class AdaptiveThresholdingViewModel : ViewModel
     private bool MinMaxThresholdingCommand_CanExecute(object? parameter) =>
         !PictureSize.IsEmpty &&
         Radius > 0 &&
-        Threshold > 0;
+        Threshold >= 0;
 
     private void MinMaxThresholdingCommand_OnExecuted(object? parameter)
     {
@@ -181,7 +191,38 @@ public class AdaptiveThresholdingViewModel : ViewModel
                 Tools.GetPixel(PictureBytes!, index),
                 Tools.GetGrayPixel((byte) (intensity - c > Threshold ? 255 : 0)));
         }
+        
+        Store?.TriggerPictureBytesEvent(PictureBytes!, PictureSize);
+    }
 
+    #endregion
+
+    #region ThresholdingCommand
+
+    public Command? ThresholdingCommand { get; }
+
+    private bool ThresholdingCommand_CanExecute(object? parameter) =>
+        !PictureSize.IsEmpty &&
+        Radius > 0 &&
+        Threshold >= 0;
+
+    private void ThresholdingCommand_OnExecuted(object? parameter)
+    {
+        var originalPictureBytes = (byte[]) PictureBytes!.Clone();
+        var width = (int) PictureSize.Width;
+        var height = (int) PictureSize.Height;
+        var radius = (int) Radius!;
+
+        for (var y = 0; y < height; y++)
+        for (var x = 0; x < width; x++)
+        {
+            var index = y * width * 4 + x * 4;
+            var intensity = Tools.GetPixelIntensity(originalPictureBytes, index);
+            Tools.SetPixel(
+                Tools.GetPixel(PictureBytes!, index),
+                Tools.GetGrayPixel((byte) (intensity - C > Threshold ? 255 : 0)));
+        }
+        
         Store?.TriggerPictureBytesEvent(PictureBytes!, PictureSize);
     }
 

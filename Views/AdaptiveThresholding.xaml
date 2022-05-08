@@ -48,5 +48,14 @@
             <Button Content="Минмаксный адаптивный порог"
                     Command="{Binding MinMaxThresholdingCommand}" />
         </StackPanel>
+        <StackPanel>
+            <TextBox
+                Text="{Binding C, UpdateSourceTrigger=PropertyChanged}"
+                MaxLength="2"
+                Tag="Порог C"
+                Margin="0, 0, 0, 2" />
+            <Button Content="Адаптивный порог"
+                    Command="{Binding ThresholdingCommand}" />
+        </StackPanel>
     </StackPanel>
 </UserControl>
