@@ -15,7 +15,7 @@ public class SegmentationViewModel : ViewModel
     private int? _areaPercentage;
     private int? _kNeighbours;
     private int? _cannyThreshold;
-
+    
 
     private double[]? Histogram
     {
@@ -34,18 +34,18 @@ public class SegmentationViewModel : ViewModel
         get => _cannyThreshold;
         set => Set(ref _cannyThreshold, value);
     }
-
+    
     public int? KNeighbours
     {
         get => _kNeighbours;
         set => Set(ref _kNeighbours, value);
     }
-
+    
     private int[,] SobelMask3X3 { get; } =
     {
-        {-1, -2, -1},
-        {0, 0, 0},
-        {1, 2, 1}
+        { -1, -2, -1 },
+        { 0, 0, 0 },
+        { 1, 2, 1 }
     };
 
     #endregion
@@ -60,7 +60,7 @@ public class SegmentationViewModel : ViewModel
     public SegmentationViewModel(ViewModelStore? store) : base(store)
     {
         if (store is not null) store.HistogramChanged += histogram => Histogram = histogram;
-
+        
         PTileCommand = new Command(
             PTileCommand_OnExecuted,
             PTileCommand_CanExecute);
@@ -276,10 +276,10 @@ public class SegmentationViewModel : ViewModel
     private void CannyMethodCommand_OnExecuted(object? parameter)
     {
         var originalPictureBytes = (byte[]) PictureBytes!.Clone();
-        var width = (int) PictureSize.Width;
-        var height = (int) PictureSize.Height;
+        var width = (int)PictureSize.Width;
+        var height = (int)PictureSize.Height;
         var mask = SobelMask3X3;
-        var grad = new double [height, width, 2];
+        var grad = new double [height, width, 3];
 
         for (var y = 0; y < height; y++)
         for (var x = 0; x < width; x++)
@@ -303,9 +303,10 @@ public class SegmentationViewModel : ViewModel
             var f = Math.Sqrt(gx * gx + gy * gy);
             var direction = ((Math.Round(Math.Atan2(gx, gy) / (Math.PI / 4)) * (Math.PI / 4) - Math.PI / 2) /
                 (Math.PI / 4) + 8) % 8;
+            var threshold = CannyThreshold;
             Tools.SetPixel(
                 Tools.GetPixel(PictureBytes, y * width * 4 + x * 4),
-                Tools.GetGrayPixel((byte) (f > CannyThreshold ? 0 : 255)));
+                Tools.GetGrayPixel((byte) (f > threshold ? 0 : 255)));
             grad[y, x, 0] = f;
             grad[y, x, 1] = direction;
         }
@@ -314,30 +315,194 @@ public class SegmentationViewModel : ViewModel
         for (var y = 0; y < height; y++)
         for (var x = 0; x < width; x++)
         {
-            if ((int) Tools.GetPixelIntensity(PictureBytes, y * width * 4 + x * 4) == 255) continue;
+            if ((int)Tools.GetPixelIntensity(PictureBytes, y*width*4 + x * 4) == 255) continue;
             if (y - 1 < 0 | y + 1 >= height) continue;
             if (x - 1 < 0 | x + 1 >= width) continue;
-            var direct = (int) grad[y, x, 1];
+            int direct = (int) grad[y, x, 1];
             (comparison[0], comparison[1]) = (direct % 4) switch
             {
                 0 => (grad[y, x - 1, 0], grad[y, x + 1, 0]),
                 1 => (grad[y - 1, x + 1, 0], grad[y + 1, x - 1, 0]),
-                2 => (grad[y + 1, x, 0], grad[y - 1, x, 0]),
+                2 => (grad[y + 1, x , 0], grad[y - 1, x, 0]),
                 3 => (grad[y - 1, x - 1, 0], grad[y + 1, x + 1, 0]),
-                _ => throw new ArgumentOutOfRangeException(direct.ToString())
+                _ => throw new ArgumentOutOfRangeException()
             };
             if (grad[y, x, 0] <= comparison[0] && grad[y, x, 0] <= comparison[1])
             {
                 Tools.SetPixel(
                     Tools.GetPixel(PictureBytes, y * width * 4 + x * 4),
-                    Tools.GetGrayPixel(255));
+                    Tools.GetGrayPixel(255));   
             }
         }
 
+        for (var y = 0; y < height; y++)
+        for (var x = 0; x < width; x++)
+        {
+            if ((int) Tools.GetPixelIntensity(PictureBytes, y * width * 4 + x * 4) == 255 ||
+                (int) grad[y, x, 2] == 1) continue;
+            if (y - 1 < 0 | y + 1 >= height) continue;
+            if (x - 1 < 0 | x + 1 >= width) continue;
+            grad[y, x, 2] = 1;
+            var flag = true;
+            var i = 0;
+            var j = 0;
+            while (flag)
+            {
+                if (y - i - 1 <= 0 | y + i + 1 >= height | y + i - 1 <= 0 | y - i + 1 >= height) break;
+                if (x - j  - 1 <= 0 | x + j + 1>= width | x + j  - 1 <= 0 | x - j + 1>= width) break;
+                if ((int) Tools.GetPixelIntensity(PictureBytes, (y + i) * width * 4 + (x + j + 1) * 4) == 0 &&
+                    (int) grad[y + i, x + j + 1, 2] == 0)
+                {
+                    grad[y + i, x + j + 1, 2] = 1;
+                    j++;
+                }
+                else if ((int) Tools.GetPixelIntensity(PictureBytes, (y + i + 1) * width * 4 + (x + j + 1) * 4) == 0 &&
+                         (int) grad[y + i + 1, x + j + 1, 2] == 0)
+                {
+                    grad[y + i + 1, x + j + 1, 2] = 1;
+                    i++;
+                    j++;
+                }
+                else if ((int) Tools.GetPixelIntensity(PictureBytes, (y + i + 1) * width * 4 + (x + j) * 4) == 0 &&
+                         (int) grad[y + i + 1, x + j, 2] == 0)
+                {
+                    grad[y + i + 1, x + j, 2] = 1;
+                    i++;
+                }
+                else if ((int) Tools.GetPixelIntensity(PictureBytes, (y + i + 1) * width * 4 + (x + j - 1) * 4) == 0 &&
+                         (int) grad[y + i + 1, x + j - 1, 2] == 0)
+                {
+                    grad[y + i + 1, x + j - 1, 2] = 1;
+                    j--;
+                    i++;
+                }
+                else if ((int) Tools.GetPixelIntensity(PictureBytes, (y + i) * width * 4 + (x + j - 1) * 4) == 0 &&
+                         (int) grad[y + i, x + j - 1, 2] == 0)
+                {
+                    grad[y + i, x + j - 1, 2] = 1;
+                    j--;
+                }
+                else if ((int) Tools.GetPixelIntensity(PictureBytes, (y + i - 1) * width * 4 + (x + j - 1) * 4) == 0 &&
+                         (int) grad[y + i - 1, x + j - 1, 2] == 0)
+                {
+                    grad[y + i - 1, x + j - 1, 2] = 1;
+                    i--;
+                    j--;
+                }
+                else if ((int) Tools.GetPixelIntensity(PictureBytes, (y + i - 1) * width * 4 + (x + j) * 4) == 0 &&
+                         (int) grad[y + i - 1, x + j, 2] == 0)
+                {
+                    grad[y + i - 1, x + j, 2] = 1;
+                    i--;
+                }
+                else if ((int) Tools.GetPixelIntensity(PictureBytes, (y + i - 1) * width * 4 + (x + j + 1) * 4) == 0 &&
+                         (int) grad[y + i - 1, x + j + 1, 2] == 0)
+                {
+                    grad[y + i - 1, x + j + 1, 2] = 1;
+                    i--;
+                    j++;
+                }
+                else if ((int) Tools.GetPixelIntensity(PictureBytes, (y + i) * width * 4 + (x + j) * 4) == 0 &&
+                         (int) grad[y + i, x + j, 2] == 1)
+                {   
+                    var flagFill = true;
+                    var q = i;
+                    var w = j;
+                    if (w < 0)
+                    {
+                        w--;
+                    }
+
+                    while (flagFill)
+                    {
+                        if (y - q - 1 <= 0 | y + q + 1 >= height | y + q - 1 <= 0 | y - q + 1 >= height) break;
+                        if (x - w - 1 <= 0 | x + w + 1 >= width | x + w - 1 <= 0 | x - w + 1 >= width) break;
+                        if ((int) Tools.GetPixelIntensity(PictureBytes, (y + q) * width * 4 + (x + w + 1) * 4) == 255)
+                        {
+                            Tools.SetPixel(
+                                Tools.GetPixel(PictureBytes, (y + q) * width * 4 + (x + w + 1) * 4),
+                                Tools.GetGrayPixel(0));
+                            w++;
+                        }
+                        else if ((int) Tools.GetPixelIntensity(PictureBytes, (y + q + 1) * width * 4 + (x + w + 1) * 4) ==
+                                 255)
+                        {
+                            Tools.SetPixel(
+                                Tools.GetPixel(PictureBytes, (y + q + 1) * width * 4 + (x + w + 1) * 4),
+                                Tools.GetGrayPixel(0));
+                            q++;
+                            w++;
+                        }
+                        else if ((int) Tools.GetPixelIntensity(PictureBytes, (y + q + 1) * width * 4 + (x + w) * 4) ==
+                                 255)
+                        {
+                            Tools.SetPixel(
+                                Tools.GetPixel(PictureBytes, (y + q + 1) * width * 4 + (x + w) * 4),
+                                Tools.GetGrayPixel(0));
+                            q++;
+                        }
+
+                        else if ((int) Tools.GetPixelIntensity(PictureBytes, (y + q + 1) * width * 4 + (x + w - 1) * 4) ==
+                                 255)
+                        {
+                            Tools.SetPixel(
+                                Tools.GetPixel(PictureBytes, (y + q + 1) * width * 4 + (x + w - 1) * 4),
+                                Tools.GetGrayPixel(0));
+                            w--;
+                            q++;
+                        }
+                        
+                        else if ((int) Tools.GetPixelIntensity(PictureBytes, (y + q) * width * 4 + (x + w - 1) * 4) ==
+                                 255)
+                        {
+                            Tools.SetPixel(
+                                Tools.GetPixel(PictureBytes, (y + q) * width * 4 + (x + w - 1) * 4),
+                                Tools.GetGrayPixel(0));
+                            w--;
+                        }
+                        else if ((int) Tools.GetPixelIntensity(PictureBytes, (y + q - 1) * width * 4 + (x + w - 1) * 4) ==
+                                 255)
+                        {
+                            Tools.SetPixel(
+                                Tools.GetPixel(PictureBytes, (y + q - 1) * width * 4 + (x + w - 1) * 4),
+                                Tools.GetGrayPixel(0));
+                            w--;
+                            q--;
+                        }
+                        else if ((int) Tools.GetPixelIntensity(PictureBytes, (y + q - 1) * width * 4 + (x + w) * 4) ==
+                                 255)
+                        {
+                            Tools.SetPixel(
+                                Tools.GetPixel(PictureBytes, (y + q - 1) * width * 4 + (x + w) * 4),
+                                Tools.GetGrayPixel(0));
+                            q--;
+                        }
+                        else if ((int) Tools.GetPixelIntensity(PictureBytes, (y + q - 1) * width * 4 + (x + w + 1) * 4) ==
+                                 255)
+                        {
+                            Tools.SetPixel(
+                                Tools.GetPixel(PictureBytes, (y + q - 1) * width * 4 + (x + w + 1) * 4),
+                                Tools.GetGrayPixel(0));
+                            w++;
+                            q--;
+                        }
+                        else
+                        {
+                            flagFill = false;
+                            flag = false;
+                        }
+                    }
+                }
+                else
+                {
+                    flag = false;
+                }
+            }
+            
+        }
         Store?.TriggerPictureBytesEvent(PictureBytes!, PictureSize);
+        
     }
-
     #endregion
-
     #endregion
 }
