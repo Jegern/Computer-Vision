@@ -85,6 +85,9 @@
                 <MenuItem x:Name="SegmentationMenuItem"
                           Header="Сегментация"
                           Command="{Binding ChangeVisibilityCommand}" />
+                <MenuItem x:Name="AdaptiveThresholdingMenuItem"
+                          Header="Адаптивная сегментация"
+                          Command="{Binding ChangeVisibilityCommand}" />
                 <MenuItem x:Name="HistogramMenuItem"
                           Header="Гистограмма"
                           Command="{Binding ChangeVisibilityCommand}" />
@@ -122,6 +125,8 @@
                                    Visibility="{Binding Visibility}" />
                 <view:Histogram x:Name="HistogramControl"
                                 Visibility="{Binding Visibility}" />
+                <view:AdaptiveThresholding x:Name="AdaptiveThresholdingControl"
+                                           Visibility="{Binding Visibility}" />
             </StackPanel>
         </StackPanel>
     </StackPanel>
