@@ -119,7 +119,7 @@ public class ImageManagementViewModel : ViewModel
     {
     }
 
-    public ImageManagementViewModel(ViewModelStore? store) : base(store)
+    public ImageManagementViewModel(ViewModelStore store) : base(store)
     {
         ValueChangedCommand = new Command(ValueChangedCommand_OnExecuted, ValueChangedCommand_CanExecute);
         BleachCommand = new Command(BleachCommand_OnExecuted, BleachCommand_CanExecute);

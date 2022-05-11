@@ -67,9 +67,8 @@ public abstract class ViewModel : INotifyPropertyChanged
     {
     }
 
-    protected ViewModel(ViewModelStore? store)
+    protected ViewModel(ViewModelStore store)
     {
-        if (store is null) return;
         Store = store;
         Store.PictureSizeChanged += size => PictureSize = size;
         Store.PictureBytesChanged += bytes => PictureBytes = bytes;

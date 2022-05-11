@@ -30,7 +30,7 @@ public class AdaptiveThresholdingViewModel : ViewModel
     {
     }
 
-    public AdaptiveThresholdingViewModel(ViewModelStore? store) : base(store)
+    public AdaptiveThresholdingViewModel(ViewModelStore store) : base(store)
     {
         MeanThresholdingCommand = new Command(
             MeanThresholdingCommand_OnExecuted,
@@ -156,7 +156,7 @@ public class AdaptiveThresholdingViewModel : ViewModel
         for (var y = 0; y < height; y++)
         for (var x = 0; x < width; x++)
         {
-            var min = 0d;
+            var min = 255d;
             var max = 0d;
             for (var i = -radius; i <= radius; i++)
             {
@@ -166,7 +166,7 @@ public class AdaptiveThresholdingViewModel : ViewModel
                     if (x + j < 0 | x + j >= width) continue;
                     var windowPixelIndex = (y + i) * width * 4 + (x + j) * 4;
                     var windowPixelIntensity = Tools.GetPixelIntensity(originalPictureBytes, windowPixelIndex);
-                    if (min > windowPixelIndex) min = windowPixelIntensity;
+                    if (min > windowPixelIntensity) min = windowPixelIntensity;
                     if (max < windowPixelIntensity) max = windowPixelIntensity;
                 }
             }

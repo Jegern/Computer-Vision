@@ -60,7 +60,7 @@ public class HistogramViewModel : ViewModel
     {
     }
 
-    public HistogramViewModel(ViewModelStore? store) : base(store)
+    public HistogramViewModel(ViewModelStore store) : base(store)
     {
         if (store is not null) store.HistogramChanged += Histogram_OnChanged;
     }
