@@ -11,7 +11,7 @@ public class ViewModelStore
     public event Action<byte[]>? PictureBytesChanged;
     public event Action<Point>? MousePositionChanged;
     public event Action<byte[]>? AntiAliasingPictureBytesChanged;
-    public event Action<double[]>? HistogramChanged;
+    public event Action<int[]>? HistogramChanged;
 
     public void TriggerPictureSizeEvent(Size size) => PictureSizeChanged?.Invoke(size);
     public void TriggerPictureBytesEvent(byte[] bytes)
@@ -28,5 +28,5 @@ public class ViewModelStore
 
     public void TriggerMousePositionEvent(Point point) => MousePositionChanged?.Invoke(point);
     public void TriggerAntiAliasingPictureBytesEvent(byte[] bytes) => AntiAliasingPictureBytesChanged?.Invoke(bytes);
-    public void TriggerHistogramEvent(double[] histogram) => HistogramChanged?.Invoke(histogram);
+    public void TriggerHistogramEvent(int[] histogram) => HistogramChanged?.Invoke(histogram);
 }
