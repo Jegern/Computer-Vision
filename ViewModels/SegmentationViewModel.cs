@@ -15,7 +15,7 @@ public class SegmentationViewModel : ViewModel
     private int? _areaPercentage;
     private int? _kNeighbours;
     private int? _cannyThreshold;
-    
+
 
     private double[]? Histogram
     {
@@ -34,18 +34,18 @@ public class SegmentationViewModel : ViewModel
         get => _cannyThreshold;
         set => Set(ref _cannyThreshold, value);
     }
-    
+
     public int? KNeighbours
     {
         get => _kNeighbours;
         set => Set(ref _kNeighbours, value);
     }
-    
+
     private int[,] SobelMask3X3 { get; } =
     {
-        { -1, -2, -1 },
-        { 0, 0, 0 },
-        { 1, 2, 1 }
+        {-1, -2, -1},
+        {0, 0, 0},
+        {1, 2, 1}
     };
 
     #endregion
@@ -57,10 +57,10 @@ public class SegmentationViewModel : ViewModel
     {
     }
 
-    public SegmentationViewModel(ViewModelStore? store) : base(store)
+    public SegmentationViewModel(ViewModelStore store) : base(store)
     {
-        if (store is not null) store.HistogramChanged += histogram => Histogram = histogram;
-        
+        store.HistogramChanged += histogram => Histogram = histogram;
+
         PTileCommand = new Command(
             PTileCommand_OnExecuted,
             PTileCommand_CanExecute);
@@ -276,8 +276,8 @@ public class SegmentationViewModel : ViewModel
     private void CannyMethodCommand_OnExecuted(object? parameter)
     {
         var originalPictureBytes = (byte[]) PictureBytes!.Clone();
-        var width = (int)PictureSize.Width;
-        var height = (int)PictureSize.Height;
+        var width = (int) PictureSize.Width;
+        var height = (int) PictureSize.Height;
         var mask = SobelMask3X3;
         var grad = new double [height, width, 3];
 
@@ -315,7 +315,7 @@ public class SegmentationViewModel : ViewModel
         for (var y = 0; y < height; y++)
         for (var x = 0; x < width; x++)
         {
-            if ((int)Tools.GetPixelIntensity(PictureBytes, y*width*4 + x * 4) == 255) continue;
+            if ((int) Tools.GetPixelIntensity(PictureBytes, y * width * 4 + x * 4) == 255) continue;
             if (y - 1 < 0 | y + 1 >= height) continue;
             if (x - 1 < 0 | x + 1 >= width) continue;
             int direct = (int) grad[y, x, 1];
@@ -323,7 +323,7 @@ public class SegmentationViewModel : ViewModel
             {
                 0 => (grad[y, x - 1, 0], grad[y, x + 1, 0]),
                 1 => (grad[y - 1, x + 1, 0], grad[y + 1, x - 1, 0]),
-                2 => (grad[y + 1, x , 0], grad[y - 1, x, 0]),
+                2 => (grad[y + 1, x, 0], grad[y - 1, x, 0]),
                 3 => (grad[y - 1, x - 1, 0], grad[y + 1, x + 1, 0]),
                 _ => throw new ArgumentOutOfRangeException()
             };
@@ -331,7 +331,7 @@ public class SegmentationViewModel : ViewModel
             {
                 Tools.SetPixel(
                     Tools.GetPixel(PictureBytes, y * width * 4 + x * 4),
-                    Tools.GetGrayPixel(255));   
+                    Tools.GetGrayPixel(255));
             }
         }
 
@@ -349,7 +349,7 @@ public class SegmentationViewModel : ViewModel
             while (flag)
             {
                 if (y - i - 1 <= 0 | y + i + 1 >= height | y + i - 1 <= 0 | y - i + 1 >= height) break;
-                if (x - j  - 1 <= 0 | x + j + 1>= width | x + j  - 1 <= 0 | x - j + 1>= width) break;
+                if (x - j - 1 <= 0 | x + j + 1 >= width | x + j - 1 <= 0 | x - j + 1 >= width) break;
                 if ((int) Tools.GetPixelIntensity(PictureBytes, (y + i) * width * 4 + (x + j + 1) * 4) == 0 &&
                     (int) grad[y + i, x + j + 1, 2] == 0)
                 {
@@ -404,7 +404,7 @@ public class SegmentationViewModel : ViewModel
                 }
                 else if ((int) Tools.GetPixelIntensity(PictureBytes, (y + i) * width * 4 + (x + j) * 4) == 0 &&
                          (int) grad[y + i, x + j, 2] == 1)
-                {   
+                {
                     var flagFill = true;
                     var q = i;
                     var w = j;
@@ -424,7 +424,8 @@ public class SegmentationViewModel : ViewModel
                                 Tools.GetGrayPixel(0));
                             w++;
                         }
-                        else if ((int) Tools.GetPixelIntensity(PictureBytes, (y + q + 1) * width * 4 + (x + w + 1) * 4) ==
+                        else if ((int) Tools.GetPixelIntensity(PictureBytes,
+                                     (y + q + 1) * width * 4 + (x + w + 1) * 4) ==
                                  255)
                         {
                             Tools.SetPixel(
@@ -442,7 +443,8 @@ public class SegmentationViewModel : ViewModel
                             q++;
                         }
 
-                        else if ((int) Tools.GetPixelIntensity(PictureBytes, (y + q + 1) * width * 4 + (x + w - 1) * 4) ==
+                        else if ((int) Tools.GetPixelIntensity(PictureBytes,
+                                     (y + q + 1) * width * 4 + (x + w - 1) * 4) ==
                                  255)
                         {
                             Tools.SetPixel(
@@ -451,7 +453,7 @@ public class SegmentationViewModel : ViewModel
                             w--;
                             q++;
                         }
-                        
+
                         else if ((int) Tools.GetPixelIntensity(PictureBytes, (y + q) * width * 4 + (x + w - 1) * 4) ==
                                  255)
                         {
@@ -460,7 +462,8 @@ public class SegmentationViewModel : ViewModel
                                 Tools.GetGrayPixel(0));
                             w--;
                         }
-                        else if ((int) Tools.GetPixelIntensity(PictureBytes, (y + q - 1) * width * 4 + (x + w - 1) * 4) ==
+                        else if ((int) Tools.GetPixelIntensity(PictureBytes,
+                                     (y + q - 1) * width * 4 + (x + w - 1) * 4) ==
                                  255)
                         {
                             Tools.SetPixel(
@@ -477,7 +480,8 @@ public class SegmentationViewModel : ViewModel
                                 Tools.GetGrayPixel(0));
                             q--;
                         }
-                        else if ((int) Tools.GetPixelIntensity(PictureBytes, (y + q - 1) * width * 4 + (x + w + 1) * 4) ==
+                        else if ((int) Tools.GetPixelIntensity(PictureBytes,
+                                     (y + q - 1) * width * 4 + (x + w + 1) * 4) ==
                                  255)
                         {
                             Tools.SetPixel(
@@ -498,11 +502,12 @@ public class SegmentationViewModel : ViewModel
                     flag = false;
                 }
             }
-            
         }
+
         Store?.TriggerPictureBytesEvent(PictureBytes!, PictureSize);
-        
     }
+
     #endregion
+
     #endregion
 }

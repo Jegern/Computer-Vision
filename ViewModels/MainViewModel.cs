@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
@@ -64,9 +63,9 @@ public class MainViewModel : ViewModel
     {
     }
 
-    public MainViewModel(ViewModelStore? store) : base(store)
+    public MainViewModel(ViewModelStore store) : base(store)
     {
-        if (store is not null) store.PictureChanged += source => Picture = source;
+        store.PictureChanged += source => Picture = source;
         
         OpenImageCommand = new Command(
             OpenImageCommand_OnExecuted,
@@ -166,9 +165,10 @@ public class MainViewModel : ViewModel
     {
         var e = (MouseEventArgs) parameter!;
         var position = e.GetPosition((Image) e.Source);
-        position.X = Math.Round(Math.Min(position.X, Picture!.PixelWidth - 1), 0);
-        position.Y = Math.Round(Math.Min(position.Y, Picture!.PixelHeight - 1), 0);
-        PictureMousePosition = position;
+        position.X = (int) position.X;
+        position.Y = (int) position.Y;
+        if (0 <= position.X && position.X < PictureSize.Width && 0 <= position.Y && position.Y < PictureSize.Height) 
+            PictureMousePosition = position;
     }
 
     #endregion

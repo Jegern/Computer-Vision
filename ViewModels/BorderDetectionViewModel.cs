@@ -88,7 +88,7 @@ public class BorderDetectionViewModel : ViewModel
     {
     }
 
-    public BorderDetectionViewModel(ViewModelStore? store) : base(store)
+    public BorderDetectionViewModel(ViewModelStore store) : base(store)
     {
         HessianOperatorCommand = new Command(
             HessianOperatorCommand_OnExecuted,

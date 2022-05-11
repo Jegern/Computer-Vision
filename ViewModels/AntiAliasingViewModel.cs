@@ -87,7 +87,7 @@ public class AntiAliasingViewModel : ViewModel
     {
     }
 
-    public AntiAliasingViewModel(ViewModelStore? store) : base(store)
+    public AntiAliasingViewModel(ViewModelStore store) : base(store)
     {
         RectangleFilterCommand = new Command(
             RectangleFilterCommand_OnExecuted,

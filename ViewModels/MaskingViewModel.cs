@@ -33,10 +33,10 @@ public class MaskingViewModel : ViewModel
     {
     }
 
-    public MaskingViewModel(ViewModelStore? store) : base(store)
+    public MaskingViewModel(ViewModelStore store) : base(store)
     {
-        if (store is not null) store.AntiAliasingPictureBytesChanged += AntiAliasingPictureBytes_OnChanged;
-        
+        store.AntiAliasingPictureBytesChanged += AntiAliasingPictureBytes_OnChanged;
+
         SoftMaskingCommand = new Command(
             SoftMaskingCommand_OnExecuted,
             SoftMaskingCommand_CanExecute);

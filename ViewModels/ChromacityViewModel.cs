@@ -48,7 +48,7 @@ public class ChromacityViewModel : ViewModel
     {
     }
 
-    public ChromacityViewModel(ViewModelStore? store) : base(store)
+    public ChromacityViewModel(ViewModelStore store) : base(store)
     {
         BinaryTransformationCommand = new Command(
             BinaryTransformationCommand_OnExecuted,

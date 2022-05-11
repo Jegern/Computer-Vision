@@ -12,7 +12,7 @@ public class HistogramViewModel : ViewModel
     {
     }
 
-    public HistogramViewModel(ViewModelStore? store) : base(store)
+    public HistogramViewModel(ViewModelStore store) : base(store)
     {
     }
 

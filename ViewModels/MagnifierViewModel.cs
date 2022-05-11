@@ -75,9 +75,9 @@ public class MagnifierViewModel : ViewModel
     {
     }
 
-    public MagnifierViewModel(ViewModelStore? store) : base(store)
+    public MagnifierViewModel(ViewModelStore store) : base(store)
     {
-        if (store is not null) store.MousePositionChanged += MousePosition_OnChanged;
+        store.MousePositionChanged += MousePosition_OnChanged;
     }
 
     #region Event Subscription
