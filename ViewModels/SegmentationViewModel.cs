@@ -11,13 +11,13 @@ public class SegmentationViewModel : ViewModel
 {
     #region Fields
 
-    private double[]? _histogram;
+    private int[]? _histogram;
     private int? _areaPercentage;
     private int? _kNeighbours;
     private int? _cannyThreshold;
 
 
-    private double[]? Histogram
+    private int[]? Histogram
     {
         get => _histogram;
         set => Set(ref _histogram, value);

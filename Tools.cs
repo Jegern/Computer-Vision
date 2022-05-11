@@ -20,9 +20,9 @@ public static class Tools
             (int) width * 4);
     }
 
-    public static double[] GetHistogram(byte[] bytes)
+    public static int[] GetHistogram(byte[] bytes)
     {
-        var histogram = new double[256];
+        var histogram = new int[256];
         for (var i = 0; i < bytes.Length; i += 4)
             histogram[(byte) GetPixelIntensity(bytes, i)]++;
         return histogram;
