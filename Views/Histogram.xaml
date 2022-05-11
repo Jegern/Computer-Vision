@@ -17,16 +17,21 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Styles/StackPanel.xaml" />
+                <ResourceDictionary Source="Styles/TextBlock.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
 
     <StackPanel Margin="3">
-        <StackPanel Height="184">
-                <lvc:CartesianChart Series="{Binding Series}"
-                                    XAxes="{Binding XAxes}"
-                                    YAxes="{Binding YAxes}"
-                                    Height="184"/>
+        <StackPanel>
+            <lvc:CartesianChart Series="{Binding Series}"
+                                XAxes="{Binding XAxes}"
+                                YAxes="{Binding YAxes}"
+                                Height="184" />
+        </StackPanel>
+
+        <StackPanel>
+            <TextBlock Text="{Binding Peaks}" />
         </StackPanel>
     </StackPanel>
 </UserControl>

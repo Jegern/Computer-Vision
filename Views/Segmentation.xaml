@@ -39,12 +39,12 @@
             <Button Content="P-Tile"
                     Command="{Binding PTileCommand}" />
         </StackPanel>
-        
+
         <StackPanel>
             <Button Content="Зависимость от гистограммы"
                     Command="{Binding HistogramDependentCommand}" />
         </StackPanel>
-        
+
         <StackPanel>
             <TextBox Text="{Binding KNeighbours, UpdateSourceTrigger=PropertyChanged}"
                      MaxLength="2"
@@ -52,6 +52,11 @@
                      Margin="0, 0, 0, 2" />
             <Button Content="K-средних"
                     Command="{Binding KMeansCommand}" />
+        </StackPanel>
+
+        <StackPanel>
+            <Button Content="Заспавнить кринж видео"
+                    Command="{Binding VideoCringeCommand}" />
         </StackPanel>
     </StackPanel>
 </UserControl>
