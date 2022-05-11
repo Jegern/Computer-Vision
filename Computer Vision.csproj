@@ -15,11 +15,7 @@
     <ItemGroup>
       <PackageReference Include="LiveChartsCore.SkiaSharpView.WPF" Version="2.0.0-beta.220" />
       <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.39" />
-      <PackageReference Include="OpenCV" Version="2.4.11" />
-      <PackageReference Include="OpenCV.Net" Version="3.4.1" />
       <PackageReference Include="OpenCVSharp" Version="2.4.0.1" />
-      <PackageReference Include="OpenCvSharp4" Version="4.5.5.20211231" />
-      <PackageReference Include="OpenCvSharp4.WpfExtensions" Version="4.5.5.20211231" />
       <PackageReference Include="ScottPlot.WPF" Version="4.1.44" />
     </ItemGroup>
 
