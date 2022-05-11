@@ -31,7 +31,7 @@
         </StackPanel>
 
         <StackPanel>
-            <TextBlock Text="{Binding Peaks}" />
+            <TextBlock Text="{Binding PeakNumber}" />
         </StackPanel>
     </StackPanel>
 </UserControl>

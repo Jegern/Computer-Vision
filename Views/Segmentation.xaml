@@ -26,9 +26,9 @@
         <StackPanel>
             <TextBox Text="{Binding CannyThreshold, UpdateSourceTrigger=PropertyChanged}"
                      MaxLength="4"
-                     Tag="Порог кенни"
+                     Tag="Порог Кенни"
                      Margin="0, 0, 0, 2" />
-            <Button Content="КЕЕЕЕЕЕЕНННННИИИИИ"
+            <Button Content="Кенни"
                     Command="{Binding CannyMethodCommand}" />
         </StackPanel>
         <StackPanel>
@@ -52,11 +52,6 @@
                      Margin="0, 0, 0, 2" />
             <Button Content="K-средних"
                     Command="{Binding KMeansCommand}" />
-        </StackPanel>
-
-        <StackPanel>
-            <Button Content="Заспавнить кринж видео"
-                    Command="{Binding VideoCringeCommand}" />
         </StackPanel>
     </StackPanel>
 </UserControl>

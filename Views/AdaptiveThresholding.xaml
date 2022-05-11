@@ -28,9 +28,9 @@
             <TextBox
                 Text="{Binding Radius, UpdateSourceTrigger=PropertyChanged}"
                 MaxLength="2"
-                Tag="Сторона окна"
+                Tag="Сторона окна k"
                 Margin="0, 0, 0, 2" />
-            
+            <TextBox
                 Text="{Binding C, UpdateSourceTrigger=PropertyChanged}"
                 MaxLength="4"
                 Tag="Порог C"
