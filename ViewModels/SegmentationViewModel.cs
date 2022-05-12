@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Laboratory_work_1.Commands.Base;
 using Laboratory_work_1.ViewModels.Base;
 using Laboratory_work_1.ViewModels.Store;
+using OpenCvSharp;
 
 namespace Laboratory_work_1.ViewModels;
 
@@ -15,6 +16,7 @@ public class SegmentationViewModel : ViewModel
     private int? _areaPercentage;
     private int? _kNeighbours;
     private int? _cannyThreshold;
+    
 
     private int[]? Histogram
     {
@@ -39,13 +41,7 @@ public class SegmentationViewModel : ViewModel
         get => _kNeighbours;
         set => Set(ref _kNeighbours, value);
     }
-
-    private int[,] SobelMask3X3 { get; } =
-    {
-        {-1, -2, -1},
-        {0, 0, 0},
-        {1, 2, 1}
-    };
+    
 
     #endregion
 
@@ -75,7 +71,7 @@ public class SegmentationViewModel : ViewModel
     }
 
     #region Commands
-
+    
     #region CannyMethodCommand
 
     public Command? CannyMethodCommand { get; }
@@ -83,14 +79,23 @@ public class SegmentationViewModel : ViewModel
     private bool CannyMethodCommand_CanExecute(object? parameter) =>
         !PictureSize.IsEmpty &&
         CannyThreshold > 0;
-
+    
     private void CannyMethodCommand_OnExecuted(object? parameter)
     {
-        Store?.TriggerPictureBytesEvent(PictureBytes!, PictureSize);
+        var mat = Mat.FromArray(PictureBytes);
+        Cv2.Canny(mat, mat, (double) CannyThreshold - 10, (double) CannyThreshold);
+        var imageBytes = mat.ToArray();
+        for (var i = 0; i < PictureBytes!.Length; i += 4)
+        {
+            Tools.SetPixel(
+                Tools.GetPixel(PictureBytes, i),
+                Tools.GetGrayPixel((byte) (imageBytes[i] == 0 ? 255 : 0)));
+        }
+        Store?.TriggerPictureBytesEvent(PictureBytes, PictureSize);
     }
-
+    
     #endregion
-
+    
     #region PTileCommand
 
     public Command? PTileCommand { get; }
@@ -278,6 +283,7 @@ public class SegmentationViewModel : ViewModel
     }
 
     #endregion
+
 
     #endregion
 }
