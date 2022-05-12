@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
+using System.Collections.Generic;
 using Laboratory_work_1.ViewModels.Base;
 using Laboratory_work_1.ViewModels.Store;
 using LiveChartsCore;
@@ -13,7 +13,6 @@ public class HistogramViewModel : ViewModel
     #region Fields
 
     private int[]? _histogram;
-    private string _peakNumber = string.Empty;
 
     public ISeries[] Series { get; set; } =
     {
@@ -23,17 +22,18 @@ public class HistogramViewModel : ViewModel
         }
     };
 
-    public IEnumerable<Axis> XAxes { get; set; } = new[]
+    public Axis[] XAxes { get; set; } =
     {
-        new Axis
+        new()
         {
             TextSize = 0,
+            ShowSeparatorLines = false
         }
     };
 
-    public IEnumerable<Axis> YAxes { get; set; } = new[]
+    public Axis[] YAxes { get; set; } =
     {
-        new Axis
+        new()
         {
             TextSize = 0
         }
@@ -47,12 +47,6 @@ public class HistogramViewModel : ViewModel
             if (Set(ref _histogram, value))
                 Series[0].Values = Histogram;
         }
-    }
-
-    public string PeakNumber
-    {
-        get => _peakNumber;
-        set => Set(ref _peakNumber, value);
     }
 
     #endregion
@@ -69,11 +63,13 @@ public class HistogramViewModel : ViewModel
         store.HistogramChanged += Histogram_OnChanged;
     }
 
+    #region Event Subscription
+
     private void Histogram_OnChanged(int[] histogram)
     {
         Histogram = histogram;
-        var peaks = BaselinePeakFinding(histogram);
-        PeakNumber = $"Количество пиков: {peaks.Count(x => x)}";
+        XAxes.First().Name = $"Количество пиков: {BaselinePeakFinding(histogram).Count(x => x)}";
+        XAxes.First().NameTextSize = 15;
     }
 
     private static IEnumerable<bool> DispersionPeakFinding(
@@ -102,13 +98,13 @@ public class HistogramViewModel : ViewModel
 
         return peaks;
     }
-    
+
     private static IEnumerable<bool> BaselinePeakFinding(IReadOnlyCollection<int> signals)
     {
         var smoothInput = new double[signals.Count];
         for (var i = 2; i < signals.Count; i++)
             smoothInput[i] = signals.Skip(i - 2).Take(2).Average();
-        
+
         var peaks = new bool[signals.Count];
         int? peakIndex = null;
         double? peakValue = null;
@@ -136,4 +132,6 @@ public class HistogramViewModel : ViewModel
 
         return peaks;
     }
+
+    #endregion
 }

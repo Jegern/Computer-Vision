@@ -16,22 +16,20 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/Button.xaml" />
                 <ResourceDictionary Source="Styles/StackPanel.xaml" />
-                <ResourceDictionary Source="Styles/TextBlock.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
 
     <StackPanel Margin="3">
         <StackPanel>
-            <lvc:CartesianChart Series="{Binding Series}"
+            <lvc:CartesianChart x:Name="Chart"
+                                Series="{Binding Series}"
                                 XAxes="{Binding XAxes}"
                                 YAxes="{Binding YAxes}"
+                                ZoomMode="Both"
                                 Height="184" />
-        </StackPanel>
-
-        <StackPanel>
-            <TextBlock Text="{Binding PeakNumber}" />
         </StackPanel>
     </StackPanel>
 </UserControl>
