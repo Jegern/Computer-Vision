@@ -19,7 +19,7 @@ public static class Tools
             pixels,
             (int) width * 4);
     }
-
+    
     public static int[] GetHistogram(byte[] bytes)
     {
         var histogram = new int[256];

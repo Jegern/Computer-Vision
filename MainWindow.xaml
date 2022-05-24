@@ -92,6 +92,11 @@
                           Header="Гистограмма"
                           Command="{Binding ChangeVisibilityCommand}" />
             </MenuItem>
+            <MenuItem Header="5 лаба">
+                <MenuItem x:Name="ColorSegmentationMenuItem"
+                          Header="Сегментация по цвету"
+                          Command="{Binding ChangeVisibilityCommand}" />
+            </MenuItem>
         </Menu>
 
         <StackPanel Orientation="Horizontal">
@@ -127,6 +132,8 @@
                                 Visibility="{Binding Visibility}" />
                 <view:AdaptiveThresholding x:Name="AdaptiveThresholdingControl"
                                            Visibility="{Binding Visibility}" />
+                <view:ColorSegmentation x:Name="ColorSegmentationControl"
+                                        Visibility="{Binding Visibility}" />
             </StackPanel>
         </StackPanel>
     </StackPanel>
