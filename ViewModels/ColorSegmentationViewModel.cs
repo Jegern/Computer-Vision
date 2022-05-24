@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Drawing;
 using Laboratory_work_1.Commands.Base;
 using Laboratory_work_1.ViewModels.Base;
 using Laboratory_work_1.ViewModels.Store;
@@ -45,10 +42,10 @@ public class ColorSegmentationViewModel : ViewModel
     
     private void KmeansCommand_OnExecuted(object? parameter)
     {
-        var mat = Mat.FromArray(PictureBytes);
+        var mat = Mat.FromArray(PictureBytes!);
         var matResult = mat.Clone();
-        Store?.TriggerPictureBytesEvent(PictureBytes, PictureSize);
-        int colors = (int) NumberOfColors;
+        Store?.TriggerPictureBytesEvent(PictureBytes!, PictureSize);
+        int colors = (int) NumberOfColors!;
 
         using Mat points = new Mat();
         using Mat labels = new Mat();
@@ -67,14 +64,14 @@ public class ColorSegmentationViewModel : ViewModel
             {
                 for (int x = 0; x < width; x++, i++)
                 {
-                    Vec3f vec3f = new Vec3f
+                    Vec3f vec3F = new Vec3f
                     {
                         Item0 = mat.At<Vec3b>(y, x).Item0,
                         Item1 = mat.At<Vec3b>(y, x).Item1,
                         Item2 = mat.At<Vec3b>(y, x).Item2
                     };
 
-                    points.Set<Vec3f>(i, vec3f);
+                    points.Set(i, vec3F);
                 }
             }
 
@@ -94,21 +91,21 @@ public class ColorSegmentationViewModel : ViewModel
                 {
                     int index = labels.Get<int>(i);
 
-                    Vec3b vec3b = new Vec3b();
+                    Vec3b vec3B = new Vec3b();
 
                     int firstComponent = Convert.ToInt32(Math.Round(centers.At<Vec3f>(index).Item0));
                     firstComponent = firstComponent > 255 ? 255 : firstComponent < 0 ? 0 : firstComponent;
-                    vec3b.Item0 = Convert.ToByte(firstComponent);
+                    vec3B.Item0 = Convert.ToByte(firstComponent);
 
                     int secondComponent = Convert.ToInt32(Math.Round(centers.At<Vec3f>(index).Item1));
                     secondComponent = secondComponent > 255 ? 255 : secondComponent < 0 ? 0 : secondComponent;
-                    vec3b.Item1 = Convert.ToByte(secondComponent);
+                    vec3B.Item1 = Convert.ToByte(secondComponent);
 
                     int thirdComponent = Convert.ToInt32(Math.Round(centers.At<Vec3f>(index).Item2));
                     thirdComponent = thirdComponent > 255 ? 255 : thirdComponent < 0 ? 0 : thirdComponent;
-                    vec3b.Item2 = Convert.ToByte(thirdComponent);
+                    vec3B.Item2 = Convert.ToByte(thirdComponent);
 
-                    matResult.Set<Vec3b>(y, x, vec3b);
+                    matResult.Set(y, x, vec3B);
                 }
             }
         }
